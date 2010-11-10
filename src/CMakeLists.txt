@@ -1,4 +1,4 @@
-find_package( Boost 1.41.0 REQUIRED )
+find_package( Boost 1.42.0 REQUIRED )
 find_package( Qt4 COMPONENTS QtCore QtGui REQUIRED )
 find_package( Qwt5 REQUIRED )
 
