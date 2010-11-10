@@ -76,7 +76,7 @@ SchematicEditor::SchematicEditor(QWidget* parent, Qt::WindowFlags flags)
 
   setGeometry(0, 0, 640, 480);
   setWindowTitle(curFile_ + "[*]");
-  setWindowIcon(QIcon(":/images/grid"));
+  setWindowIcon(QIcon(":/images/grid.png"));
   setAttribute(Qt::WA_DeleteOnClose);
 }
 

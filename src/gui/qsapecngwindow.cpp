@@ -171,7 +171,7 @@ QSapecNGWindow::QSapecNGWindow()
   updateDocks();
   loadRecentFileList();
 
-  setWindowIcon(QIcon(":/images/qsapecng"));
+  setWindowIcon(QIcon(":/images/qsapecng.png"));
   setWindowTitle(QString("%1 - %2")
       .arg(PACKAGE_NAME)
       .arg(PACKAGE_VERSION)
@@ -745,7 +745,7 @@ SchematicEditor* QSapecNGWindow::createSchematicEditor()
       this, SLOT(sceneSelectionChanged()));
 
   editor->setAttribute(Qt::WA_DeleteOnClose);
-  editor->setWindowIcon(QIcon(":/images/grid"));
+  editor->setWindowIcon(QIcon(":/images/grid.png"));
   mdiArea_->addSubWindow(editor, Qt::SubWindow);
 
   QApplication::restoreOverrideCursor();
@@ -769,17 +769,17 @@ void QSapecNGWindow::createLogger()
 
 void QSapecNGWindow::createActions()
 {
-  newAct_ = new QAction(QIcon(":/images/new"), tr("&New"), this);
+  newAct_ = new QAction(QIcon(":/images/new.png"), tr("&New"), this);
   newAct_->setShortcuts(QKeySequence::New);
   newAct_->setStatusTip(tr("New file"));
   connect(newAct_, SIGNAL(triggered()), this, SLOT(newFile()));
 
-  openAct_ = new QAction(QIcon(":/images/open"), tr("&Open..."), this);
+  openAct_ = new QAction(QIcon(":/images/open.png"), tr("&Open..."), this);
   openAct_->setShortcuts(QKeySequence::Open);
   openAct_->setStatusTip(tr("Open"));
   connect(openAct_, SIGNAL(triggered()), this, SLOT(open()));
 
-  saveAct_ = new QAction(QIcon(":/images/save"), tr("&Save"), this);
+  saveAct_ = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
   saveAct_->setShortcuts(QKeySequence::Save);
   saveAct_->setStatusTip(tr("Save"));
   connect(saveAct_, SIGNAL(triggered()), this, SLOT(save()));
@@ -789,22 +789,22 @@ void QSapecNGWindow::createActions()
   saveAsAct_->setStatusTip(tr("Save As..."));
   connect(saveAsAct_, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-  printAct_ = new QAction(QIcon(":/images/print"), tr("&Print"), this);
+  printAct_ = new QAction(QIcon(":/images/print.png"), tr("&Print"), this);
   printAct_->setShortcuts(QKeySequence::Print);
   printAct_->setStatusTip(tr("Print"));
   connect(printAct_, SIGNAL(triggered()), this, SLOT(print()));
 
-  quitAct_ = new QAction(QIcon(":/images/cross"), tr("&Quit"), this);
+  quitAct_ = new QAction(QIcon(":/images/cross.png"), tr("&Quit"), this);
   quitAct_->setShortcut(tr("Ctrl+Q"));
   quitAct_->setStatusTip(tr("Quit"));
   connect(quitAct_, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
 
-  binAct_ = new QAction(QIcon(":/images/bin"), tr("&Delete"), this);
+  binAct_ = new QAction(QIcon(":/images/bin.png"), tr("&Delete"), this);
   binAct_->setShortcut(QKeySequence::Delete);
   binAct_->setStatusTip(tr("Delete"));
   connect(binAct_, SIGNAL(triggered()), this, SLOT(bin()));
 
-  undoAct_ = new QAction(QIcon(":/images/undo"), tr("&Undo"), this);
+  undoAct_ = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
   undoAct_->setShortcut(QKeySequence::Undo);
   undoAct_->setStatusTip(tr("Undo"));
   undoAct_->setEnabled(undoRedoGroup_->canUndo());
@@ -814,7 +814,7 @@ void QSapecNGWindow::createActions()
       undoAct_, SLOT(setEnabled(bool))
     );
 
-  redoAct_ = new QAction(QIcon(":/images/redo"), tr("&Redo"), this);
+  redoAct_ = new QAction(QIcon(":/images/redo.png"), tr("&Redo"), this);
   redoAct_->setShortcut(QKeySequence::Redo);
   redoAct_->setStatusTip(tr("Redo"));
   redoAct_->setEnabled(undoRedoGroup_->canRedo());
@@ -828,68 +828,68 @@ void QSapecNGWindow::createActions()
   propsAct_->setStatusTip(tr("Properties..."));
   connect(propsAct_, SIGNAL(triggered()), this, SLOT(props()));
 
-  cutAct_ = new QAction(QIcon(":/images/cut"), tr("Cu&t"), this);
+  cutAct_ = new QAction(QIcon(":/images/cut.png"), tr("Cu&t"), this);
   cutAct_->setShortcut(QKeySequence::Cut);
   cutAct_->setStatusTip(tr("Cut"));
   connect(cutAct_, SIGNAL(triggered()), this, SLOT(cut()));
 
-  copyAct_ = new QAction(QIcon(":/images/copy"), tr("&Copy"), this);
+  copyAct_ = new QAction(QIcon(":/images/copy.png"), tr("&Copy"), this);
   copyAct_->setShortcut(QKeySequence::Copy);
   copyAct_->setStatusTip(tr("Copy"));
   connect(copyAct_, SIGNAL(triggered()), this, SLOT(copy()));
 
-  pasteAct_ = new QAction(QIcon(":/images/paste"), tr("&Paste"), this);
+  pasteAct_ = new QAction(QIcon(":/images/paste.png"), tr("&Paste"), this);
   pasteAct_->setShortcut(QKeySequence::Paste);
   pasteAct_->setStatusTip(tr("Paste"));
   connect(pasteAct_, SIGNAL(triggered()), this, SLOT(paste()));
 
-  rotateAct_ = new QAction(QIcon(":/images/rotate"), tr("R&otate"), this);
+  rotateAct_ = new QAction(QIcon(":/images/rotate.png"), tr("R&otate"), this);
   rotateAct_->setStatusTip(tr("Rotate"));
   connect(rotateAct_, SIGNAL(triggered()), this, SLOT(rotate()));
 
-  mirrorAct_ = new QAction(QIcon(":/images/mirror"), tr("&Mirror"), this);
+  mirrorAct_ = new QAction(QIcon(":/images/mirror.png"), tr("&Mirror"), this);
   mirrorAct_->setStatusTip(tr("Mirror"));
   connect(mirrorAct_, SIGNAL(triggered()), this, SLOT(mirror()));
 
   bringToFrontAct_ =
-    new QAction(QIcon(":/images/bringfront"), tr("Bring to &front"), this);
+    new QAction(QIcon(":/images/bringfront.png"), tr("Bring to &front"), this);
   bringToFrontAct_->setStatusTip(tr("Bring to front"));
   connect(bringToFrontAct_, SIGNAL(triggered()), this, SLOT(bringToFront()));
 
   sendToBackAct_ =
-    new QAction(QIcon(":/images/sendback"), tr("Send to &back"), this);
+    new QAction(QIcon(":/images/sendback.png"), tr("Send to &back"), this);
   sendToBackAct_->setStatusTip(tr("Send to back"));
   connect(sendToBackAct_, SIGNAL(triggered()), this, SLOT(sendToBack()));
 
-  zoomInAct_ = new QAction(QIcon(":/images/zoomin"), tr("Zoom &In"), this);
+  zoomInAct_ = new QAction(QIcon(":/images/zoomin.png"), tr("Zoom &In"), this);
   zoomInAct_->setShortcuts(QKeySequence::ZoomIn);
   zoomInAct_->setStatusTip(tr("Zoom In"));
   connect(zoomInAct_, SIGNAL(triggered()), this, SLOT(zoomIn()));
 
-  zoomOutAct_ = new QAction(QIcon(":/images/zoomout"), tr("Zoom &Out"), this);
+  zoomOutAct_ = new QAction(QIcon(":/images/zoomout.png"), tr("Zoom &Out"), this);
   zoomOutAct_->setShortcuts(QKeySequence::ZoomOut);
   zoomOutAct_->setStatusTip(tr("Zoom Out"));
   connect(zoomOutAct_, SIGNAL(triggered()), this, SLOT(zoomOut()));
 
-  zoomNormalAct_ = new QAction(QIcon(":/images/zoomnormal"), tr("Zoom &Normal"), this);
+  zoomNormalAct_ = new QAction(QIcon(":/images/zoomnormal.png"), tr("Zoom &Normal"), this);
   zoomNormalAct_->setStatusTip(tr("Zoom Normal"));
   connect(zoomNormalAct_, SIGNAL(triggered()), this, SLOT(zoomNormal()));
 
-  fitAct_ = new QAction(QIcon(":/images/fit"), tr("&Fit"), this);
+  fitAct_ = new QAction(QIcon(":/images/fit.png"), tr("&Fit"), this);
   fitAct_->setStatusTip(tr("Fit"));
   connect(fitAct_, SIGNAL(triggered()), this, SLOT(fit()));
 
-  nodeAct_ = new QAction(QIcon(":/images/node"), tr("Assign &nodes"), this);
+  nodeAct_ = new QAction(QIcon(":/images/node.png"), tr("Assign &nodes"), this);
   nodeAct_->setShortcut(tr("F7"));
   nodeAct_->setStatusTip(tr("Assign nodes"));
   connect(nodeAct_, SIGNAL(triggered()), this, SLOT(assignNodes()));
 
-  resolveAct_ = new QAction(QIcon(":/images/resolve"), tr("&Resolve..."), this);
+  resolveAct_ = new QAction(QIcon(":/images/resolve.png"), tr("&Resolve..."), this);
   resolveAct_->setShortcut(tr("F8"));
   resolveAct_->setStatusTip(tr("Resolve"));
   connect(resolveAct_, SIGNAL(triggered()), this, SLOT(resolve()));
 
-  waveAct_ = new QAction(QIcon(":/images/wave"), tr("&Workplane..."), this);
+  waveAct_ = new QAction(QIcon(":/images/wave.png"), tr("&Workplane..."), this);
   waveAct_->setShortcut(tr("F9"));
   waveAct_->setStatusTip(tr("Workplane"));
   connect(waveAct_, SIGNAL(triggered()), this, SLOT(wave()));
@@ -900,7 +900,7 @@ void QSapecNGWindow::createActions()
   connect(toggleScreenModeAct_, SIGNAL(triggered()),
     this, SLOT(toggleScreenMode()));
 
-  configureAppAct_ = new QAction(QIcon(":/images/configuration"),
+  configureAppAct_ = new QAction(QIcon(":/images/configuration.png"),
     tr("&Configure QSapecNG..."), this);
   configureAppAct_->setStatusTip(tr("Configure QSapecNG..."));
   connect(configureAppAct_, SIGNAL(triggered()),
@@ -940,77 +940,77 @@ void QSapecNGWindow::createActions()
   separatorAct_ = new QAction(this);
   separatorAct_->setSeparator(true);
 
-  licenseAct_ = new QAction(QIcon(":/images/license"), tr("&License"), this);
+  licenseAct_ = new QAction(QIcon(":/images/license.png"), tr("&License"), this);
   licenseAct_->setStatusTip(tr("Show License"));
   connect(licenseAct_, SIGNAL(triggered()), this, SLOT(license()));
 
-  aboutAct_ = new QAction(QIcon(":/images/info"), tr("&About"), this);
+  aboutAct_ = new QAction(QIcon(":/images/info.png"), tr("&About"), this);
   aboutAct_->setStatusTip(tr("About QSapecNG"));
   connect(aboutAct_, SIGNAL(triggered()), this, SLOT(about()));
 
-  aboutQtAct_ = new QAction(QIcon(":/images/qt-logo"), tr("&Qt"), this);
+  aboutQtAct_ = new QAction(QIcon(":/images/qt-logo.png"), tr("&Qt"), this);
   aboutQtAct_->setStatusTip(tr("About Qt"));
   connect(aboutQtAct_, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
   userdefAct_ =
-    new QAction(QIcon(":/images/symbols/userdef"), tr("&User def"), this);
+    new QAction(QIcon(":/images/symbols/userdef.png"), tr("&User def"), this);
   userdefAct_->setStatusTip(tr("User def"));
   connect(userdefAct_, SIGNAL(triggered()), this, SLOT(userDefRequested()));
 
   connectedWireSessionAct_ =
-    new QAction(QIcon(":/images/symbols/wirecross"), tr("Wire c&ross"), this);
+    new QAction(QIcon(":/images/symbols/wirecross.png"), tr("Wire c&ross"), this);
   connectedWireSessionAct_->setStatusTip(tr("Wire Cross Session Request"));
   connect(connectedWireSessionAct_, SIGNAL(triggered()),
     this, SLOT(connectedWireSessionRequested()));
 
   disconnectedWireSessionAct_ =
-    new QAction(QIcon(":/images/symbols/wire"), tr("&Wire"), this);
+    new QAction(QIcon(":/images/symbols/wire.png"), tr("&Wire"), this);
   disconnectedWireSessionAct_->setStatusTip(tr("Wire Session Request"));
   connect(disconnectedWireSessionAct_, SIGNAL(triggered()),
     this, SLOT(disconnectedWireSessionRequested()));
 
   groundSessionAct_ =
-    new QAction(QIcon(":/images/symbols/ground"), tr("&Ground"), this);
+    new QAction(QIcon(":/images/symbols/ground.png"), tr("&Ground"), this);
   groundSessionAct_->setStatusTip(tr("Ground Session Request"));
   connect(groundSessionAct_, SIGNAL(triggered()),
     this, SLOT(groundSessionRequested()));
 
   portSessionAct_ =
-    new QAction(QIcon(":/images/symbols/port"), tr("&Port"), this);
+    new QAction(QIcon(":/images/symbols/port.png"), tr("&Port"), this);
   portSessionAct_->setStatusTip(tr("Port Session Request"));
   connect(portSessionAct_, SIGNAL(triggered()),
     this, SLOT(portSessionRequested()));
 
   outSessionAct_ =
-    new QAction(QIcon(":/images/symbols/out"), tr("&Out"), this);
+    new QAction(QIcon(":/images/symbols/out.png"), tr("&Out"), this);
   outSessionAct_->setStatusTip(tr("Out Session Request"));
   connect(outSessionAct_, SIGNAL(triggered()),
     this, SLOT(outSessionRequested()));
 
   voltmeterSessionAct_ =
-    new QAction(QIcon(":/images/symbols/voltmeter"), tr("&Voltmeter"), this);
+    new QAction(QIcon(":/images/symbols/voltmeter.png"), tr("&Voltmeter"), this);
   voltmeterSessionAct_->setStatusTip(tr("Voltmeter Session Request"));
   connect(voltmeterSessionAct_, SIGNAL(triggered()),
     this, SLOT(voltmeterSessionRequested()));
 
   ammeterSessionAct_ =
-    new QAction(QIcon(":/images/symbols/ammeter"), tr("&Ammeter"), this);
+    new QAction(QIcon(":/images/symbols/ammeter.png"), tr("&Ammeter"), this);
   ammeterSessionAct_->setStatusTip(tr("Ammeter Session Request"));
   connect(ammeterSessionAct_, SIGNAL(triggered()),
     this, SLOT(ammeterSessionRequested()));
 
   labelSessionAct_ =
-    new QAction(QIcon(":/images/label"), tr("&Label"), this);
+    new QAction(QIcon(":/images/label.png"), tr("&Label"), this);
   labelSessionAct_->setStatusTip(tr("Insert Label"));
   connect(labelSessionAct_, SIGNAL(triggered()),
     this, SLOT(labelSessionRequested()));
 
-  cursorAct_ = new QAction(QIcon(":/images/cursor"), tr("&Cursor"), this);
+  cursorAct_ = new QAction(QIcon(":/images/cursor.png"), tr("&Cursor"), this);
   cursorAct_->setStatusTip(tr("Clear pending request"));
   connect(cursorAct_, SIGNAL(triggered()), this, SLOT(clearSessionRequested()));
 
   toggleGridAct_ =
-    new QAction(QIcon(":/images/grid"), tr("&Toggle grid"), this);
+    new QAction(QIcon(":/images/grid.png"), tr("&Toggle grid"), this);
   toggleGridAct_->setStatusTip(tr("Toggle grid"));
   toggleGridAct_->setCheckable(true);
   connect(toggleGridAct_, SIGNAL(triggered(bool)),
@@ -1133,7 +1133,7 @@ void QSapecNGWindow::createMenus()
   fileMenu_ = menuBar()->addMenu(tr("&File"));
   fileMenu_->addAction(newAct_);
   fileMenu_->addAction(openAct_);
-  recentMenu_ = fileMenu_->addMenu(QIcon(":/images/open"), tr("Open &Recent"));
+  recentMenu_ = fileMenu_->addMenu(QIcon(":/images/open.png"), tr("Open &Recent"));
   for(int i = 0; i < maxRecentFiles; ++i)
     recentMenu_->addAction(openRecentActs_[i]);
   fileMenu_->addAction(saveAct_);
@@ -1338,7 +1338,7 @@ void QSapecNGWindow::createUndoRedoDockLayout()
 {
   undoRedoGroup_ = new QUndoGroup(this);
   undoRedoView_ = new QUndoView(undoRedoGroup_, this);
-  undoRedoView_->setCleanIcon(QIcon(":/images/save"));
+  undoRedoView_->setCleanIcon(QIcon(":/images/save.png"));
 
   undoRedoDock_->setWidget(undoRedoView_);
 }

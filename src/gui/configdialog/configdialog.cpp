@@ -126,13 +126,13 @@ void ConfigDialog::checkBeforeClose()
 void ConfigDialog::createIcons()
 {
   QListWidgetItem* generalButton = new QListWidgetItem(contents_);
-  generalButton->setIcon(QIcon(":images/qsapecng"));
+  generalButton->setIcon(QIcon(":/images/qsapecng.png"));
   generalButton->setText(tr("General"));
   generalButton->setTextAlignment(Qt::AlignHCenter);
   generalButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem* fontButton = new QListWidgetItem(contents_);
-  fontButton->setIcon(QIcon(":images/font"));
+  fontButton->setIcon(QIcon(":/images/font.png"));
   fontButton->setText(tr("Font"));
   fontButton->setTextAlignment(Qt::AlignHCenter);
   fontButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

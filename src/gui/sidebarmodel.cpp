@@ -113,7 +113,7 @@ void SideBarModel::setupSideBar()
 {
   QMap<int, QVariant> resistorItemData;
   resistorItemData[Qt::DisplayRole] = tr("Resistor");
-  resistorItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/resistor");
+  resistorItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/resistor.png");
   resistorItemData[Qt::ToolTipRole] = tr("Resistor Item");
   resistorItemData[Qt::UserRole] = SchematicScene::ResistorItemType;
   componentList_.append(resistorItemData);
@@ -121,21 +121,21 @@ void SideBarModel::setupSideBar()
   QMap<int, QVariant> conductanceItemData;
   conductanceItemData[Qt::DisplayRole] = tr("Conductance");
   conductanceItemData[Qt::DecorationRole] =
-    QPixmap(":/images/symbols/resistor");
+    QPixmap(":/images/symbols/resistor.png");
   conductanceItemData[Qt::ToolTipRole] = tr("Conductance Item");
   conductanceItemData[Qt::UserRole] = SchematicScene::ConductanceItemType;
   componentList_.append(conductanceItemData);
 
   QMap<int, QVariant> inductorItemData;
   inductorItemData[Qt::DisplayRole] = tr("Inductor");
-  inductorItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/inductor");
+  inductorItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/inductor.png");
   inductorItemData[Qt::ToolTipRole] = tr("Inductor Item");
   inductorItemData[Qt::UserRole] = SchematicScene::InductorItemType;
   componentList_.append(inductorItemData);
 
   QMap<int, QVariant> capacitorItemData;
   capacitorItemData[Qt::DisplayRole] = tr("Capacitor");
-  capacitorItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/capacitor");
+  capacitorItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/capacitor.png");
   capacitorItemData[Qt::ToolTipRole] = tr("Capacitor Item");
   capacitorItemData[Qt::UserRole] = SchematicScene::CapacitorItemType;
   componentList_.append(capacitorItemData);
@@ -143,7 +143,7 @@ void SideBarModel::setupSideBar()
   QMap<int, QVariant> voltageSourceItemData;
   voltageSourceItemData[Qt::DisplayRole] = tr("Voltage Source");
   voltageSourceItemData[Qt::DecorationRole] =
-    QPixmap(":/images/symbols/voltage");
+    QPixmap(":/images/symbols/voltage.png");
   voltageSourceItemData[Qt::ToolTipRole] = tr("Voltage Source Item");
   voltageSourceItemData[Qt::UserRole] = SchematicScene::VoltageSourceItemType;
   componentList_.append(voltageSourceItemData);
@@ -151,42 +151,42 @@ void SideBarModel::setupSideBar()
   QMap<int, QVariant> currentSourceItemData;
   currentSourceItemData[Qt::DisplayRole] = tr("Current Source");
   currentSourceItemData[Qt::DecorationRole] =
-    QPixmap(":/images/symbols/current");
+    QPixmap(":/images/symbols/current.png");
   currentSourceItemData[Qt::ToolTipRole] = tr("Current Source Item");
   currentSourceItemData[Qt::UserRole] = SchematicScene::CurrentSourceItemType;
   componentList_.append(currentSourceItemData);
 
   QMap<int, QVariant> vcvsItemData;
   vcvsItemData[Qt::DisplayRole] = tr("VCVS");
-  vcvsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/vcvs");
+  vcvsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/vcvs.png");
   vcvsItemData[Qt::ToolTipRole] = tr("VCVS Item");
   vcvsItemData[Qt::UserRole] = SchematicScene::VCVSItemType;
   componentList_.append(vcvsItemData);
 
   QMap<int, QVariant> ccvsItemData;
   ccvsItemData[Qt::DisplayRole] = tr("CCVS");
-  ccvsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/ccvs");
+  ccvsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/ccvs.png");
   ccvsItemData[Qt::ToolTipRole] = tr("CCVS Item");
   ccvsItemData[Qt::UserRole] = SchematicScene::CCVSItemType;
   componentList_.append(ccvsItemData);
 
   QMap<int, QVariant> vccsItemData;
   vccsItemData[Qt::DisplayRole] = tr("VCCS");
-  vccsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/vccs");
+  vccsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/vccs.png");
   vccsItemData[Qt::ToolTipRole] = tr("VCCS Item");
   vccsItemData[Qt::UserRole] = SchematicScene::VCCSItemType;
   componentList_.append(vccsItemData);
 
   QMap<int, QVariant> cccsItemData;
   cccsItemData[Qt::DisplayRole] = tr("CCCS");
-  cccsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/cccs");
+  cccsItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/cccs.png");
   cccsItemData[Qt::ToolTipRole] = tr("CCCS Item");
   cccsItemData[Qt::UserRole] = SchematicScene::CCCSItemType;
   componentList_.append(cccsItemData);
 
   QMap<int, QVariant> opAmplItemData;
   opAmplItemData[Qt::DisplayRole] = tr("Operational Amplifier");
-  opAmplItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/opampl");
+  opAmplItemData[Qt::DecorationRole] = QPixmap(":/images/symbols/opampl.png");
   opAmplItemData[Qt::ToolTipRole] = tr("Operational Amplifier Item");
   opAmplItemData[Qt::UserRole] = SchematicScene::OpAmplItemType;
   componentList_.append(opAmplItemData);
@@ -194,7 +194,7 @@ void SideBarModel::setupSideBar()
   QMap<int, QVariant> transformerItemData;
   transformerItemData[Qt::DisplayRole] = tr("Ideal Transformer");
   transformerItemData[Qt::DecorationRole] =
-    QPixmap(":/images/symbols/transformer");
+    QPixmap(":/images/symbols/transformer.png");
   transformerItemData[Qt::ToolTipRole] = tr("Ideal Transformer Item");
   transformerItemData[Qt::UserRole] = SchematicScene::TransformerItemType;
   componentList_.append(transformerItemData);
@@ -202,7 +202,7 @@ void SideBarModel::setupSideBar()
   QMap<int, QVariant> mutualInductanceItemData;
   mutualInductanceItemData[Qt::DisplayRole] = tr("Mutual Inductance");
   mutualInductanceItemData[Qt::DecorationRole] =
-    QPixmap(":/images/symbols/mutualinductance");
+    QPixmap(":/images/symbols/mutualinductance.png");
   mutualInductanceItemData[Qt::ToolTipRole] = tr("Mutual Inductance Item");
   mutualInductanceItemData[Qt::UserRole] = SchematicScene::MutualInductanceItemType;
   componentList_.append(mutualInductanceItemData);

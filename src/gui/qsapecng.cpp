@@ -29,8 +29,8 @@
 int main(int argc, char** argv)
 {
   QApplication app(argc, argv);
-//   QPixmap pixmap(":/images/qsapecng-splash-ng");
-  QPixmap pixmap(":/images/qsapecng-splash");
+//   QPixmap pixmap(":/images/qsapecng-splash-ng.png");
+  QPixmap pixmap(":/images/qsapecng-splash.png");
   QSplashScreen splash(pixmap);
   splash.show();
 
