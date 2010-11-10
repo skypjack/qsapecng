@@ -1,0 +1,148 @@
+/*!
+ * \file stuff.h
+ * 
+ * \brief Doxygen related stuff
+ * 
+ * Nothing to do, here. That's a container for project documentation. \n
+ * Sorry for the inconvenience. :-)
+ */
+
+
+/*!
+ * \mainpage QSapecNG - Qt-based Symbolic Analysis Program for Electric Circuits (New Generation)
+ *
+ * \image html qsapecng-splash.png
+ * \image latex qsapecng-splash.png
+ *
+ * \section intro_sec Introduction
+ *
+ * QSapecNG is a Qt-based symbolic analysis program for linear analog circuits. \n
+ * In fact, it consists of two indipendently parts: the SapecNG framework engine, and the application gui QSapecNG. \n
+ * It is an open source, multi-platform project, in continuous progress by students and researchers of Department of Electronics and Telecommunications of the University of Florence. \n
+ * It comes after and as continuation of Sapwin for Windows, in order to give to the project a full compatibility on other platforms. \n
+ * Using SapecNG/QSapecNG users can draw, solve and analyze analog circuits as well as manage them. \n
+ * \n
+ * SapecNG/QSapecNG is freely available on SourceForge.net (https://sourceforge.net/projects/qsapecng/). \n
+ * Previous version of SapecNG is available too, on SourceForge.net (https://sourceforge.net/projects/sapec-ng/). \n
+ * Pre-compiled packages will be also available from projects related pages.
+ *
+ * \subsection portability_subsec QSapecNG means portability
+ * 
+ * SapecNG, and QSapecNG are based on a portable frameworks like Boost C++ (http://www.boost.org/) and the Qt toolkit by Nokia (http://qt.nokia.com/). \n
+ * Qwt - Qt Widgets for Technical Applications (http://qwt.sourceforge.net/), and Qt Property Browser shipped with the toolkit from Qt Solutions has been used too. \n
+ * Moreover code is platform indipendent, and the build system it's designed on is CMake (http://www.cmake.org/), a cross-platform, open-source set of tools. \n
+ * On the whole you can compile, use, and join as developer of SapecNG/QSapecNG regardless of what's your preferred operating system.
+ * 
+ * \subsection open-source_subsec QSapecNG means open-source
+ * 
+ * SapecNG, and QSapecNG are developed using open-source frameworks and toolkits. The code is freely available, and any help or suggestions are appreciated. \n
+ * Because the result of a degree thesis depicts not only a destination but a starting point, we are aimed at doing efforts to undertake the project. \n
+ * You can think at SapecNG/QSapecNG as a young project that looks towards the future, like a new generation family of multi-purpose symbolic analysis program.
+ * 
+ * \subsection easytouse_subsec QSapecNG means easy to use
+ * 
+ * SapecNG, and QSapecNG are designed to be easy to use. But easy for who? \n
+ * SapecNG framework engine aims to offer a wide range set of services to the developers, so everyone can develop a fully personalized interface. \n
+ * Fully personalized interfaces means low-level interaction program as well as a graphical user interface based on different toolkit (i.e. GTK+ on http://www.gtk.org/). \n
+ * The QSapecNG high level part of the application attempts to make easy to design and solve electric circuits, as well as to analyze them. \n
+ * Despite the complexity of the underneath framework, GUI guides new, and experienced users through a carefully, user-friendly designed interface.
+ * 
+ * \section contact_sec Contact us
+ *
+ * Project coordinators are Prof. S. Manetti (who developed last version of SapWin) and Prof. A. Luchetta (luchetta@unifi.it). \n
+ * Chef developer of SapecNG, and QSapecNG is M. Caini (michele.caini@gmail.com). \n
+ * \n
+ * Please feel free to contact us for information about the projects, and if you wish to work with us.
+ * 
+ * \section note_sec Note
+ * 
+ * Documentation is not complete, that's a work in progress. Please be patient. :-)
+ */
+
+/*!
+ * \page inst_sapecng HowTo - Compile sapecng
+ * 
+ * \section inst_sapecng_sec Compile sapecng
+ *
+ * The process of make an executable of sapecng is quite easy, both on GNU/Linux or Microsoft Windows systems. \n
+ * If you intend to compile sapecng under Microsoft Windows systems, we suggest to use MinGW - Minimalist GNU for Windows (http://www.mingw.org/). \n
+ * \n
+ * To compile latest stable version, steps follow:
+ *  - download the tarball with the command:
+ *    - svn co https://sapec-ng.svn.sourceforge.net/svnroot/sapec-ng/branches/1.8.2 sapec-ng
+ *  - jump into the \a sapec-ng directory
+ *  - compile software with the commands:
+ *    - ./configure && make all
+ *
+ * You will find executable located into \a sapec-ng/src directory. That's all.
+ */
+
+/*!
+ * \page inst_qsapecng HowTo - Compile QSapecNG
+ *
+ * \section inst_qsapecng_sec Compile QSapecNG
+ *
+ * Working both on GNU/Linux or Microsoft Windows systems requires several steps which are useful to prepare the environment. \n
+ * Users of Unix-like systems maybe are able to retrieve needed packages by a dedicated package manager, otherwise download them from the correct sources. \n
+ * \b Attention: you need development headers and libraries if you intend to compile QSapecNG, not only shared (or static) libraries. \n
+ * \n
+ * These are your needed libraries:
+ *  - Qt - Cross-platform application and UI framework, from <a href="http://qt.nokia.com/">here</a> (version 4.6, or newer)
+ *  - Boost C++ Libraries, from <a href="http://www.boost.org/">here</a> (version 1.42, or newer)
+ *  - Qwt - Qt Widgets for Technical Applications, from <a href="http://qwt.sourceforge.net/">here</a> (version 5.x)
+ *  - CMake - the cross-platform, open-source build system, from <a href="http://www.cmake.org/">here</a> (version 2.6, or newer)
+ *  - nullsoft scriptable install system, from <a href="http://nsis.sourceforge.net/">here</a> (if you would like to prepare a package for Microsoft Windows systems)
+ *
+ * At the end, you will be ready to compile QSapecNG. \n
+ * If you will encounter difficulties, please keep in mind that pre-compiled packages are available (or they will be soon) for download from <a href="http://sourceforge.net/projects/qsapecng/">SourceForge.net</a> directory. \n
+ * \n
+ * Refer to the correct section to compile QSapecNG on your system.
+ *
+ * \subsection qsapecng_lin_sec Compile QSapecNG on GNU/Linux systems
+ *
+ * Coming soon...
+ *
+ * \subsection qsapecng_win_sec Compile QSapecNG on Microsoft Windows systems
+ *
+ * Coming soon...
+ */
+
+/*!
+ * \page sapecnglic_sec License - SapecNG
+ * 
+ * SapecNG - Next Generation Symbolic Analysis Program for Electric Circuit \n
+ * Copyright (C) 2009, Michele Caini \n
+ * \n
+ * This program is free software: you can redistribute it and/or modify \n
+ * it under the terms of the GNU General Public License as published by \n
+ * the Free Software Foundation, either version 3 of the License, or \n
+ *  (at your option) any later version. \n
+ * \n
+ * This program is distributed in the hope that it will be useful, \n
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of \n
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n
+ * GNU General Public License for more details. \n
+ * \n
+ * You should have received a copy of the GNU General Public License \n
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*!
+ * \page qsapecnglic_sec License - QSapecNG
+ * 
+ * QSapecNG - Qt based SapecNG GUI front-end \n
+ * Copyright (C) 2009, Michele Caini \n
+ * \n
+ * This program is free software: you can redistribute it and/or modify \n
+ * it under the terms of the GNU General Public License as published by \n
+ * the Free Software Foundation, either version 3 of the License, or \n
+ *  (at your option) any later version. \n
+ * \n
+ * This program is distributed in the hope that it will be useful, \n
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of \n
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \n
+ * GNU General Public License for more details. \n
+ * \n
+ * You should have received a copy of the GNU General Public License \n
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
