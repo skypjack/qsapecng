@@ -34,11 +34,11 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QFrame>
 
-#include <qwt/qwt_plot_grid.h>
-#include <qwt/qwt_plot_canvas.h>
-#include <qwt/qwt_plot_picker.h>
-#include <qwt/qwt_plot_marker.h>
-#include <qwt/qwt_scale_engine.h>
+#include <qwt_plot_grid.h>
+#include <qwt_plot_canvas.h>
+#include <qwt_plot_picker.h>
+#include <qwt_plot_marker.h>
+#include <qwt_scale_engine.h>
 
 #include <map>
 #include <limits>

@@ -1,14 +1,4 @@
 /*!
- * \file stuff.h
- * 
- * \brief Doxygen related stuff
- * 
- * Nothing to do, here. That's a container for project documentation. \n
- * Sorry for the inconvenience. :-)
- */
-
-
-/*!
  * \mainpage QSapecNG - Qt-based Symbolic Analysis Program for Electric Circuits (New Generation)
  *
  * \image html qsapecng-splash.png
@@ -53,10 +43,16 @@
  * Chef developer of SapecNG, and QSapecNG is M. Caini (michele.caini@gmail.com). \n
  * \n
  * Please feel free to contact us for information about the projects, and if you wish to work with us.
- * 
+ *
  * \section note_sec Note
  * 
  * Documentation is not complete, that's a work in progress. Please be patient. :-)
+ *
+ * \htmlonly
+ *  <center><a href="http://sourceforge.net/donate/index.php?group_id=369990">
+ *   <img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" />
+ *  </a></center>
+ * \endhtmlonly
  */
 
 /*!
@@ -68,7 +64,7 @@
  * If you intend to compile sapecng under Microsoft Windows systems, we suggest to use MinGW - Minimalist GNU for Windows (http://www.mingw.org/). \n
  * \n
  * To compile latest stable version, steps follow:
- *  - download the tarball with the command:
+ *  - download the software with the command:
  *    - svn co https://sapec-ng.svn.sourceforge.net/svnroot/sapec-ng/branches/1.8.2 sapec-ng
  *  - jump into the \a sapec-ng directory
  *  - compile software with the commands:
@@ -100,15 +96,53 @@
  *
  * \subsection qsapecng_lin_sec Compile QSapecNG on GNU/Linux systems
  *
- * Coming soon...
+ * Once environment has been prepared, these are necessaries steps you have to follow to compile the software:
+ *  - download the latest snapshot of the software with the command:
+ *    - svn co https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/trunk qsapecng
+ *    - or if you prefer a stable tag, svn co https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/tags/qsapecng-x.y.z qsapecng \n
+ *      where \a x, \a y, and \a z are respectively \a major, \a minor, and \a patches release number
+ *  - jump into the \a qsapecng directory
+ *  - check your system with the command:
+ *    - cmake CMakeLists.txt
+ *  - then compile as follow:
+ *    - make all
+ *  - working as root, you can install executable into the system (\a /usr/local/bin/qsapecng) launching:
+ *    - make install
+ *
+ * If all that works fine, you will find an executable called \a qsapecng into the \a bin subdirectory, or as system-wide executable. \n
+ * \n
+ * If you intend to pack compiled software, you can use \a cpack, a software shipped with \a cmake. To do that, launch from main directory:
+ *  - cpack
+ *
+ * You will find QSapecNG-x.y.z.[deb|tar.bz2|tar.gz|tar.Z] packages placed into the main directory.
  *
  * \subsection qsapecng_win_sec Compile QSapecNG on Microsoft Windows systems
  *
- * Coming soon...
+ * Under Microsoft Windows systems, you can prepare environment using cmake by command line as previously shown. \n
+ * Then compile with Visual Studio or other equivalent IDEs which support Makefile architecture. That's all.
  */
 
 /*!
- * \page sapecnglic_sec License - SapecNG
+ * \page screenshots Screenshots
+ *
+ * \image html screenshots/ss-0.png
+ * \image latex screenshots/ss-0.png
+ * \n \n \n
+ * \image html screenshots/ss-1.png
+ * \image latex screenshots/ss-1.png
+ * \n \n \n
+ * \image html screenshots/ss-2.png
+ * \image latex screenshots/ss-2.png
+ * \n \n \n
+ * \image html screenshots/ss-3.png
+ * \image latex screenshots/ss-3.png
+ * \n \n \n
+ * \image html screenshots/ss-4.png
+ * \image latex screenshots/ss-4.png
+ */
+
+/*!
+ * \page sapecnglic License - SapecNG
  * 
  * SapecNG - Next Generation Symbolic Analysis Program for Electric Circuit \n
  * Copyright (C) 2009, Michele Caini \n
@@ -128,7 +162,7 @@
  */
 
 /*!
- * \page qsapecnglic_sec License - QSapecNG
+ * \page qsapecnglic License - QSapecNG
  * 
  * QSapecNG - Qt based SapecNG GUI front-end \n
  * Copyright (C) 2009, Michele Caini \n
