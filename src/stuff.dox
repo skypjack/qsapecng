@@ -6,43 +6,43 @@
  *
  * \section intro_sec Introduction
  *
- * QSapecNG is a Qt-based symbolic analysis program for linear analog circuits. \n
- * In fact, it consists of two indipendently parts: the SapecNG framework engine, and the application gui QSapecNG. \n
- * It is an open source, multi-platform project, in continuous progress by students and researchers of Department of Electronics and Telecommunications of the University of Florence. \n
- * It comes after and as continuation of Sapwin for Windows, in order to give to the project a full compatibility on other platforms. \n
- * Using SapecNG/QSapecNG users can draw, solve and analyze analog circuits as well as manage them. \n
+ * QSapecNG is a Qt-based program for symbolic analysis of linear analog circuits. \n
+ * In fact, it consists of two indipendent parts: the SapecNG framework engine and the application gui QSapecNG. \n
+ * It is an open source, multi-platform project, continuously enhanced by students and researchers of Department of Electronics and Telecommunications of the University of Florence. \n
+ * It comes as continuation of SapWin for Windows, in order to give to the project a full compatibility on other platforms. \n
+ * Through SapecNG/QSapecNG users can draw, solve and analyze analog circuits as well as manage them. \n
  * \n
  * SapecNG/QSapecNG is freely available on SourceForge.net (https://sourceforge.net/projects/qsapecng/). \n
- * Previous version of SapecNG is available too, on SourceForge.net (https://sourceforge.net/projects/sapec-ng/). \n
+ * A previous version of SapecNG is available too, on SourceForge.net (https://sourceforge.net/projects/sapec-ng/). \n
  * Pre-compiled packages will be also available from projects related pages.
  *
  * \subsection portability_subsec QSapecNG means portability
  * 
- * SapecNG, and QSapecNG are based on a portable frameworks like Boost C++ (http://www.boost.org/) and the Qt toolkit by Nokia (http://qt.nokia.com/). \n
- * Qwt - Qt Widgets for Technical Applications (http://qwt.sourceforge.net/), and Qt Property Browser shipped with the toolkit from Qt Solutions has been used too. \n
- * Moreover code is platform indipendent, and the build system it's designed on is CMake (http://www.cmake.org/), a cross-platform, open-source set of tools. \n
- * On the whole you can compile, use, and join as developer of SapecNG/QSapecNG regardless of what's your preferred operating system.
+ * SapecNG and QSapecNG are based on the portable framework Boost C++ (http://www.boost.org/) and on the Qt toolkit by Nokia (http://qt.nokia.com/). \n
+ * Qwt - Qt Widgets for Technical Applications (http://qwt.sourceforge.net/) and Qt Property Browser shipped with the toolkit from Qt Solutions have been used too. \n
+ * Moreover code is platform indipendent and it's based on the build system CMake (http://www.cmake.org/), which is a cross-platform, open-source set of tools. \n
+ * Hence users can compile, use and join the software, and cooperate to the development of SapecNG/QSapecNG, regardless of the operating system in use.
  * 
  * \subsection open-source_subsec QSapecNG means open-source
  * 
- * SapecNG, and QSapecNG are developed using open-source frameworks and toolkits. The code is freely available, and any help or suggestions are appreciated. \n
- * Because the result of a degree thesis depicts not only a destination but a starting point, we are aimed at doing efforts to undertake the project. \n
- * You can think at SapecNG/QSapecNG as a young project that looks towards the future, like a new generation family of multi-purpose symbolic analysis program.
+ * SapecNG and QSapecNG are developed using open-source frameworks and toolkits. The code is freely available and any help or suggestion is appreciated. \n
+ * Since the result of a degree thesis depicts not only a destination but a starting point, developers' aim is to carry out the project as long as possible. \n
+ * SapecNG/QSapecNG can be thought as a young project that looks to the future, like a new generation family of multi-purpose symbolic analysis program.
  * 
  * \subsection easytouse_subsec QSapecNG means easy to use
  * 
- * SapecNG, and QSapecNG are designed to be easy to use. But easy for who? \n
+ * SapecNG and QSapecNG are designed to be easy to use. But easy who for? \n
  * SapecNG framework engine aims to offer a wide range set of services to the developers, so everyone can develop a fully personalized interface. \n
- * Fully personalized interfaces means low-level interaction program as well as a graphical user interface based on different toolkit (i.e. GTK+ on http://www.gtk.org/). \n
- * The QSapecNG high level part of the application attempts to make easy to design and solve electric circuits, as well as to analyze them. \n
- * Despite the complexity of the underneath framework, GUI guides new, and experienced users through a carefully, user-friendly designed interface.
+ * Fully personalized interface means low-level interaction program as well as graphical user interface based on different toolkits (i.e. GTK+ on http://www.gtk.org/). \n
+ * QSapecNG is the high level part of the application and attempts to make easy the design and the resolution of electric circuits, as well as their analysis. \n
+ * Despite to the complexity of the underlying framework, the GUI leads both new and experienced users through a carefully and user-friendly designed interface.
  * 
  * \section contact_sec Contact us
  *
  * Project coordinators are Prof. S. Manetti (who developed last version of SapWin) and Prof. A. Luchetta (luchetta@unifi.it). \n
- * Chef developer of SapecNG, and QSapecNG is M. Caini (michele.caini@gmail.com). \n
+ * Chef developer of SapecNG and QSapecNG is M. Caini (michele.caini@gmail.com). \n
  * \n
- * Please feel free to contact us for information about the projects, and if you wish to work with us.
+ * Please feel free to contact us for informations about the projects, or if you wish to work with us.
  *
  * \section note_sec Note
  * 
@@ -60,17 +60,17 @@
  * 
  * \section inst_sapecng_sec Compile sapecng
  *
- * The process of make an executable of sapecng is quite easy, both on GNU/Linux or Microsoft Windows systems. \n
+ * The process of building an executable of sapecng is quite easy, both on GNU/Linux or Microsoft Windows systems. \n
  * If you intend to compile sapecng under Microsoft Windows systems, we suggest to use MinGW - Minimalist GNU for Windows (http://www.mingw.org/). \n
  * \n
- * To compile latest stable version, steps follow:
+ * To compile latest stable version, follow these steps:
  *  - download the software with the command:
  *    - svn co https://sapec-ng.svn.sourceforge.net/svnroot/sapec-ng/branches/1.8.2 sapec-ng
  *  - jump into the \a sapec-ng directory
- *  - compile software with the commands:
+ *  - compile software with the command:
  *    - ./configure && make all
  *
- * You will find executable located into \a sapec-ng/src directory. That's all.
+ * You will find the executable located into \a sapec-ng/src directory. That's all.
  */
 
 /*!
@@ -79,10 +79,10 @@
  * \section inst_qsapecng_sec Compile QSapecNG
  *
  * Working both on GNU/Linux or Microsoft Windows systems requires several steps which are useful to prepare the environment. \n
- * Users of Unix-like systems maybe are able to retrieve needed packages by a dedicated package manager, otherwise download them from the correct sources. \n
- * \b Attention: you need development headers and libraries if you intend to compile QSapecNG, not only shared (or static) libraries. \n
+ * Users of Unix-like systems maybe are able to retrieve needed packages from a dedicated package manager, otherwise can download them from the correct sources. \n
+ * \b Attention: if you want to compile QSapecNG you need development headers and libraries, not only shared (or static) libraries. \n
  * \n
- * These are your needed libraries:
+ * These are the libraries you need:
  *  - Qt - Cross-platform application and UI framework, from <a href="http://qt.nokia.com/">here</a> (version 4.6, or newer)
  *  - Boost C++ Libraries, from <a href="http://www.boost.org/">here</a> (version 1.42, or newer)
  *  - Qwt - Qt Widgets for Technical Applications, from <a href="http://qwt.sourceforge.net/">here</a> (version 5.x)
@@ -92,11 +92,11 @@
  * At the end, you will be ready to compile QSapecNG. \n
  * If you will encounter difficulties, please keep in mind that pre-compiled packages are available (or they will be soon) for download from <a href="http://sourceforge.net/projects/qsapecng/">SourceForge.net</a> directory. \n
  * \n
- * Refer to the correct section to compile QSapecNG on your system.
+ * To compile QSapecNG, please look at the section dedicated to your system.
  *
  * \subsection qsapecng_lin_sec Compile QSapecNG on GNU/Linux systems
  *
- * Once environment has been prepared, these are necessaries steps you have to follow to compile the software:
+ * Once environment has been prepared, these are the necessaries steps you have to follow to compile the software:
  *  - download the latest snapshot of the software with the command:
  *    - svn co https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/trunk qsapecng
  *    - or if you prefer a stable tag, svn co https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/tags/qsapecng-x.y.z qsapecng \n
@@ -109,9 +109,9 @@
  *  - working as root, you can install executable into the system (\a /usr/local/bin/qsapecng) launching:
  *    - make install
  *
- * If all that works fine, you will find an executable called \a qsapecng into the \a bin subdirectory, or as system-wide executable. \n
+ * If it works, you will find an executable called \a qsapecng into the \a bin subdirectory, or a system-wide executable. \n
  * \n
- * If you intend to pack compiled software, you can use \a cpack, a software shipped with \a cmake. To do that, launch from main directory:
+ * If you want to pack compiled software, you can use \a cpack, a software shipped with \a cmake. To do that, launch from main directory:
  *  - cpack
  *
  * You will find QSapecNG-x.y.z.[deb|tar.bz2|tar.gz|tar.Z] packages placed into the main directory.
