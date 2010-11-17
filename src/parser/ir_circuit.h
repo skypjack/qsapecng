@@ -34,7 +34,6 @@ namespace sapecng
 {
 
 
-
 class ir_parser: public abstract_parser
 {
 
@@ -128,18 +127,18 @@ class ir_builder: public abstract_builder
 public:
   ir_builder();
 
-  void add_circuit_properties(std::map<std::string, std::string> map);
+  void add_circuit_properties(std::map<std::string,std::string> map);
   void add_circuit_property(std::string name, std::string value);
 
   void add_wire_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_out_component(
       unsigned int v,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_dual_component(
@@ -149,8 +148,8 @@ public:
       bool symbolic,
       unsigned int va,
       unsigned int vb,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_quad_component(
@@ -162,13 +161,13 @@ public:
       unsigned int vb,
       unsigned int vac,
       unsigned int vbc,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_unknow_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
 protected:
@@ -187,8 +186,8 @@ private:
       double value,
       bool symbolic,
       std::vector<unsigned int> nodes,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
 };

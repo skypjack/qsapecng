@@ -1,0 +1,11 @@
+Document: qsapecng
+Title: QSapecNG User Manual
+Author: Michele Caini
+Abstract: This manual describes what QSapecNG is
+ and how it can be used to draw, solve and
+ analyze analog circuits.
+Section: Science/Electronics
+
+Format: HTML
+Index: /usr/share/doc/qsapecng/html/index.html
+Files: /usr/share/doc/qsapecng/html/*.html

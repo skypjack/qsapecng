@@ -31,7 +31,6 @@ namespace sapecng
 {
 
 
-
 class crc_builder: public abstract_builder
 {
 
@@ -40,18 +39,18 @@ public:
       std::ostream& stream
     ): stream_(stream), out_(0) { }
 
-  void add_circuit_properties(std::map<std::string, std::string> map) { }
+  void add_circuit_properties(std::map<std::string,std::string> map) { }
   void add_circuit_property(std::string name, std::string value) { }
 
   void add_wire_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     ) { }
 
   void add_out_component(
       unsigned int v,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_dual_component(
@@ -61,8 +60,8 @@ public:
       bool symbolic,
       unsigned int va,
       unsigned int vb,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_quad_component(
@@ -74,13 +73,13 @@ public:
       unsigned int vb,
       unsigned int vac,
       unsigned int vbc,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_unknow_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     ) { }
 
   void flush();

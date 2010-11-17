@@ -1,0 +1,61 @@
+This work was packaged for Debian by:
+
+    Simone Rossetto <simros85@gmail.com> on Sun, 14 Nov 2010 17:17:21 +0100
+
+It was downloaded from:
+
+    http://qsapecng.sourceforge.net/
+
+Upstream Author(s):
+
+    Michele Caini <michele.caini@gmail.com>
+
+Copyright:
+
+    Copyright (C) 2009-2010 Michele Caini
+
+License:
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+On Debian systems, the complete text of the GNU General
+Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+
+The Debian packaging is:
+
+    Copyright (C) 2010 Simone Rossetto <simros85@gmail.com>
+
+and is licensed under the GPL version 3, see above.
+
+
+The following files have different licenses and/or copyright owners:
+
+    * src/functor/rpoly.cpp - unknown license, copyright C. Bond
+    * src/gui/qtsolutions/qtpropertyeditor/
+        - qttreepropertybrowser.cpp - GPLv3, copyright Nokia Corporation
+        - qtvariantproperty.cpp - GPLv3, copyright Nokia Corporation
+        - qteditorfactory.h - GPLv3, copyright Nokia Corporation
+        - qtpropertymanager.h - GPLv3, copyright Nokia Corporation
+        - qtbuttonpropertybrowser.h - GPLv3, copyright Nokia Corporation
+        - qtpropertybrowser.h - GPLv3, copyright Nokia Corporation
+        - qtvariantproperty.h - GPLv3, copyright Nokia Corporation
+        - qteditorfactory.cpp - GPLv3, copyright Nokia Corporation
+        - qtgroupboxpropertybrowser.h - GPLv3, copyright Nokia Corporation
+        - qtbuttonpropertybrowser.cpp - GPLv3, copyright Nokia Corporation
+        - qtpropertybrowser.cpp - GPLv3, copyright Nokia Corporation
+        - qtpropertybrowserutils_p.h - GPLv3, copyright Nokia Corporation
+        - qtgroupboxpropertybrowser.cpp - GPLv3, copyright Nokia Corporation
+        - qtpropertybrowserutils.cpp - GPLv3, copyright Nokia Corporation
+        - qttreepropertybrowser.h - GPLv3, copyright Nokia Corporation
+        - qtpropertymanager.cpp - GPLv3, copyright Nokia Corporation

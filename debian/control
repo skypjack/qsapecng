@@ -1,0 +1,43 @@
+Source: qsapecng
+Section: electronics
+Priority: optional
+Maintainer: Simone Rossetto <simros85@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6.0), libqt4-dev (>= 4.6.0), libqwt5-qt4-dev (>= 5.2.0), libboost-dev (>= 1.41.0), doxygen
+Standards-Version: 3.9.1
+Homepage: http://qsapecng.sourceforge.net/
+#Vcs-Git: git://git.debian.org/collab-maint/qsapecng.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/qsapecng.git;a=summary
+
+Package: qsapecng
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: qsapecng-doc (= ${binary:Version})
+Description: A Qt-based program for symbolic analysis of linear analog circuits.
+ This program consists of two indipendent parts: the SapecNG framework engine
+ and the GUI application QSapecNG.
+ .
+ QSapecNG is an open source, multi-platform project, continuously enhanced by
+ students and researchers of the Department of Electronics and
+ Telecommunications (DET) of the University of Florence. It comes as
+ continuation of SapWin for Windows, in order to give to the project a full
+ compatibility on other platforms.
+ .
+ Through SapecNG/QSapecNG users can draw, solve and analyze analog circuits as
+ well as manage them.
+ .
+ SapecNG/QSapecNG is freely available on SourceForge.net
+ <https://sourceforge.net/projects/qsapecng/>. A previous version of SapecNG is
+ available too, on SourceForge.net <https://sourceforge.net/projects/sapec-ng/>.
+
+Package: qsapecng-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Recommends: qsapecng (= ${binary:Version})
+Suggests: doc-base
+Description: Documentation for QSapecNG program.
+ With QSapecNG users can draw, solve and analyze analog circuits as well as
+ manage them.
+ .
+ This package contains the documentation of QSapecNG, that can also be read
+ online at <http://qsapecng.sourceforge.net/>.

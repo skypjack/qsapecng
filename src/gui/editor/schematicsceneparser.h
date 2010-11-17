@@ -39,7 +39,6 @@ namespace qsapecng
 {
 
 
-
 class SchematicSceneParser: public sapecng::abstract_parser
 {
 
@@ -58,12 +57,12 @@ public:
 
 private:
   void storeItemData(
-      std::map<std::string, std::string>& props,
+      std::map<std::string,std::string>& props,
       SchematicScene::SupportedItemType type,
       Item* item
     );
   void storeLabel(
-      std::map<std::string, std::string>& props,
+      std::map<std::string,std::string>& props,
       Component* component
     );
   void setupMap();
@@ -95,18 +94,18 @@ public:
   SchematicSceneBuilder(SchematicScene& scene, const QPointF& offset)
     : scene_(scene), offset_(offset) { }
 
-  void add_circuit_properties(std::map<std::string, std::string> map);
+  void add_circuit_properties(std::map<std::string,std::string> map);
   void add_circuit_property(std::string name, std::string value);
 
   void add_wire_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_out_component(
       unsigned int v,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_dual_component(
@@ -116,8 +115,8 @@ public:
       bool symbolic,
       unsigned int va,
       unsigned int vb,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_quad_component(
@@ -129,13 +128,13 @@ public:
       unsigned int vb,
       unsigned int vac,
       unsigned int vbc,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void add_unknow_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     );
 
   void flush();
@@ -143,16 +142,16 @@ public:
   inline QList<QGraphicsItem*> items() const { return items_; }
 
 private:
-  void insert_item(Item* item, std::map<std::string, std::string> props);
-  void mirror_and_rotate(Item* item, std::map<std::string, std::string> props);
-  void adjust_label(Component* cmp, std::map<std::string, std::string> props);
+  void insert_item(Item* item, std::map<std::string,std::string> props);
+  void mirror_and_rotate(Item* item, std::map<std::string,std::string> props);
+  void adjust_label(Component* cmp, std::map<std::string,std::string> props);
   void setup_properties(
       SchematicScene::SupportedItemType type,
       Item* item,
       std::string name,
       double value,
       bool symbolic,
-      std::map<std::string, std::string> props
+      std::map<std::string,std::string> props
     );
 
   QList<Component*> components_;

@@ -30,7 +30,6 @@ namespace sapecng
 {
 
 
-
 class abstract_builder
 {
 
@@ -65,19 +64,19 @@ public:
   virtual ~abstract_builder() { }
 
   virtual void add_circuit_properties(
-    std::map<std::string, std::string> map) = 0;
+    std::map<std::string,std::string> map) = 0;
   virtual void add_circuit_property(
     std::string name, std::string value) = 0;
 
   virtual void add_wire_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     ) = 0;
 
   virtual void add_out_component(
       unsigned int v,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     ) = 0;
 
   virtual void add_dual_component(
@@ -87,8 +86,8 @@ public:
       bool symbolic,
       unsigned int va,
       unsigned int vb,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     ) = 0;
 
   virtual void add_quad_component(
@@ -100,13 +99,13 @@ public:
       unsigned int vb,
       unsigned int vac,
       unsigned int vbc,
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     ) = 0;
 
   virtual void add_unknow_component(
-      std::map<std::string, std::string> props =
-        std::map<std::string, std::string>()
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
     ) = 0;
 
   virtual void flush() = 0;
