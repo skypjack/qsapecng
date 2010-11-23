@@ -1,6 +1,6 @@
 QSapecNG README
 ~~~~~~~~~~~~~~~~
-   QSapecNG v1.2.0
+   QSapecNG v1.2.1
    Copyright (C) 2009-2010 Michele Caini
    GNU General Public License v3
 
@@ -51,7 +51,7 @@ ChangeLog
 Requirements for building
 ~~~~~~~~~~~~~~~~~~~~~~~~~
  * Qt v4.6.0 (http://qt.nokia.com/) [QtCore and QtGui are required]
- * Boost v1.4.10 (http://www.boost.org/) [required] 
+ * Boost v1.41.0 (http://www.boost.org/) [required] 
  * Qwt v5.1.2 (http://qwt.sourceforge.net/) [required]     
  * CMake v2.6 (http://www.cmake.org/) [optional, only for building]
  * Doxygen (http://www.doxygen.org/) [optional, needed to generate the html documentation]
