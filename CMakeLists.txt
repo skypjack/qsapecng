@@ -64,8 +64,7 @@ endif(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT5_DLL_IN_BIN_PACKAGE OR NOT QT
 
 set( CPACK_GENERATOR "TZ;TGZ;TBZ2" )
 
-set( CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${PACKAGE_VERSION}" )
-set( CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${PACKAGE_VERSION}_src" )
+set( CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${PACKAGE_VERSION}-source" )
 set( CPACK_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${PACKAGE_VERSION}" )
 set( CPACK_PACKAGE_NAME "${PACKAGE_NAME}" )
 set( CPACK_PACKAGE_VENDOR "${PACKAGE_CHEF}" )
@@ -90,6 +89,17 @@ set(
   build.*
   \\\\.settings
   .*\\\\.patch
+  moc_qtbuttonpropertybrowser\\\\.cpp
+  moc_qteditorfactory\\\\.cpp
+  moc_qtgroupboxpropertybrowser\\\\.cpp
+  moc_qtpropertybrowser\\\\.cpp
+  moc_qtpropertybrowserutils_p\\\\.cpp
+  moc_qtpropertymanager\\\\.cpp
+  moc_qttreepropertybrowser\\\\.cpp
+  moc_qtvariantproperty\\\\.cpp
+  qteditorfactory\\\\.moc
+  qtpropertymanager\\\\.moc
+  qttreepropertybrowser\\\\.moc
 )
 set(
   CPACK_PACKAGE_INSTALL_DIRECTORY
