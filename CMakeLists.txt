@@ -49,6 +49,20 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in src/config.h )
 
 add_subdirectory( src )
 
+# create the debian.tar.gz file with the debian subfolder
+find_program(TAR_EXECUTABLE tar)
+if( TAR_EXECUTABLE )
+  add_custom_target(debian_tar
+    ${TAR_EXECUTABLE} -cz --exclude=.svn -f "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${PACKAGE_VERSION}-debian.tar.gz" "debian/"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Create the tarball with the debian subfolder only.")
+else( TAR_EXECUTABLE )
+  # TODO this code doesn't exclude the .svn subfolders, try to fix!!
+  add_custom_target(debian_tar
+    ${CMAKE_COMMAND} -E tar czf "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-${PACKAGE_VERSION}-debian.tar.gz" "debian/"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Create the tarball with the debian subfolder only.")
+endif( TAR_EXECUTABLE )
 
 
 #################################################################
@@ -74,8 +88,7 @@ SET( CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README" )
 set( CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}" )
 set( CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}" )
 set( CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}" )
-set(
-  CPACK_SOURCE_IGNORE_FILES
+set( CPACK_SOURCE_IGNORE_FILES
   .*~
   .*kdev*
   /CMakeFiles/
@@ -100,6 +113,8 @@ set(
   qteditorfactory\\\\.moc
   qtpropertymanager\\\\.moc
   qttreepropertybrowser\\\\.moc
+  /\\\\.pc/
+  "${CMAKE_SOURCE_DIR}/debian/"
 )
 set(
   CPACK_PACKAGE_INSTALL_DIRECTORY

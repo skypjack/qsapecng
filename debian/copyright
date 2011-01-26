@@ -34,13 +34,14 @@ Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
 
 The Debian packaging is:
 
-    Copyright (C) 2010 Simone Rossetto <simros85@gmail.com>
+    Copyright (C) 2010-2011 Simone Rossetto <simros85@gmail.com>
 
 and is licensed under the GPL version 3, see above.
 
 
 The following files have different licenses and/or copyright owners:
 
+    * cmake/Modules/FindQwt5.cmake - BSD, copyright Pau Garcia i Quiles
     * src/functor/rpoly.cpp - unknown license, copyright C. Bond
     * src/gui/qtsolutions/qtpropertyeditor/
         - qttreepropertybrowser.cpp - GPLv3, copyright Nokia Corporation
@@ -59,3 +60,4 @@ The following files have different licenses and/or copyright owners:
         - qtpropertybrowserutils.cpp - GPLv3, copyright Nokia Corporation
         - qttreepropertybrowser.h - GPLv3, copyright Nokia Corporation
         - qtpropertymanager.cpp - GPLv3, copyright Nokia Corporation
+
