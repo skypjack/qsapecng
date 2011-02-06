@@ -42,10 +42,13 @@ Installation
 
 ChangeLog
 ~~~~~~~~~
- * 1.2.0 (under development)
+ * 1.2.1 (current release)
     o Added support for MacOSX
     o Added debian subfolder
-    o ...
+    o Minor bugs fixed
+    o Created this README
+    o Created the file src/functor/README.rpoly with the license of the
+      rpoly.cpp source file
 
 
 Requirements for building
@@ -165,6 +168,12 @@ Note for Debian-based distributions
  where ${version} is the current version of QSapecNG and ${arch} is
  your system architecture.
 
+ To generate the whole set of debian-related files you need to create
+ the 'orig' tarball, this can be done executing "make package_source", the
+ resulting gzipped archive does not contain the debian subfolder and represents
+ the 'orig' tarball. The archive containing only the debian folder can be
+ created executing "make debian_tar".
+
 
 Note for (Slackware/Debian/RedHat)-based distributions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,7 +186,7 @@ Note for (Slackware/Debian/RedHat)-based distributions
  
    checkinstall --default \
      --pkgname qsapecng \
-     --pkgversion 1.2.0 \
+     --pkgversion 1.2.1 \
      --pkggroup electronics
 
 
@@ -186,11 +195,11 @@ Packages
  There are two additional targets for "make" command:
  - package_source
  - package
- The first will create compressed archives with all the source files, the
- second will create a binary compressed package on Unix systems, a
- setup executable on Windows (if the program NSIS http://nsis.sourceforge.net/
- is installed on the system) and a .dmg file with the application bundle
- on MacOSX.
+ The first will create compressed archives with all the source files without
+ the debian subfolder, the second will create a binary compressed package on
+ Unix systems, a setup executable on Windows (if the program NSIS
+ http://nsis.sourceforge.net/ is installed on the system) and a .dmg file with
+ the application bundle on MacOSX.
  
  * Debian users may execute (as root) "cpack -G DEB" instead of
    "make package" to build a .deb binary file.
@@ -203,6 +212,7 @@ Packages
 Translations
 ~~~~~~~~~~~~
  Currently only English language is supported.
+ The Italian one is in progress and other ranslations are welcomed.
 
 
 Usage

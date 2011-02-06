@@ -2,6 +2,11 @@
  *  http://www.crbond.com/download/misc/rpoly.cpp
  */
 
+/*
+ * This software is offered freely and without restriction.
+ * (notice added with the permission of the author, see the file
+ * README.rpoly)
+ */
 
 /*      rpoly.cpp -- Jenkins-Traub real polynomial root finder.
  *

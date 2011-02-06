@@ -1,5 +1,9 @@
 qsapecng (1.2.1-1) unstable; urgency=low
 
   * Initial release. (Closes: #609218)
+  * Added a notice to the file src/functor/rpoly.cpp in order to release that
+    file under a Public Domain-like license. The permission has been granted
+    with an e-mail sent by the author of rpoly.cpp. See the file README.rpoly
+    for more information.
 
- -- Simone Rossetto <simros85@gmail.com>  Sun, 23 Jan 2011 21:05:10 +0100
+ -- Simone Rossetto <simros85@gmail.com>  Thu, 03 Feb 2011 07:50:59 +0100

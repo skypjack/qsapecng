@@ -42,7 +42,7 @@ and is licensed under the GPL version 3, see above.
 The following files have different licenses and/or copyright owners:
 
     * cmake/Modules/FindQwt5.cmake - BSD, copyright Pau Garcia i Quiles
-    * src/functor/rpoly.cpp - unknown license, copyright C. Bond
+    * src/functor/rpoly.cpp - Public Domain, copyright C. R. Bond
     * src/gui/qtsolutions/qtpropertyeditor/
         - qttreepropertybrowser.cpp - GPLv3, copyright Nokia Corporation
         - qtvariantproperty.cpp - GPLv3, copyright Nokia Corporation
