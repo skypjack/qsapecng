@@ -673,8 +673,8 @@ Item* SchematicScene::itemByType(SchematicScene::SupportedItemType type)
   case CCCSItemType:
     {
       QList<QPointF> nodes;
-      nodes.push_back(QPointF(0, 0));
       nodes.push_back(QPointF(0, 5 * GridStep));
+      nodes.push_back(QPointF(0, 0));
       nodes.push_back(QPointF(5 * GridStep, 0));
       nodes.push_back(QPointF(5 * GridStep, 5 * GridStep));
       item = new Component(cccsPath(), nodes);
@@ -701,8 +701,8 @@ Item* SchematicScene::itemByType(SchematicScene::SupportedItemType type)
   case CurrentSourceItemType:
     {
       QList<QPointF> nodes;
-      nodes.push_back(QPointF(GridStep, 0));
       nodes.push_back(QPointF(GridStep, 5 * GridStep));
+      nodes.push_back(QPointF(GridStep, 0));
       item = new Component(currentSourcePath(), nodes);
       break;
     }
@@ -734,8 +734,8 @@ Item* SchematicScene::itemByType(SchematicScene::SupportedItemType type)
   case VCCSItemType:
     {
       QList<QPointF> nodes;
-      nodes.push_back(QPointF(0, 0));
       nodes.push_back(QPointF(0, 5 * GridStep));
+      nodes.push_back(QPointF(0, 0));
       nodes.push_back(QPointF(5 * GridStep, 0));
       nodes.push_back(QPointF(5 * GridStep, 5 * GridStep));
       item = new Component(vccsPath(), nodes);
