@@ -2,11 +2,12 @@ Source: qsapecng
 Section: electronics
 Priority: optional
 Maintainer: Simone Rossetto <simros85@gmail.com>
+Uploaders: Georges Khaznadar <georgesk@ofset.org>
 Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6.0), libqt4-dev (>= 4.6.0), libqwt5-qt4-dev (>= 5.2.0), libboost-dev (>= 1.41.0), doxygen
 Standards-Version: 3.9.1
 Homepage: http://qsapecng.sourceforge.net/
-#Vcs-Git: git://git.debian.org/collab-maint/qsapecng.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/qsapecng.git;a=summary
+Vcs-Svn: https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/trunk
+Vcs-Browser: http://qsapecng.svn.sourceforge.net/viewvc/qsapecng/trunk
 
 Package: qsapecng
 Architecture: any

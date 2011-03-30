@@ -1,0 +1,7 @@
+?package(qsapecng):\
+  needs="X11" \
+  section="Applications/Science/Electronics" \
+  title="QSapecNG" \
+  command="qsapecng" \
+  icon16x16="qsapecng-16.xpm" \
+  icon32x32="qsapecng-32.xpm"

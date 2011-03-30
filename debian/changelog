@@ -1,3 +1,13 @@
+qsapecng (1.2.2-1) unstable; urgency=low
+
+  * New upstream release (fixed a bug of sign inversion).
+  * Added the debian/qsapecng.menu file with proper images in order to create
+    an entry in the Debian menu.
+  * Rewritten the debian/copyright file following DEP-5 proposal.
+  * Added VCS data in the debian/control file.
+
+ -- Simone Rossetto <simros85@gmail.com>  Wed, 30 Mar 2011 18:17:33 +0200
+
 qsapecng (1.2.1-1) unstable; urgency=low
 
   * Initial release. (Closes: #609218)

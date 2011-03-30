@@ -1,3 +1,4 @@
 usr/bin/qsapecng
 usr/share/applications/qsapecng.desktop
 usr/share/icons/
+src/gui/images/*.xpm usr/share/pixmaps/

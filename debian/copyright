@@ -1,63 +1,88 @@
-This work was packaged for Debian by:
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: qsapecng
+Upstream-Contact: Michele Caini <michele.caini@gmail.com>
+Source: http://qsapecng.sourceforge.net/
 
-    Simone Rossetto <simros85@gmail.com> on Sun, 14 Nov 2010 17:17:21 +0100
+Files: *
+Copyright: 2009-2011 Michele Caini <michele.caini@gmail.com>
+License: GPL-3.0+
 
-It was downloaded from:
+Files: debian/*
+Copyright: 2010-2011 Simone Rossetto <simros85@gmail.com>
+License: GPL-3.0+
 
-    http://qsapecng.sourceforge.net/
+Files: cmake/Modules/FindQwt5.cmake
+Copyright: 2007 Pau Garcia i Quiles <pgquiles@elpauer.org>
+License: BSD-3-Clause
 
-Upstream Author(s):
+Files: src/functor/rpoly.cpp
+Copyright: 2000 C. Bond <crb@crbond.com>
+License: public-domain
+Comment: The original rpoly.cpp file does not contain any license information
+ and the public-domain notice has been added to the header with a written
+ permission of the author. See the file src/functor/README.rpoly for the
+ authorization.
 
-    Michele Caini <michele.caini@gmail.com>
+Files: src/gui/qtsolutions/qtpropertyeditor/qt*.h
+       src/gui/qtsolutions/qtpropertyeditor/qt*.cpp
+Copyright: 2009 Nokia Corporation and/or its subsidiary(-ies)
+License: LGPL-2.1+ or GPL-3.0+
 
-Copyright:
+License: GPL-3.0+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
 
-    Copyright (C) 2009-2010 Michele Caini
+License: BSD-3-Clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of the University nor the names of its contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-License:
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This package is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-On Debian systems, the complete text of the GNU General
-Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
-
-The Debian packaging is:
-
-    Copyright (C) 2010-2011 Simone Rossetto <simros85@gmail.com>
-
-and is licensed under the GPL version 3, see above.
-
-
-The following files have different licenses and/or copyright owners:
-
-    * cmake/Modules/FindQwt5.cmake - BSD, copyright Pau Garcia i Quiles
-    * src/functor/rpoly.cpp - Public Domain, copyright C. R. Bond
-    * src/gui/qtsolutions/qtpropertyeditor/
-        - qttreepropertybrowser.cpp - GPLv3, copyright Nokia Corporation
-        - qtvariantproperty.cpp - GPLv3, copyright Nokia Corporation
-        - qteditorfactory.h - GPLv3, copyright Nokia Corporation
-        - qtpropertymanager.h - GPLv3, copyright Nokia Corporation
-        - qtbuttonpropertybrowser.h - GPLv3, copyright Nokia Corporation
-        - qtpropertybrowser.h - GPLv3, copyright Nokia Corporation
-        - qtvariantproperty.h - GPLv3, copyright Nokia Corporation
-        - qteditorfactory.cpp - GPLv3, copyright Nokia Corporation
-        - qtgroupboxpropertybrowser.h - GPLv3, copyright Nokia Corporation
-        - qtbuttonpropertybrowser.cpp - GPLv3, copyright Nokia Corporation
-        - qtpropertybrowser.cpp - GPLv3, copyright Nokia Corporation
-        - qtpropertybrowserutils_p.h - GPLv3, copyright Nokia Corporation
-        - qtgroupboxpropertybrowser.cpp - GPLv3, copyright Nokia Corporation
-        - qtpropertybrowserutils.cpp - GPLv3, copyright Nokia Corporation
-        - qttreepropertybrowser.h - GPLv3, copyright Nokia Corporation
-        - qtpropertymanager.cpp - GPLv3, copyright Nokia Corporation
-
+License: LGPL-2.1+
+ This package is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU Lesser General
+ Public License can be found in "/usr/share/common-licenses/LGPL-2.1".
