@@ -63,6 +63,7 @@ else( TAR_EXECUTABLE )
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Create the tarball with the debian subfolder only.")
 endif( TAR_EXECUTABLE )
+mark_as_advanced( TAR_EXECUTABLE )
 
 
 #################################################################
@@ -132,7 +133,7 @@ if(WIN32 AND NOT UNIX)
   set( CPACK_NSIS_INSTALLED_ICON_NAME "${OUTPUT_BIN_FOLDER}\\\\${OUTPUT_BIN_NAME}.exe" )
   set( CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}" )
   set( CPACK_NSIS_CONTACT "${PACKAGE_CHEF}" )
-  set(CPACK_NSIS_URL_INFO_ABOUT "http://qsapecng.sourceforge.net/")
+  set( CPACK_NSIS_URL_INFO_ABOUT "http://qsapecng.sourceforge.net/" )
   set( CPACK_NSIS_MODIFY_PATH ON )
   set( CPACK_GENERATOR NSIS ZIP )
   set( CPACK_SOURCE_GENERATOR ZIP )
@@ -152,15 +153,16 @@ if(WIN32 AND NOT UNIX)
   
   # Codice per far creare il link sul desktop se l'utente lo seleziona durante
   # l'installazione da setup: CMake crea un checkbox che non funziona!!!
-  set(CPACK_NSIS_DESKTOP_LINK_NAME "QSapecNG")
-  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nCreateShortcut '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk' '$instdir\\\\${OUTPUT_BIN_FOLDER}\\\\${OUTPUT_BIN_NAME}.exe'\nnodesktoplink:\n")
-  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nDelete '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk'\nnodesktoplink:\n")
+  set( CPACK_NSIS_DESKTOP_LINK_NAME "QSapecNG" )
+  set( CPACK_NSIS_EXTRA_INSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nCreateShortcut '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk' '$instdir\\\\${OUTPUT_BIN_FOLDER}\\\\${OUTPUT_BIN_NAME}.exe'\nnodesktoplink:\n" )
+  set( CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nDelete '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk'\nnodesktoplink:\n" )
 
 elseif(APPLE)
 
-  set(CPACK_DMG_VOLUME_NAME "${CPACK_PACKAGE_NAME}_${PROJECT_VERSION}") # da testare
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
-  set(CPACK_GENERATOR DragNDrop)
+  set( CPACK_DMG_VOLUME_NAME "${CPACK_PACKAGE_NAME}_${PROJECT_VERSION}" ) # da testare
+  set( CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}" )
+  set( CPACK_GENERATOR DragNDrop )
+  set( CPACK_SOURCE_GENERATOR TGZ ZIP )
 
 else()
 
@@ -168,6 +170,7 @@ else()
   set( CPACK_SOURCE_STRIP_FILES "" )
 
   set( CPACK_GENERATOR "${CPACK_GENERATOR};DEB" )
+  set( CPACK_SOURCE_GENERATOR TBZ2 TGZ ZIP)
   set( CPACK_DEBIAN_PACKAGE_MAINTAINER "${PACKAGE_CHEF}" )
   set( CPACK_DEBIAN_PACKAGE_SECTION Electronics )
   set( CPACK_DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}+sid" )

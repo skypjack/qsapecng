@@ -21,6 +21,7 @@ include_directories(
 
 ### PLATFORM SPECIFIC DATA ###
 set(OUTPUT_BIN_FOLDER bin)
+set(OUTPUT_BIN_FOLDER "${OUTPUT_BIN_FOLDER}" PARENT_SCOPE)
 set(OUTPUT_BUNDLE_FOLDER "./")
 set(OUTPUT_FRAMEWORKS_FOLDER Frameworks)
 set(OUTPUT_RESOURCES_FOLDER_NAME Resources)
@@ -28,9 +29,11 @@ set(BUNDLE_ICON)
 
 if(UNIX AND NOT WIN32 AND NOT APPLE)
   set(OUTPUT_BIN_NAME "qsapecng")
+  set(OUTPUT_BIN_NAME "${OUTPUT_BIN_NAME}" PARENT_SCOPE)
   #set(OUTPUT_DOC_FOLDER "share/doc/${OUTPUT_BIN_NAME}")
 elseif(APPLE)
   set(OUTPUT_BIN_NAME "QSapecNG")
+  set(OUTPUT_BIN_NAME "${OUTPUT_BIN_NAME}" PARENT_SCOPE)
   set(OUTPUT_DOC_FOLDER "${OUTPUT_BIN_NAME}.app/Contents/${OUTPUT_RESOURCES_FOLDER_NAME}/doc")
   set(OUTPUT_RES_FOLDER "${OUTPUT_BIN_NAME}.app/Contents/${OUTPUT_RESOURCES_FOLDER_NAME}")
   set(OUTPUT_BUNDLE_NAME "QSapecNG")
@@ -70,6 +73,7 @@ elseif(WIN32)
   # Lo metterei maiuscolo su Windows, però ci sono da cambiare alcuni
   # percorsi in altri file di CMake.
   set(OUTPUT_BIN_NAME "qsapecng")
+  set(OUTPUT_BIN_NAME "${OUTPUT_BIN_NAME}" PARENT_SCOPE)
   #set(OUTPUT_DOC_FOLDER "doc")
 
   unset(QT_DLL_DIR CACHE)
