@@ -4,7 +4,35 @@
     risultati in messages
 - traduzione in italiano (lupdate e compagnia)
 
+- scrivere la sezione "Usage" sia nel README che in debian/qsapecng.1
+- avvio da riga di comando passando il file circuito in ingresso.
+
+*** IMPORTANTE ***
 - SOTTOCIRCUITI A MEZZO: cerca userdef!! :-)
+      *sfruttare userdef per quanto sotto!!*
+      La userdefdialog sparisce e si usa il caricamento file per alternativa al trascinamento da
+        workspace. Non si può decidere il numero di porte da usare, si usano *tutte* le presenti.
+        Si può usare una inputdialog al posto della userdef dialog, si sceglie solo il file!!
+- SOTTOCIRCUITI:
+      In ogni schematicscene si mantiene una mappa che memorizza i componenti definiti da utente.
+      La mappa manterrà: checksum del .info e definizione .info.
+      Trascinando un file sulla mdiarea, se anche su schematicscene chiede se si vuole aprire
+        oppure si vuole caricare come componente definito dall'utente nella schematicscene.
+      L'apertura carica il .info e definisce il checksum, controlla e se non presente lo inserisce
+        nella mappa, quindi crea un componente con le porte presenti nel circuito definito esposte
+        verso l'esterno, numerate. Se il file viene trascinato in un secondo momento, *dopo*
+        essere stato modificato, sarà considerato come un altro componente.
+      Deve esistere un modo per vedere (inspect) i sottocircuiti, senza poterli modificare.
+      Al salvataggio viene memorizzato il componente con codice come definizione, quindi nei punti
+        d'uso viene richiamato il codice e inseriti tutti i dati (nome, valori componenti, etc.).
+        Il nome non è necessariamente riportato di volta in volta.
+      Al caricamento verrà riempita la mappa con i componenti definiti e verranno riportati gli
+        elementi nel circuito, ricostruiti correttamente sulla base di quanto caricato.
+      Inserendo un circuito definito dall'utente questo entra a far parte del circuito in
+        costruzione. Si può inserirne un secondo uguale trascinando nuovamente il file di
+        definizione o per copia. Se si cancellano tutti gli oggetti di quel tipo, lo stesso non
+        vale per la sua definizione, la quale resterà a far parte del circuito seppure non usata.
+        La si potrà eliminare tramite editing diretto dei file .info.=======
 
 - scrivere la sezione "Usage" sia nel README che in debian/qsapecng.1
 - leggere per i tipi MIME
