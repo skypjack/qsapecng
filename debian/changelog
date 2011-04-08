@@ -1,19 +1,9 @@
 qsapecng (1.2.2-1) unstable; urgency=low
 
-  * New upstream release (fixed a bug of sign inversion).
-  * Added the debian/qsapecng.menu file with proper images in order to create
-    an entry in the Debian menu.
-  * Rewritten the debian/copyright file following DEP-5 proposal.
-  * Added VCS data in the debian/control file.
-
- -- Simone Rossetto <simros85@gmail.com>  Wed, 30 Mar 2011 18:17:33 +0200
-
-qsapecng (1.2.1-1) unstable; urgency=low
-
   * Initial release. (Closes: #609218)
   * Added a notice to the file src/functor/rpoly.cpp in order to release that
     file under a Public Domain-like license. The permission has been granted
     with an e-mail sent by the author of rpoly.cpp. See the file README.rpoly
     for more information.
 
- -- Simone Rossetto <simros85@gmail.com>  Thu, 03 Feb 2011 07:50:59 +0100
+ -- Simone Rossetto <simros85@gmail.com>  Sat, 02 Apr 2011 11:09:17 +0200

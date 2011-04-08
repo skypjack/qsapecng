@@ -6,6 +6,11 @@
 
 - scrivere la sezione "Usage" sia nel README che in debian/qsapecng.1
 - avvio da riga di comando passando il file circuito in ingresso.
+- leggere per i tipi MIME
+    o http://www.debian.org/doc/packaging-manuals/mime-policy/
+    o http://wiki.debian.org/MimeTypesSupport
+    o http://stackoverflow.com/questions/30931/register-file-extensions-mime-types-in-linux
+- mantenendo la stessa icona, rederla più usabile su ambienti desktop
 
 *** IMPORTANTE ***
 - SOTTOCIRCUITI A MEZZO: cerca userdef!! :-)
@@ -33,12 +38,3 @@
         definizione o per copia. Se si cancellano tutti gli oggetti di quel tipo, lo stesso non
         vale per la sua definizione, la quale resterà a far parte del circuito seppure non usata.
         La si potrà eliminare tramite editing diretto dei file .info.=======
-
-- scrivere la sezione "Usage" sia nel README che in debian/qsapecng.1
-- leggere per i tipi MIME
-    o http://www.debian.org/doc/packaging-manuals/mime-policy/
-    o http://wiki.debian.org/MimeTypesSupport
-    o http://stackoverflow.com/questions/30931/register-file-extensions-mime-types-in-linux
-- implementare l'apertura del file passato come argomento al main
-- adattare il file debian/copyright allo standard http://dep.debian.net/deps/dep5
-- mantenendo la stessa icona, rederla più usabile su ambienti desktop

@@ -42,7 +42,11 @@ Installation
 
 ChangeLog
 ~~~~~~~~~
- * 1.2.2 (current release)
+ * 1.2.2+svn (under development)
+    o Added 24x24 and 48x48 hicolor icons for GNU/Linux
+    o ...
+
+ * 1.2.2 (current stable release)
     o Fixed the inverted sign produced by some components
     o Adapted the debian/copyright file in order to respect the DEP-5 proposal
     o Created required files to install an entry in the Debian menu

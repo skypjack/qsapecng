@@ -327,8 +327,18 @@ if(UNIX AND NOT APPLE AND NOT WIN32)
     RENAME qsapecng.png
   )
   install(
+    FILES gui/images/qsapecng-24x24.png
+    DESTINATION share/icons/hicolor/24x24/apps
+    RENAME qsapecng.png
+  )
+  install(
     FILES gui/images/qsapecng-32x32.png
     DESTINATION share/icons/hicolor/32x32/apps
+    RENAME qsapecng.png
+  )
+  install(
+    FILES gui/images/qsapecng-48x48.png
+    DESTINATION share/icons/hicolor/48x48/apps
     RENAME qsapecng.png
   )
   install(
