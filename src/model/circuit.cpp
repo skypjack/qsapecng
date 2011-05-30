@@ -47,8 +47,8 @@ circuit_builder::circuit_builder(circuit& circuit)
   replace_requested(GROUND);
   circuit_.out_ = GROUND;
 
-  circuit_.reference_ = add_vertex(*(circuit_.iG_));
-  requested_.push_front(add_vertex(*(circuit_.vG_)));
+  circuit_.reference_ = boost::add_vertex(*(circuit_.iG_));
+  requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 }
 
 
@@ -138,8 +138,8 @@ void circuit_builder::add_dual_component(
     }
   case abstract_builder::V:
     {
-      circuit::vertex_descriptor vdesc = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor vdesc = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 
       add_edge(
           vdesc, GROUND, GROUND, circuit_.reference_,
@@ -167,10 +167,10 @@ void circuit_builder::add_dual_component(
     }
   case abstract_builder::VM:
     {
-      circuit::vertex_descriptor vdesc = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
-      circuit::vertex_descriptor v_ = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor vdesc = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor v_ = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 
       add_edge(
           vdesc, vb, vb, va, Y,
@@ -192,8 +192,8 @@ void circuit_builder::add_dual_component(
     }
   case abstract_builder::AM:
     {
-      circuit::vertex_descriptor v_ = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor v_ = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 
       add_edge(
           va, vb, GROUND, v_, Z,
@@ -232,7 +232,7 @@ void circuit_builder::add_quad_component(
   nv.push_back(vb);
   nv.push_back(vac);
   nv.push_back(vbc);
-  sort(nv.begin(), nv.end());
+  std::sort(nv.begin(), nv.end());
 
   replace_requested(nv.at(0));
   replace_requested(nv.at(1));
@@ -253,8 +253,8 @@ void circuit_builder::add_quad_component(
     }
   case abstract_builder::VCVS:
     {
-      circuit::vertex_descriptor vdesc = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor vdesc = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 
       add_edge(
           vdesc, vbc, vbc, vac, Y,
@@ -274,8 +274,8 @@ void circuit_builder::add_quad_component(
     }
   case abstract_builder::CCCS:
     {
-      circuit::vertex_descriptor vdesc = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor vdesc = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 
       add_edge(
           vac, vbc, GROUND, vdesc, Z,
@@ -318,12 +318,12 @@ void circuit_builder::add_quad_component(
     }
   case abstract_builder::n:
     {
-      circuit::vertex_descriptor vvdesc = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
-      circuit::vertex_descriptor ivdesc = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
-      circuit::vertex_descriptor fix = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor vvdesc = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor ivdesc = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor fix = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 
       add_edge(
           vvdesc, vbc, vbc, vac, Y,
@@ -357,14 +357,14 @@ void circuit_builder::add_quad_component(
     }
   case abstract_builder::K:
     {
-      circuit::vertex_descriptor afix = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
-      circuit::vertex_descriptor bfix = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
-      circuit::vertex_descriptor cfix = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
-      circuit::vertex_descriptor dfix = add_vertex(*(circuit_.iG_));
-      requested_.push_front(add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor afix = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor bfix = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor cfix = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
+      circuit::vertex_descriptor dfix = boost::add_vertex(*(circuit_.iG_));
+      requested_.push_front(boost::add_vertex(*(circuit_.vG_)));
 
       add_edge(
           va, afix, va, afix, Z, prefix_ + props["lp:name"],
@@ -434,38 +434,38 @@ void circuit_builder::try_add_block()
 
 void circuit_builder::replace_requested(circuit::vertex_descriptor vertex)
 {
-  remove_edge(
+  boost::remove_edge(
       boost::add_edge(vertex, vertex, *(circuit_.iG_)).first,
       *(circuit_.iG_)
     );
-  remove_edge(
+  boost::remove_edge(
       boost::add_edge(vertex, vertex, *(circuit_.vG_)).first,
       *(circuit_.vG_)
     );
 
-  if(find(requested_.begin(), requested_.end(), vertex) != requested_.end()) {
+  if(std::find(requested_.begin(), requested_.end(), vertex) != requested_.end()) {
 
-    circuit::vertex_descriptor ireq = add_vertex(*(circuit_.iG_));
-    circuit::vertex_descriptor vreq = add_vertex(*(circuit_.vG_));
+    circuit::vertex_descriptor ireq = boost::add_vertex(*(circuit_.iG_));
+    circuit::vertex_descriptor vreq = boost::add_vertex(*(circuit_.vG_));
 
     if(ireq != vreq) {
-      remove_vertex(ireq, *(circuit_.iG_));
-      remove_vertex(vreq, *(circuit_.vG_));
+      boost::remove_vertex(ireq, *(circuit_.iG_));
+      boost::remove_vertex(vreq, *(circuit_.vG_));
       return;
     }
 
     circuit::edge_iterator icurr, iend, vcurr, vend;
-    tie(icurr, iend) = edges(*(circuit_.iG_));
-    tie(vcurr, vend) = edges(*(circuit_.vG_));
+    boost::tie(icurr, iend) = boost::edges(*(circuit_.iG_));
+    boost::tie(vcurr, vend) = boost::edges(*(circuit_.vG_));
 
     while(icurr != iend && vcurr != vend) {
       circuit::edge_descriptor iedge = *icurr;
       circuit::edge_descriptor vedge = *vcurr;
 
-      if(source(iedge, *(circuit_.iG_)) == vertex
-          || target(iedge, *(circuit_.iG_)) == vertex
-          || source(vedge, *(circuit_.vG_)) == vertex
-          || target(vedge, *(circuit_.vG_)) == vertex
+      if(boost::source(iedge, *(circuit_.iG_)) == vertex
+          || boost::target(iedge, *(circuit_.iG_)) == vertex
+          || boost::source(vedge, *(circuit_.vG_)) == vertex
+          || boost::target(vedge, *(circuit_.vG_)) == vertex
         )
       {
         add_edge(
@@ -481,17 +481,17 @@ void circuit_builder::replace_requested(circuit::vertex_descriptor vertex)
           get(boost::edge_any, *(circuit_.iG_), iedge)
         );
 
-        remove_edge(iedge, *(circuit_.iG_));
-        remove_edge(vedge, *(circuit_.vG_));
+        boost::remove_edge(iedge, *(circuit_.iG_));
+        boost::remove_edge(vedge, *(circuit_.vG_));
         circuit_.iG_o_.erase(
-            find(circuit_.iG_o_.begin(), circuit_.iG_o_.end(), iedge)
+            std::find(circuit_.iG_o_.begin(), circuit_.iG_o_.end(), iedge)
           );
         circuit_.vG_o_.erase(
-            find(circuit_.vG_o_.begin(), circuit_.vG_o_.end(), vedge)
+            std::find(circuit_.vG_o_.begin(), circuit_.vG_o_.end(), vedge)
           );
 
-        tie(icurr, iend) = edges(*(circuit_.iG_));
-        tie(vcurr, vend) = edges(*(circuit_.vG_));
+        boost::tie(icurr, iend) = boost::edges(*(circuit_.iG_));
+        boost::tie(vcurr, vend) = boost::edges(*(circuit_.vG_));
       } else {
         ++icurr;
         ++vcurr;

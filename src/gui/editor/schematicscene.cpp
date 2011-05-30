@@ -19,7 +19,6 @@
 
 #include "parser/parser_factory.h"
 
-#include "gui/userdefdialog/userdefdialog.h"
 #include "gui/editor/schematicscene.h"
 #include "gui/editor/schematicsceneparser.h"
 #include "gui/editor/undoredocommand.h"
@@ -28,6 +27,7 @@
 #include "gui/editor/wire.h"
 #include "gui/editor/item.h"
 
+#include "gui/settings.h"
 #include "gui/qlogger.h"
 
 #include "gui/qtsolutions/qtpropertyeditor/QtBoolPropertyManager"
@@ -43,9 +43,12 @@
 #include "gui/qtsolutions/qtpropertyeditor/QtProperty"
 
 #include <QtCore/QEvent>
+#include <QtCore/QCryptographicHash>
+
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMenu>
 #include <QtGui/QPainter>
+#include <QtGui/QFileDialog>
 #include <QtGui/QUndoCommand>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QGraphicsSceneMouseEvent>
@@ -820,7 +823,7 @@ Item* SchematicScene::itemByType(SchematicScene::SupportedItemType type)
       item = new Label;
       break;
     }
-  case NilItemType:
+  case UserDefItemType:
     {
       QList<QPointF> nodes;
       item = new Component(nilPath(), nodes);
@@ -879,6 +882,8 @@ QString SchematicScene::itemNameByType(SchematicScene::SupportedItemType type)
     return QString(QObject::tr("CCCS"));
   case OpAmplItemType:
     return QString(QObject::tr("Operational Amplifier"));
+  case UserDefItemType:
+    return QString(QObject::tr("User Defined"));
   default:
     return QString(QObject::tr("Unknow"));
   }
@@ -917,6 +922,8 @@ QChar SchematicScene::itemIdByType(SchematicScene::SupportedItemType type)
     return QChar('F');
   case OpAmplItemType:
     return QChar('A');
+  case UserDefItemType:
+    return QChar('X');
   default:
     break;
   }
@@ -950,8 +957,8 @@ QPainterPath SchematicScene::userDefPath(uint ports)
     path.lineTo(0, step * (2 * i + 1));
     path.lineTo(step, step * (2 * i + 1));
     path.addText(step * 4 / 3, step * (2 * i + 1) + step / 2,
-	QFont("Times", 8, QFont::Light),
-	QString::number(i + 1));
+        QFont("Times", 8, QFont::Light),
+        QString::number(i + 1));
   }
 
   side -= ports % 2;
@@ -960,8 +967,8 @@ QPainterPath SchematicScene::userDefPath(uint ports)
     path.lineTo(6 * step, step * (2 * i + 1));
     path.lineTo(5 * step, step * (2 * i + 1));
     path.addText(4 * step - step / 3, step * (2 * i + 1) + step / 2,
-	QFont("Times", 8, QFont::Light),
-	QString::number(i + side + ports % 2 + 1));
+        QFont("Times", 8, QFont::Light),
+        QString::number(i + side + ports % 2 + 1));
   }
 
   return path;
@@ -1019,6 +1026,7 @@ QList<Item*> SchematicScene::activeItems() const
   items.append(portList_);
   items.append(groundList_);
   items.append(standardList_);
+  items.append(userDefList_);
   items.append(wireList_);
   items.append(labelList_);
   if(out_)
@@ -1028,29 +1036,77 @@ QList<Item*> SchematicScene::activeItems() const
 }
 
 
+QByteArray SchematicScene::registerUserDef(const SchematicScene& scene)
+{
+    std::ostringstream stream;
+    sapecng::abstract_parser* parser = new SchematicSceneParser(scene);
+    sapecng::abstract_builder* builder =
+      sapecng::builder_factory::builder(sapecng::builder_factory::INFO, stream);
+    
+    if(builder)
+      parser->parse(*builder);
+    
+    QByteArray str(stream.str().c_str());
+    QByteArray md5 = QCryptographicHash::hash(str, QCryptographicHash::Md5);
+    
+    delete builder;
+    delete parser;
+    
+    if(!userDefMap_.contains(md5))
+      userDefMap_.insert(md5, stream.str());
+    
+    return md5;
+}
+
+
+std::string SchematicScene::queryUserDef(QByteArray md5)
+{
+  std::string rep;
+
+  if(!userDefMap_.contains(md5))
+    userDefMap_.value(md5);
+  
+  return rep;
+}
+
+
 void SchematicScene::setUserDefRequest()
 {
-  UserDefDialog userDefDialog;
-  int res = userDefDialog.exec();
+  if(0 == views().size())
+    return;
+  
+  QString fileName = QFileDialog::getOpenFileName(views().at(0),
+      tr("Read file"), Settings().workspace(),
+      QString("%1;;%2")
+        .arg(tr("Info files (*.info)"))
+        .arg(tr("XML files (*.xml)"))
+    );
 
-  if(res == QDialog::Accepted
-    && !userDefDialog.fileName().trimmed().isEmpty())
-  {
-    int size = userDefDialog.size();
-    QString fileName = userDefDialog.fileName();
+  if(!fileName.isEmpty()) {
+    SchematicScene* scene = new SchematicScene(this);
+    sapecng::abstract_builder* builder = new SchematicSceneBuilder(*scene);
+    
+    QFileInfo fileInfo(fileName);
+    std::ifstream in_file(QFile::encodeName(fileName));
+    sapecng::abstract_parser* parser =
+      sapecng::parser_factory::parser(
+        fileInfo.suffix().toStdString(), in_file);
 
-    resetStatus();
+    if(parser)
+      parser->parse(*builder);
+
+    delete parser;
+    delete builder;
+    
+    QByteArray md5 = registerUserDef(*scene);
+    int size = SchematicScene::size(*scene);
+
+    delete scene;
+    
+    setActiveItem(SchematicScene::UserDefItemType);
     userDefSessionRequested_ = true;
-
-    if(userDefItem_)
-      delete userDefItem_;
-
-    userDefItem_ = SchematicScene::itemByType(NilItemType);
-    static_cast<Component*>(userDefItem_)->setPath(userDefPath(size));
-    static_cast<Component*>(userDefItem_)->addNodes(userDefNodes(size));
-
-    foreach(QGraphicsView* view, views())
-      view->setCursor(Qt::CrossCursor);
+    userDefSize_ = size;
+    userDefMD5_ = md5;
   }
 }
 
@@ -1147,7 +1203,7 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
             standardList_.push_back(item);
 
             QtProperty* name =
-	      stringManager_->addProperty(itemNameByType(type));
+              stringManager_->addProperty(itemNameByType(type));
 
             if(init) {
               stringManager_->setValue(name,
@@ -1156,21 +1212,21 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
               stringManager_->setValue(name, tr("noname"));
             }
 
-	    item->setData(1, QVariant::fromValue<QtProperty*>(name));
-	    static_cast<Component*>(item)->label()->setProperty(name);
-	    connect(
-	      stringManager_,
-	      SIGNAL(valueChanged(QtProperty*, const QString&)),
-	      static_cast<Component*>(item)->label(),
-	      SLOT(valueChanged(QtProperty*, const QString&))
-	    );
+            item->setData(1, QVariant::fromValue<QtProperty*>(name));
+            static_cast<Component*>(item)->label()->setProperty(name);
+            connect(
+              stringManager_,
+              SIGNAL(valueChanged(QtProperty*, const QString&)),
+              static_cast<Component*>(item)->label(),
+              SLOT(valueChanged(QtProperty*, const QString&))
+            );
 
-	    if(type != OpAmplItemType) {
+            if(type != OpAmplItemType) {
               QtProperty* pS = boolManager_->addProperty(tr("Symbolic"));
               boolManager_->setValue(pS, true);
 
               QtProperty* pV =
-		doubleManager_->addProperty(
+                doubleManager_->addProperty(
                     type == MutualInductanceItemType
                   ? tr("M")
                   : tr("Value")
@@ -1186,8 +1242,8 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
                 doubleManager_->setMinimum(pV, 0.0);
               }
 
-	      name->addSubProperty(pS);
-	      name->addSubProperty(pV);
+              name->addSubProperty(pS);
+              name->addSubProperty(pV);
             }
 
             if(type == MutualInductanceItemType) {
@@ -1208,7 +1264,39 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
             }
 
             static_cast<Component*>(item)
-	      ->label()->setPlainText(stringManager_->value(name));
+              ->label()->setPlainText(stringManager_->value(name));
+            
+            typeRootMap_[type]->addSubProperty(name);
+            properties_->addSubProperty(typeRootMap_[type]);
+          }
+          break;
+        }
+      case UserDefItemType:
+        {
+          if(!userDefList_.contains(item)) {
+            userDefList_.push_back(item);
+
+            QtProperty* name =
+              stringManager_->addProperty(itemNameByType(type));
+
+            stringManager_->setValue(name,
+                itemIdByType(type) + QString::number(++itemCntMap_[type]));
+
+            item->setData(1, QVariant::fromValue<QtProperty*>(name));
+            static_cast<Component*>(item)->label()->setProperty(name);
+            connect(
+              stringManager_,
+              SIGNAL(valueChanged(QtProperty*, const QString&)),
+              static_cast<Component*>(item)->label(),
+              SLOT(valueChanged(QtProperty*, const QString&))
+            );
+
+            SchematicScene* rep = static_cast<SchematicScene*>(item->data(101).value<void*>());
+            name->addSubProperty(rep->properties());
+            rep->initializeBrowser(browser_);
+
+            static_cast<Component*>(item)
+              ->label()->setPlainText(stringManager_->value(name));
 
             typeRootMap_[type]->addSubProperty(name);
             properties_->addSubProperty(typeRootMap_[type]);
@@ -1304,12 +1392,26 @@ void SchematicScene::removeSupportedItem(QGraphicsItem* gItem)
       case OpAmplItemType:
         {
           if(standardList_.contains(item)) {
-	    if(itemProperties(item))
-	      typeRootMap_[type]->removeSubProperty(itemProperties(item));
-            if(typeRootMap_[type]->subProperties().size() == 0)
-              properties_->removeSubProperty(typeRootMap_[type]);
+            if(itemProperties(item)) {
+              typeRootMap_[type]->removeSubProperty(itemProperties(item));
+              if(typeRootMap_[type]->subProperties().size() == 0)
+                properties_->removeSubProperty(typeRootMap_[type]);
+            }
 
             standardList_.removeAll(item);
+          }
+          break;
+        }
+      case UserDefItemType:
+        {
+          if(userDefList_.contains(item)) {
+            if(itemProperties(item)) {
+              typeRootMap_[type]->removeSubProperty(itemProperties(item));
+              if(typeRootMap_[type]->subProperties().size() == 0)
+                properties_->removeSubProperty(typeRootMap_[type]);
+            }
+
+            userDefList_.removeAll(item);
           }
           break;
         }
@@ -1403,19 +1505,32 @@ void SchematicScene::clearSupportedItem(QGraphicsItem* gItem)
       case OpAmplItemType:
         {
           if(standardList_.contains(item)) {
-            standardList_.removeAll(item);
-
             QtProperty* props = itemProperties(item);
+            if(props) {
+              typeRootMap_[type]->removeSubProperty(itemProperties(item));
+              if(typeRootMap_[type]->subProperties().size() == 0)
+                properties_->removeSubProperty(typeRootMap_[type]);
 
-            typeRootMap_[type]->removeSubProperty(props);
-            if(typeRootMap_[type]->subProperties().size() == 0)
-              properties_->removeSubProperty(typeRootMap_[type]);
+              foreach(QtProperty* prop, props->subProperties())
+                delete prop;
 
-	    if(props)
-	      foreach(QtProperty* prop, props->subProperties())
-		delete prop;
+              delete props;
+            }
 
-	    delete props;
+            standardList_.removeAll(item);
+          }
+          break;
+        }
+      case UserDefItemType:
+        {
+          if(userDefList_.contains(item)) {
+            if(itemProperties(item)) {
+              typeRootMap_[type]->removeSubProperty(itemProperties(item));
+              if(typeRootMap_[type]->subProperties().size() == 0)
+                properties_->removeSubProperty(typeRootMap_[type]);
+            }
+
+            userDefList_.removeAll(item);
           }
           break;
         }
@@ -1521,6 +1636,7 @@ void SchematicScene::copySelectedItems()
     new SchematicSceneParser(*this, selectedItems());
 
   parser->parse(*out);
+  
   delete parser;
   delete out;
 
@@ -1621,9 +1737,10 @@ void SchematicScene::clearSchematicScene()
 
 void SchematicScene::initializeBrowser(QtAbstractPropertyBrowser* browser)
 {
-  browser->setFactoryForManager(boolManager_, checkBoxFactory_);
-  browser->setFactoryForManager(stringManager_, lineEditFactory_);
-  browser->setFactoryForManager(doubleManager_, spinBoxFactory_);
+  browser_ = browser;
+  browser_->setFactoryForManager(boolManager_, checkBoxFactory_);
+  browser_->setFactoryForManager(stringManager_, lineEditFactory_);
+  browser_->setFactoryForManager(doubleManager_, spinBoxFactory_);
 }
 
 
@@ -1638,6 +1755,8 @@ void SchematicScene::assignNodes()
     value = static_cast<Wire*>(item)->propagate(value);
   foreach(Item* item, standardList_)
     value = static_cast<Component*>(item)->propagate(value);
+  foreach(Item* item, userDefList_)
+    value = static_cast<Component*>(item)->propagate(value);
   if(out_)
     value = static_cast<Component*>(out_)->propagate(value);
 }
@@ -1650,6 +1769,8 @@ void SchematicScene::resetNodes()
   foreach(Item* item, wireList_)
     static_cast<Wire*>(item)->invalidate();
   foreach(Item* item, standardList_)
+    static_cast<Component*>(item)->invalidate();
+  foreach(Item* item, userDefList_)
     static_cast<Component*>(item)->invalidate();
   if(out_)
     static_cast<Component*>(out_)->invalidate();
@@ -1680,8 +1801,8 @@ void SchematicScene::resetStatus()
     view->unsetCursor();
 
   userDefSessionRequested_ = false;
-  delete userDefItem_;
-  userDefItem_ = 0;
+  userDefMD5_ = QByteArray();
+  userDefSize_ = 0;
 
   wireSessionRequested_ = false;
   delete preWireItem_;
@@ -1734,7 +1855,7 @@ void SchematicScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
   lastMousePressPos_ = event->scenePos();
   resetNodes();
 
-  if(hasActiveItem()) {
+  if(hasActiveItem() || hasUserDefReq()) {
     switch(event->button())
     {
     case Qt::RightButton:
@@ -1743,41 +1864,34 @@ void SchematicScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
       return;
     case Qt::LeftButton:
     {
-      AddSupportedItem* addCommand =
-        new AddSupportedItem(this, activeItem_, item_->pos());
+      QUndoCommand* addCommand = 0;
+      
+      if(hasUserDefReq()) {
+        addCommand = new AddUserDefItem(this,
+          userDefMD5_,
+          userDefSize_,
+          userDefMap_.value(userDefMD5_),
+          item_->pos());
+      } else {
+          addCommand = new AddSupportedItem(this, activeItem_, item_->pos());
+      }
 
       undoRedoStack_->beginMacro(addCommand->text());
       undoRedoStack_->push(addCommand);
 
       uint rotFact = item_->angle() / 90;
       for(uint i = 0; i < rotFact; ++i) {
-        RotateItems* rotateCommand = new RotateItems(addCommand->item());
+        RotateItems* rotateCommand = 0;
+
+        if(hasUserDefReq()) {
+          rotateCommand = new RotateItems(static_cast<AddUserDefItem*>(addCommand)->item());
+        } else {
+          rotateCommand = new RotateItems(static_cast<AddSupportedItem*>(addCommand)->item());
+        }
+
         undoRedoStack_->push(rotateCommand);
       }
       undoRedoStack_->endMacro();
-
-      event->accept();
-      return;
-    }
-    default:
-      break;
-    }
-  }
-
-  if(hasUserDefReq()) {
-    switch(event->button())
-    {
-    case Qt::RightButton:
-      userDefItem_->rotate();
-      event->accept();
-      return;
-    case Qt::LeftButton:
-    {
-      //************ TODO ************//
-      addItem(userDefItem_);
-      userDefItem_ = 0;
-      resetStatus();
-      //************ TODO ************//
 
       event->accept();
       return;
@@ -1834,14 +1948,8 @@ void SchematicScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void SchematicScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-  if(hasActiveItem()) {
+  if(hasActiveItem() || hasUserDefReq()) {
     item_->setPos(closestGridPoint(event->scenePos()));
-    event->accept();
-    return;
-  }
-
-  if(hasUserDefReq()) {
-    userDefItem_->setPos(closestGridPoint(event->scenePos()));
     event->accept();
     return;
   }
@@ -1916,18 +2024,18 @@ bool SchematicScene::event(QEvent* event)
   // enter event
   if(event->type() == QEvent::Enter)
   {
-    if(hasActiveItem()) {
+    if(hasActiveItem() || hasUserDefReq()) {
       if(item_)
-	delete item_;
+        delete item_;
 
       item_ = SchematicScene::itemByType(activeItem_);
+      
+      if(hasUserDefReq()) {
+        static_cast<Component*>(item_)->setPath(userDefPath(userDefSize_));
+        static_cast<Component*>(item_)->addNodes(userDefNodes(userDefSize_));
+      }
+      
       addItem(item_);
-      event->accept();
-      return true;
-    }
-
-    if(hasUserDefReq()) {
-      addItem(userDefItem_);
       event->accept();
       return true;
     }
@@ -1936,16 +2044,10 @@ bool SchematicScene::event(QEvent* event)
   // leave event
   if(event->type() == QEvent::Leave)
   {
-    if(hasActiveItem()) {
+    if(hasActiveItem() || hasUserDefReq()) {
       removeItem(item_);
       delete item_;
       item_ = 0;
-      event->accept();
-      return true;
-    }
-
-    if(hasUserDefReq()) {
-      removeItem(userDefItem_);
       event->accept();
       return true;
     }
@@ -2055,7 +2157,8 @@ void SchematicScene::init()
   item_ = 0;
 
   userDefSessionRequested_ = false;
-  userDefItem_ = 0;
+  userDefMD5_ = QByteArray();
+  userDefSize_ = 0;
 
   wireSessionRequested_ = false;
   wireInProgress_ = 0;
@@ -2157,6 +2260,11 @@ void SchematicScene::setupProperties()
   typeRootMap_[MutualInductanceItemType] =
     groupManager_->addProperty(itemNameByType(MutualInductanceItemType));
 //   properties_->addSubProperty(typeRootMap_[MutualInductanceItemType]);
+
+  itemCntMap_[UserDefItemType] = 0;
+  typeRootMap_[UserDefItemType] =
+    groupManager_->addProperty(itemNameByType(UserDefItemType));
+//   properties_->addSubProperty(typeRootMap_[UserDefItemType]);
 }
 
 

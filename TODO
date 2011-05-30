@@ -13,6 +13,8 @@
 - mantenendo la stessa icona, rederla più usabile su ambienti desktop
 
 *** IMPORTANTE ***
+-----> SOTTOCIRCUITI ROADMAP: mancano i parser, cerca i TODO nel codice
+
 - SOTTOCIRCUITI A MEZZO: cerca userdef!! :-)
       *sfruttare userdef per quanto sotto!!*
       La userdefdialog sparisce e si usa il caricamento file per alternativa al trascinamento da
@@ -38,3 +40,33 @@
         definizione o per copia. Se si cancellano tutti gli oggetti di quel tipo, lo stesso non
         vale per la sua definizione, la quale resterà a far parte del circuito seppure non usata.
         La si potrà eliminare tramite editing diretto dei file .info.=======
+<<<<<<< .mine
+
+- scrivere la sezione "Usage" sia nel README che in debian/qsapecng.1
+- leggere per i tipi MIME
+    o http://www.debian.org/doc/packaging-manuals/mime-policy/
+    o http://wiki.debian.org/MimeTypesSupport
+    o http://stackoverflow.com/questions/30931/register-file-extensions-mime-types-in-linux
+- implementare l'apertura del file passato come argomento al main
+- adattare il file debian/copyright allo standard http://dep.debian.net/deps/dep5
+- mantenendo la stessa icona, rederla più usabile su ambienti desktop
+
+-------------------------------- REQUEST
+Dear Dr. Caini,
+ 
+I've been wanting to move to a more-modern symbolic analysis program than Sapwin.  I had thought that QSapec-NG would do what I want, but there is a problem I've encountered that makes it impossible for me to use for practical circuits:  component values can only range from 0.01 to 10000000. 
+
+There are two issues there:
+1.  Scientific notation is generally used in electronics, and specifically,
+2.  Values for capacitors, in general, are much less than 0.01Farads.  Unless there is an option for setting the basic unit (for example, to picoFarads, nanoFarads, or microFarads which I have missed, this means that all problems will need to be manually scaled.
+ 
+Sapwin accepts scientific notation, which avoids all scaling problems with component value entry.
+ 
+Did I miss some option setting?  If not, are there plans to change the value entry code?
+ 
+Thank you for your work - symbolic analysis is not wildly popular, and so I appreciate your efforts in this area, and your willingness to use the Open Source method of distribution.
+ 
+Regards,
+Fred Williams
+-------------------------------- REQUEST=======
+>>>>>>> .r18

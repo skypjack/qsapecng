@@ -75,6 +75,8 @@ public:
 
   enum SupportedItemType {
     NilItemType = 0,
+    
+    UserDefItemType,
 
     CapacitorItemType,
     CCCSItemType,
@@ -147,6 +149,8 @@ public:
   inline SupportedItemType activeItem() const { return activeItem_; }
   QList<Item*> activeItems() const;
 
+  QByteArray registerUserDef(const SchematicScene& scene);
+  std::string queryUserDef(QByteArray md5);
   void setUserDefRequest();
 
   void addItems(QList<QGraphicsItem*> items);
@@ -215,12 +219,9 @@ private:
   QMenu* contextMenu_;
   QPointF lastMousePressPos_;
   bool validNode_;
-
+  
   SupportedItemType activeItem_;
   Item* item_;
-
-  bool userDefSessionRequested_;
-  Item* userDefItem_;
 
   bool wireSessionRequested_;
   bool horizontalFirst_;
@@ -239,14 +240,20 @@ private:
   QList<Item*> standardList_;
   QList<Item*> wireList_;
   QList<Item*> labelList_;
+  QList<Item*> userDefList_;
+  
+  int userDefSize_;
+  QByteArray userDefMD5_;
+  QHash<QByteArray, std::string> userDefMap_;
+  bool userDefSessionRequested_;
 
   QUndoStack* undoRedoStack_;
 
+  QtAbstractPropertyBrowser* browser_;
   QtBoolPropertyManager* boolManager_;
   QtGroupPropertyManager* groupManager_;
   QtStringPropertyManager* stringManager_;
   QtDoublePropertyManager* doubleManager_;
-
   QtLineEditFactory* lineEditFactory_;
   QtCheckBoxFactory* checkBoxFactory_;
   QtDoubleSpinBoxFactory* spinBoxFactory_;

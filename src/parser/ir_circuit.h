@@ -24,6 +24,7 @@
 #include "parser/parser.h"
 #include "exception/sapecngexception.h"
 
+#include <stack>
 #include <iostream>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -38,13 +39,16 @@ class ir_parser: public abstract_parser
 {
 
 public:
-  ir_parser(): head_(0) { }
+  ir_parser() { }
 
 protected:
   void parse_internal(abstract_builder& builder);
 
 private:
-  void parse_rec(abstract_builder& builder);
+  void parse_rec(
+      abstract_builder& builder,
+      boost::property_tree::ptree* head
+    );
 
 protected:
   typedef
@@ -52,8 +56,6 @@ protected:
   what;
 
   boost::property_tree::ptree ptree_;
-  boost::property_tree::ptree* head_;
-  std::vector<boost::property_tree::ptree*> hstack_;
 
 };
 
@@ -170,6 +172,14 @@ public:
         std::map<std::string,std::string>()
     );
 
+  void begin_userdef_component(
+      std::string name,
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
+    );
+
+  void end_userdef_component();
+
 protected:
   typedef
   boost::error_info<struct tag_what, std::string>
@@ -177,7 +187,7 @@ protected:
 
   boost::property_tree::ptree ptree_;
   boost::property_tree::ptree* head_;
-  std::vector<boost::property_tree::ptree*> hstack_;
+  std::stack<boost::property_tree::ptree*> stack_;
 
 private:
   void add_item(

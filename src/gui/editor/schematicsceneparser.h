@@ -35,6 +35,7 @@
 class QGraphicsItem;
 
 
+
 namespace qsapecng
 {
 
@@ -77,7 +78,6 @@ private:
   QMap<SchematicScene::SupportedItemType,
     sapecng::abstract_builder::quad_component_type> quadMap_;
 
-  const SchematicScene& scene_;
   QList<Item*> items_;
 
 };
@@ -137,12 +137,20 @@ public:
         std::map<std::string,std::string>()
     );
 
+  void begin_userdef_component(
+      std::string name,
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
+    );
+
+  void end_userdef_component();
+
   void flush();
 
   inline QList<QGraphicsItem*> items() const { return items_; }
 
 private:
-  void insert_item(Item* item, std::map<std::string,std::string> props);
+  void prepare_item(Item* item, std::map<std::string,std::string> props);
   void mirror_and_rotate(Item* item, std::map<std::string,std::string> props);
   void adjust_label(Component* cmp, std::map<std::string,std::string> props);
   void setup_properties(

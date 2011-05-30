@@ -37,22 +37,21 @@ namespace qsapecng
 
 
 SchematicSceneParser::SchematicSceneParser(const SchematicScene& scene)
-  : scene_(scene)
 {
   setupMap();
-  items_ = scene_.activeItems();
+  items_ = scene.activeItems();
 }
 
 
 SchematicSceneParser::SchematicSceneParser(
     const SchematicScene& scene,
     const QList<QGraphicsItem*>& items
-  ): scene_(scene)
+  )
 {
   setupMap();
   foreach(QGraphicsItem* gItem, items) {
     Item* item = qgraphicsitem_cast<Item*>(gItem);
-    if(item && scene_.activeItems().contains(item))
+    if(item && scene.activeItems().contains(item))
       items_.push_back(item);
   }
 }
@@ -61,11 +60,11 @@ SchematicSceneParser::SchematicSceneParser(
 SchematicSceneParser::SchematicSceneParser(
     const SchematicScene& scene,
     QGraphicsItem* gItem
-  ): scene_(scene)
+  )
 {
   setupMap();
   Item* item = qgraphicsitem_cast<Item*>(gItem);
-  if(item && scene_.activeItems().contains(item))
+  if(item && scene.activeItems().contains(item))
     items_.push_back(item);
 }
 
@@ -233,8 +232,8 @@ void SchematicSceneParser::parse_item(
 
       builder.add_dual_component(
         dualMap_[type], subproperties.value("__NAME").toStdString(),
-	subproperties.value("Value").toDouble(),
-	QVariant(subproperties.value("Symbolic")).toBool(),
+        subproperties.value("Value").toDouble(),
+        QVariant(subproperties.value("Symbolic")).toBool(),
         nodes.at(1), nodes.at(0),
         props
       );
@@ -252,8 +251,8 @@ void SchematicSceneParser::parse_item(
 
       builder.add_quad_component(
         quadMap_[type], subproperties.value("__NAME").toStdString(),
-	subproperties.value("Value").toDouble(),
-	QVariant(subproperties.value("Symbolic")).toBool(),
+        subproperties.value("Value").toDouble(),
+        QVariant(subproperties.value("Symbolic")).toBool(),
         nodes.at(1), nodes.at(0), nodes.at(3), nodes.at(2),
         props
       );
@@ -310,6 +309,20 @@ void SchematicSceneParser::parse_item(
 
       break;
     }
+  case SchematicScene::UserDefItemType:
+    {
+      builder.begin_userdef_component(
+          subproperties.value("__NAME").toStdString(),
+          props
+        );
+
+      SchematicScene& scene = *(static_cast<SchematicScene*>(item->data(101).value<void*>()));
+      foreach(Item* item, scene.activeItems())
+        parse_item(builder, item);
+
+      builder.end_userdef_component();
+      break;
+    }
   default:
     break;
   }
@@ -352,7 +365,9 @@ void SchematicSceneBuilder::add_wire_component(
   item->setWire(QLineF(QPointF(0, 0), QPointF(to_x, to_y)));
   item->setConnectedJunctions(conn);
 
-  insert_item(item, props);
+  scene_.addSupportedItem(item, false);
+  prepare_item(item, props);
+  items_.push_back(item);
 }
 
 
@@ -364,8 +379,10 @@ void SchematicSceneBuilder::add_out_component(
   Item* item = static_cast<Item*>(
     SchematicScene::itemByType(SchematicScene::OutItemType));
 
-  insert_item(item, props);
+  scene_.addSupportedItem(item, false);
+  prepare_item(item, props);
   mirror_and_rotate(item, props);
+  items_.push_back(item);
 }
 
 
@@ -436,12 +453,14 @@ void SchematicSceneBuilder::add_dual_component(
   }
 
   if(component) {
-    insert_item(component, props);
+    scene_.addSupportedItem(component, false);
+    prepare_item(component, props);
     setup_properties(
       (SchematicScene::SupportedItemType) component->data(0).toInt(),
       component, name, value, symbolic, props);
     mirror_and_rotate(component, props);
     adjust_label(component, props);
+    items_.push_back(component);
   }
 }
 
@@ -509,12 +528,14 @@ void SchematicSceneBuilder::add_quad_component(
   }
 
   if(component) {
-    insert_item(component, props);
+    scene_.addSupportedItem(component, false);
+    prepare_item(component, props);
     setup_properties(
       (SchematicScene::SupportedItemType) component->data(0).toInt(),
       component, name, value, symbolic, props);
     mirror_and_rotate(component, props);
     adjust_label(component, props);
+    items_.push_back(component);
   }
 }
 
@@ -539,8 +560,10 @@ void SchematicSceneBuilder::add_unknow_component(
       Item* item = static_cast<Item*>(
         SchematicScene::itemByType(type));
 
-      insert_item(item, props);
+      scene_.addSupportedItem(item, false);
+      prepare_item(item, props);
       mirror_and_rotate(item, props);
+      items_.push_back(item);
 
       break;
     }
@@ -549,15 +572,65 @@ void SchematicSceneBuilder::add_unknow_component(
       Label* item = static_cast<Label*>(
         SchematicScene::itemByType(SchematicScene::LabelItemType));
 
-      insert_item(item, props);
+      scene_.addSupportedItem(item, false);
+      prepare_item(item, props);
       mirror_and_rotate(item, props);
       item->setText(QString::fromStdString(props["text"]));
+      items_.push_back(item);
 
       break;
     }
   default:
     break;
   }
+}
+
+
+void SchematicSceneBuilder::begin_userdef_component(
+    std::string name,
+    std::map<std::string,std::string> props
+  )
+{
+  // TODO
+  // SchematicScene* def = new SchematicScene;
+  // stack_.push(&scene_);
+  // scene_ = *def;
+}
+
+
+void SchematicSceneBuilder::end_userdef_component()
+{
+  // TODO
+  //
+  // QByteArray md5 =  stack_.back()->registerUserDef(scene_);
+  // std::string rep = stack_.back()->queryUserDef(md5);
+  //
+  // delete &scene_;
+  // scene_ = *(stack_.pop());
+  
+  /*
+    prepare_item(component, props);
+    add_supported??
+    
+    setup_properties(
+      (SchematicScene::SupportedItemType) component->data(0).toInt(),
+      component, name, value, symbolic, props);
+    mirror_and_rotate(component, props);
+    adjust_label(component, props);
+    
+    items_.push_back(item);
+    
+    scene --> registeruserdef
+    
+    scene --> queryuserdef
+    
+    addCommand = new AddUserDefItem(
+      this,
+      userDefMD5_,
+      userDefSize_,
+      userDefMap_.value(userDefMD5_),
+      item_->pos());
+  */
 }
 
 
@@ -579,7 +652,7 @@ void SchematicSceneBuilder::flush()
 }
 
 
-void SchematicSceneBuilder::insert_item(
+void SchematicSceneBuilder::prepare_item(
     Item* item, std::map<std::string, std::string> props
   )
 {
@@ -593,9 +666,7 @@ void SchematicSceneBuilder::insert_item(
   if(!ok)
     y = 0;
 
-  scene_.addSupportedItem(item, false);
   item->setPos(scene_.closestGridPoint(QPointF(x, y)));
-  items_.push_back(item);
 }
 
 
@@ -654,34 +725,34 @@ void SchematicSceneBuilder::setup_properties(
   if(subproperties.contains("__NAME")) {
     QtStringPropertyManager* spm =
       qobject_cast<QtStringPropertyManager*>(
-	subproperties.value("__NAME")->propertyManager());
+        subproperties.value("__NAME")->propertyManager());
       if(spm)
         spm->setValue(
-	    subproperties.value("__NAME"),
-	    QString::fromStdString(name)
-	  );
+            subproperties.value("__NAME"),
+            QString::fromStdString(name)
+          );
   }
 
   if(subproperties.contains("Value")) {
     QtDoublePropertyManager* dpm =
       qobject_cast<QtDoublePropertyManager*>(
-	subproperties.value("Value")->propertyManager());
+        subproperties.value("Value")->propertyManager());
       if(dpm)
         dpm->setValue(
-	    subproperties.value("Value"),
-	    value
-	  );
+            subproperties.value("Value"),
+            value
+          );
   }
 
   if(subproperties.contains("Symbolic")) {
     QtBoolPropertyManager* bpm =
       qobject_cast<QtBoolPropertyManager*>(
-	subproperties.value("Symbolic")->propertyManager());
+        subproperties.value("Symbolic")->propertyManager());
       if(bpm)
         bpm->setValue(
-	    subproperties.value("Symbolic"),
-	    symbolic
-	  );
+            subproperties.value("Symbolic"),
+            symbolic
+          );
   }
 
   switch(type)
@@ -689,44 +760,44 @@ void SchematicSceneBuilder::setup_properties(
   case SchematicScene::MutualInductanceItemType:
     if(subproperties.contains("lp:name")) {
       QtStringPropertyManager* spm =
-	qobject_cast<QtStringPropertyManager*>(
-	  subproperties.value("lp:name")->propertyManager());
-	if(spm)
-	  spm->setValue(
-	      subproperties.value("lp:name"),
-	      QString::fromStdString(props["lp:name"])
-	    );
+        qobject_cast<QtStringPropertyManager*>(
+          subproperties.value("lp:name")->propertyManager());
+        if(spm)
+          spm->setValue(
+              subproperties.value("lp:name"),
+              QString::fromStdString(props["lp:name"])
+            );
     }
     if(subproperties.contains("lp:value")) {
       QtDoublePropertyManager* dpm =
-	qobject_cast<QtDoublePropertyManager*>(
-	  subproperties.value("lp:value")->propertyManager());
-	if(dpm)
-	  dpm->setValue(
-	      subproperties.value("lp:value"),
-	      QString::fromStdString(props["lp:value"]).toDouble()
-	    );
+        qobject_cast<QtDoublePropertyManager*>(
+          subproperties.value("lp:value")->propertyManager());
+        if(dpm)
+          dpm->setValue(
+              subproperties.value("lp:value"),
+              QString::fromStdString(props["lp:value"]).toDouble()
+            );
     }
 
     if(subproperties.contains("ls:name")) {
       QtStringPropertyManager* spm =
-	qobject_cast<QtStringPropertyManager*>(
-	  subproperties.value("ls:name")->propertyManager());
-	if(spm)
-	  spm->setValue(
-	      subproperties.value("ls:name"),
-	      QString::fromStdString(props["ls:name"])
-	    );
+        qobject_cast<QtStringPropertyManager*>(
+          subproperties.value("ls:name")->propertyManager());
+        if(spm)
+          spm->setValue(
+              subproperties.value("ls:name"),
+              QString::fromStdString(props["ls:name"])
+            );
     }
     if(subproperties.contains("ls:value")) {
       QtDoublePropertyManager* dpm =
-	qobject_cast<QtDoublePropertyManager*>(
-	  subproperties.value("ls:value")->propertyManager());
-	if(dpm)
-	  dpm->setValue(
-	      subproperties.value("ls:value"),
-	      QString::fromStdString(props["ls:value"]).toDouble()
-	    );
+        qobject_cast<QtDoublePropertyManager*>(
+          subproperties.value("ls:value")->propertyManager());
+        if(dpm)
+          dpm->setValue(
+              subproperties.value("ls:value"),
+              QString::fromStdString(props["ls:value"]).toDouble()
+            );
     }
     break;
   default:

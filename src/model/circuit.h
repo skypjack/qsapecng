@@ -141,6 +141,14 @@ public:
         std::map<std::string,std::string>()
     ) { }
 
+  void begin_userdef_component(
+      std::string name,
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
+    ) { }
+
+  void end_userdef_component() { }
+
   void flush();
 
 private:

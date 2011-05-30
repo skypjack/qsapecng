@@ -30,20 +30,22 @@ namespace sapecng
 void ir_parser::parse_internal(abstract_builder& builder)
 {
   if(ptree_.get_child_optional("circuit")) {
-    head_ = &(ptree_.get_child("circuit"));
-    parse_rec(builder);
+    parse_rec(builder, &(ptree_.get_child("circuit")));
   }
 }
 
 
-void ir_parser::parse_rec(abstract_builder& builder)
+void ir_parser::parse_rec(
+    abstract_builder& builder,
+    boost::property_tree::ptree* head
+  )
 {
   try {
     std::map<std::string, std::string> cmap;
-    if(head_->get_child_optional("props")) {
+    if(head->get_child_optional("props")) {
       BOOST_FOREACH(
         boost::property_tree::ptree::value_type& cprop,
-        head_->get_child("props")
+        head->get_child("props")
       )
       cmap.insert(std::pair<std::string, std::string>
         (
@@ -54,9 +56,9 @@ void ir_parser::parse_rec(abstract_builder& builder)
       builder.add_circuit_properties(cmap);
     }
 
-    if(head_->get_child_optional("out")) {
+    if(head->get_child_optional("out")) {
       boost::property_tree::ptree& o =
-        head_->get_child("out");
+        head->get_child("out");
 
       unsigned int node =
         boost::lexical_cast<unsigned int>(o.get("node", "0"));
@@ -78,10 +80,10 @@ void ir_parser::parse_rec(abstract_builder& builder)
       builder.add_out_component(node, imap);
     }
 
-    if(head_->get_child_optional("components")) {
+    if(head->get_child_optional("components")) {
       BOOST_FOREACH(
           boost::property_tree::ptree::value_type& cc,
-          head_->get_child("components")
+          head->get_child("components")
         )
       {
         char id = cc.second.get("id", "none")[0];
@@ -246,11 +248,11 @@ void ir_parser::parse_rec(abstract_builder& builder)
         }
       }
     }
-
-    if(head_->get_child_optional("wires")) {
+    
+    if(head->get_child_optional("wires")) {
       BOOST_FOREACH(
           boost::property_tree::ptree::value_type& w,
-          head_->get_child("wires")
+          head->get_child("wires")
         )
       {
         std::map<std::string, std::string> imap;
@@ -271,10 +273,10 @@ void ir_parser::parse_rec(abstract_builder& builder)
       }
     }
 
-    if(head_->get_child_optional("unknows")) {
+    if(head->get_child_optional("unknows")) {
       BOOST_FOREACH(
           boost::property_tree::ptree::value_type& u,
-          head_->get_child("unknows")
+          head->get_child("unknows")
         )
       {
         std::map<std::string, std::string> imap;
@@ -292,6 +294,35 @@ void ir_parser::parse_rec(abstract_builder& builder)
         }
 
         builder.add_unknow_component(imap);
+      }
+    }
+
+    if(head->get_child_optional("userdefs")) {
+      BOOST_FOREACH(
+          boost::property_tree::ptree::value_type& ud,
+          head->get_child("userdefs")
+        )
+      {
+        std::string name =
+          boost::lexical_cast<std::string>(ud.second.get("name", "none"));
+        
+        std::map<std::string, std::string> imap;
+        if(ud.second.get_child_optional("props")) {
+          BOOST_FOREACH(
+            boost::property_tree::ptree::value_type& iprop,
+            ud.second.get_child("props")
+          )
+          imap.insert(std::pair<std::string, std::string>
+            (
+              iprop.second.get("name", "property"),
+              iprop.second.get("value", "value")
+            )
+          );
+        }
+
+        builder.begin_userdef_component(name, imap);
+        parse_rec(builder, &(ud.second.get_child("def")));
+        builder.end_userdef_component();
       }
     }
 
@@ -519,6 +550,42 @@ void ir_builder::add_unknow_component(
   }
 
   head_->add_child("unknows.unknow", cc);
+}
+
+
+void ir_builder::begin_userdef_component(
+    std::string name,
+    std::map<std::string,std::string> props
+  )
+{
+  boost::property_tree::ptree ud;
+
+  ud.put("name", name);
+
+  if(!props.empty()) {
+    boost::property_tree::ptree cprop;
+
+    typedef std::map<std::string, std::string>::const_iterator ci;
+    for(ci i = props.begin(); i != props.end(); ++i)
+    {
+      cprop.put("name", i->first);
+      cprop.put("value", i->second);
+      ud.add_child("props.prop", cprop);
+    }
+  }
+
+  boost::property_tree::ptree* foo = &(head_->add_child("userdefs.userdef", ud));
+
+  stack_.push(head_);
+  boost::property_tree::ptree def;
+  head_ = &(foo->add_child("def", def));
+}
+
+
+void ir_builder::end_userdef_component()
+{
+  head_ = stack_.top();
+  stack_.pop();
 }
 
 

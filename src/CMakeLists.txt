@@ -243,7 +243,6 @@ set(
   gui/qsapecng.cpp
   gui/settings.cpp
   gui/qsapecngwindow.cpp
-  gui/userdefdialog/userdefdialog.cpp
   gui/configdialog/configdialog.cpp
   gui/configdialog/configpage.cpp
   gui/sidebarmodel.cpp
@@ -265,7 +264,6 @@ set(
   qsapecng_HEADERS_MOC
   gui/qsapecngwindow.h
   gui/extendedmdiarea.h
-  gui/userdefdialog/userdefdialog.h
   gui/configdialog/configdialog.h
   gui/configdialog/configpage.h
   gui/sidebarmodel.h

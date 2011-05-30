@@ -17,13 +17,18 @@
 */
 
 
+#include "parser/parser_factory.h"
+#include "gui/editor/schematicsceneparser.h"
 #include "gui/editor/undoredocommand.h"
-
 #include "gui/editor/wire.h"
+#include "gui/editor/component.h"
 #include "gui/editor/item.h"
 
 #include <QtCore/QSet>
+#include <QtCore/QFileInfo>
 #include <QtGui/QGraphicsItem>
+
+#include <sstream>
 
 
 namespace qsapecng
@@ -156,6 +161,67 @@ void AddSupportedItem::redo()
 
 
 Item* AddSupportedItem::item() const
+{
+  return item_;
+}
+
+
+AddUserDefItem::AddUserDefItem(
+      SchematicScene* scene,
+      QByteArray md5,
+      int size,
+      std::string info,
+      const QPointF& pos,
+      QUndoCommand* parent
+    )
+  : QUndoCommand(parent), scene_(scene), pos_(pos)
+{
+  setText(QObject::tr("Add item: ") + SchematicScene::itemNameByType(SchematicScene::UserDefItemType));
+  item_ = scene->itemByType(SchematicScene::UserDefItemType);
+  static_cast<Component*>(item_)->setPath(SchematicScene::userDefPath(size));
+  static_cast<Component*>(item_)->addNodes(SchematicScene::userDefNodes(size));
+  item_->setData(99, md5);
+  
+  SchematicScene* rep = new SchematicScene(0);
+  sapecng::abstract_builder* builder = new SchematicSceneBuilder(*rep);
+    
+  std::istringstream in_file(info);
+  sapecng::abstract_parser* parser =
+    sapecng::parser_factory::parser(sapecng::parser_factory::INFO, in_file);
+
+  if(parser)
+    parser->parse(*builder);
+
+  delete parser;
+  delete builder;
+  
+  item_->setData(101, qVariantFromValue((void*) rep));
+}
+
+
+AddUserDefItem::~AddUserDefItem()
+{
+  scene_->clearSupportedItem(item_);
+  delete (SchematicScene*) item_->data(101).value<void*>();;
+  delete item_;
+}
+
+
+void AddUserDefItem::undo()
+{
+  scene_->resetStatus();
+  scene_->removeSupportedItem(item_);
+}
+
+
+void AddUserDefItem::redo()
+{
+  scene_->addSupportedItem(item_);
+  item_->setPos(scene_->closestGridPoint(pos_));
+}
+
+
+Item* AddUserDefItem::item() const
 {
   return item_;
 }

@@ -108,6 +108,33 @@ private:
 };
 
 
+class AddUserDefItem: public QUndoCommand
+{
+
+public:
+  AddUserDefItem(
+      SchematicScene* scene,
+      QByteArray md5,
+      int size,
+      std::string info,
+      const QPointF& pos,
+      QUndoCommand* parent = 0
+    );
+  ~AddUserDefItem();
+
+  virtual void undo();
+  virtual void redo();
+
+  Item* item() const;
+
+private:
+  SchematicScene* scene_;
+  QPointF pos_;
+  Item* item_;
+
+};
+
+
 class AddWire: public QUndoCommand
 {
 
