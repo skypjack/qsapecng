@@ -25,6 +25,8 @@
 #include "gui/editor/schematicscene.h"
 #include "gui/editor/item.h"
 
+#include <QtCore/QPair>
+#include <QtCore/QStack>
 #include <QtCore/QPointF>
 #include <QtCore/QList>
 
@@ -79,6 +81,7 @@ private:
     sapecng::abstract_builder::quad_component_type> quadMap_;
 
   QList<Item*> items_;
+  int discard_;
 
 };
 
@@ -89,10 +92,10 @@ class SchematicSceneBuilder: public sapecng::abstract_builder
 
 public:
   SchematicSceneBuilder(SchematicScene& scene)
-    : scene_(scene), offset_(QPointF(0, 0)) { }
+    : scene_(&scene), offset_(QPointF(0, 0)) { }
 
   SchematicSceneBuilder(SchematicScene& scene, const QPointF& offset)
-    : scene_(scene), offset_(offset) { }
+    : scene_(&scene), offset_(offset) { }
 
   void add_circuit_properties(std::map<std::string,std::string> map);
   void add_circuit_property(std::string name, std::string value);
@@ -143,18 +146,22 @@ public:
         std::map<std::string,std::string>()
     );
 
-  void end_userdef_component();
+  void end_userdef_component(
+      std::string name,
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
+    );
 
   void flush();
 
   inline QList<QGraphicsItem*> items() const { return items_; }
 
 private:
-  void prepare_item(Item* item, std::map<std::string,std::string> props);
+  bool discard(std::map<std::string,std::string> props);
+  void grid_coordinate(Item* item, std::map<std::string,std::string> props);
   void mirror_and_rotate(Item* item, std::map<std::string,std::string> props);
   void adjust_label(Component* cmp, std::map<std::string,std::string> props);
   void setup_properties(
-      SchematicScene::SupportedItemType type,
       Item* item,
       std::string name,
       double value,
@@ -162,9 +169,9 @@ private:
       std::map<std::string,std::string> props
     );
 
-  QList<Component*> components_;
+  QStack< QPair< SchematicScene*, QList<QGraphicsItem*> > > stack_;
   QList<QGraphicsItem*> items_;
-  SchematicScene& scene_;
+  SchematicScene* scene_;
   QPointF offset_;
 
 };

@@ -431,7 +431,7 @@ void QSapecNGWindow::print()
 
     if(editor) {
       if(QPrintDialog(&printer).exec() != QDialog::Accepted)
-	return;
+        return;
 
       QPainter painter(&printer);
       painter.setRenderHint(QPainter::Antialiasing);
@@ -458,7 +458,7 @@ void QSapecNGWindow::props()
 
     foreach(QGraphicsItem* item, items)
       if(SchematicScene::itemProperties(item))
-	browser->addProperty(SchematicScene::itemProperties(item));
+        browser->addProperty(SchematicScene::itemProperties(item));
 
     QDialog* dialog = new QDialog(this, Qt::Dialog);
     QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok);

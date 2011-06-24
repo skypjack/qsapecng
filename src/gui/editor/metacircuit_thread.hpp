@@ -47,7 +47,7 @@ public:
     {
       QMutexLocker locker(&mutex_);
       sapecng::abstract_builder* builder =
-	new sapecng::circuit_builder(*circuit_);
+        new sapecng::circuit_builder(*circuit_);
       parser.parse(*builder);
       delete builder;
     }

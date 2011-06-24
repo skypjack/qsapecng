@@ -29,14 +29,20 @@
 #include "gui/qtsolutions/qtpropertyeditor/QtProperty"
 
 #include <QtCore/QPointF>
+#include <QtCore/QPointer>
 #include <QtGui/QGraphicsItem>
+
+#include <boost/assign.hpp>
+#include <memory>
 
 
 namespace qsapecng
 {
 
 
-SchematicSceneParser::SchematicSceneParser(const SchematicScene& scene)
+SchematicSceneParser::SchematicSceneParser(
+    const SchematicScene& scene
+  ): discard_(0)
 {
   setupMap();
   items_ = scene.activeItems();
@@ -46,7 +52,7 @@ SchematicSceneParser::SchematicSceneParser(const SchematicScene& scene)
 SchematicSceneParser::SchematicSceneParser(
     const SchematicScene& scene,
     const QList<QGraphicsItem*>& items
-  )
+  ): discard_(0)
 {
   setupMap();
   foreach(QGraphicsItem* gItem, items) {
@@ -60,7 +66,7 @@ SchematicSceneParser::SchematicSceneParser(
 SchematicSceneParser::SchematicSceneParser(
     const SchematicScene& scene,
     QGraphicsItem* gItem
-  )
+  ): discard_(0)
 {
   setupMap();
   Item* item = qgraphicsitem_cast<Item*>(gItem);
@@ -199,9 +205,11 @@ void SchematicSceneParser::parse_item(
     }
   case SchematicScene::OutItemType:
     {
-      Component* out = static_cast<Component*>(item);
+      if(!discard_) {
+        Component* out = static_cast<Component*>(item);
 
-      builder.add_out_component(out->nodes().front(), props);
+        builder.add_out_component(out->nodes().front(), props);
+      }
 
       break;
     }
@@ -311,16 +319,50 @@ void SchematicSceneParser::parse_item(
     }
   case SchematicScene::UserDefItemType:
     {
+      Component* component = static_cast<Component*>(item);
+      storeLabel(props, component);
+
       builder.begin_userdef_component(
           subproperties.value("__NAME").toStdString(),
           props
         );
 
-      SchematicScene& scene = *(static_cast<SchematicScene*>(item->data(101).value<void*>()));
-      foreach(Item* item, scene.activeItems())
+      ++discard_;
+
+      QPointer<qsapecng::SchematicScene> scene =
+        item->data(101).value< QPointer<qsapecng::SchematicScene> >();
+
+      foreach(Item* item, scene->activeItems())
         parse_item(builder, item);
 
-      builder.end_userdef_component();
+      --discard_;
+
+      builder.end_userdef_component(
+          subproperties.value("__NAME").toStdString(),
+          props
+        );
+
+      // outer-to-inner port buffer resistors
+      QVector<int> nodes = component->nodes();
+      QVector<int> ports = scene->ports();
+
+      if(nodes.size() == ports.size()) {
+        for(int i = 0; i < nodes.size(); ++i)
+          builder.add_dual_component(
+            dualMap_[SchematicScene::ResistorItemType],
+            "", .0, false, nodes.at(i), ports.at(i),
+            boost::assign::map_list_of("discard", "1")
+          );
+      } else {
+        // something strange happens - port-to-ground short circuits
+        foreach(int node, nodes)
+          builder.add_dual_component(
+            dualMap_[SchematicScene::ResistorItemType],
+            "", .0, false, node, SchematicScene::Ground,
+            boost::assign::map_list_of("discard", "1")
+          );
+      }
+
       break;
     }
   default:
@@ -345,29 +387,31 @@ void SchematicSceneBuilder::add_wire_component(
     std::map<std::string, std::string> props
   )
 {
-  Wire* item = static_cast<Wire*>(
-    SchematicScene::itemByType(SchematicScene::WireItemType));
+  if(!discard(props)) {
+    Wire* item = static_cast<Wire*>(
+      SchematicScene::itemByType(SchematicScene::WireItemType));
 
-  bool ok;
+    bool ok;
 
-  double to_x = QString::fromStdString(props["to_x"]).toDouble(&ok);
-  if(!ok)
-    to_x = SchematicScene::GridStep;
+    double to_x = QString::fromStdString(props["to_x"]).toDouble(&ok);
+    if(!ok)
+      to_x = SchematicScene::GridStep;
 
-  double to_y = QString::fromStdString(props["to_y"]).toDouble(&ok);
-  if(!ok)
-    to_y = SchematicScene::GridStep;
+    double to_y = QString::fromStdString(props["to_y"]).toDouble(&ok);
+    if(!ok)
+      to_y = SchematicScene::GridStep;
 
-  bool conn = QString::fromStdString(props["conn"]).toInt(&ok);
-  if(!ok)
-    conn = false;
+    bool conn = QString::fromStdString(props["conn"]).toInt(&ok);
+    if(!ok)
+      conn = false;
 
-  item->setWire(QLineF(QPointF(0, 0), QPointF(to_x, to_y)));
-  item->setConnectedJunctions(conn);
+    item->setWire(QLineF(QPointF(0, 0), QPointF(to_x, to_y)));
+    item->setConnectedJunctions(conn);
 
-  scene_.addSupportedItem(item, false);
-  prepare_item(item, props);
-  items_.push_back(item);
+    scene_->addSupportedItem(item, false);
+    grid_coordinate(item, props);
+    items_.push_back(item);
+  }
 }
 
 
@@ -376,13 +420,15 @@ void SchematicSceneBuilder::add_out_component(
     std::map<std::string, std::string> props
   )
 {
-  Item* item = static_cast<Item*>(
-    SchematicScene::itemByType(SchematicScene::OutItemType));
+  if(!discard(props)) {
+    Item* item = static_cast<Item*>(
+      SchematicScene::itemByType(SchematicScene::OutItemType));
 
-  scene_.addSupportedItem(item, false);
-  prepare_item(item, props);
-  mirror_and_rotate(item, props);
-  items_.push_back(item);
+    scene_->addSupportedItem(item, false);
+    grid_coordinate(item, props);
+    mirror_and_rotate(item, props);
+    items_.push_back(item);
+  }
 }
 
 
@@ -396,71 +442,71 @@ void SchematicSceneBuilder::add_dual_component(
     std::map<std::string, std::string> props
   )
 {
-  Component* component = 0;
+  if(!discard(props)) {
+    Component* component = 0;
 
-  switch(c_type)
-  {
-  case sapecng::abstract_builder::R:
+    switch(c_type)
     {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::ResistorItemType));
+    case sapecng::abstract_builder::R:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::ResistorItemType));
+        break;
+      }
+    case sapecng::abstract_builder::G:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::ConductanceItemType));
+        break;
+      }
+    case sapecng::abstract_builder::L:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::InductorItemType));
+        break;
+      }
+    case sapecng::abstract_builder::C:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::CapacitorItemType));
+        break;
+      }
+    case sapecng::abstract_builder::V:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::VoltageSourceItemType));
+        break;
+      }
+    case sapecng::abstract_builder::I:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::CurrentSourceItemType));
+        break;
+      }
+    case sapecng::abstract_builder::VM:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::VoltmeterItemType));
+        break;
+      }
+    case sapecng::abstract_builder::AM:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::AmmeterItemType));
+        break;
+      }
+    default:
       break;
     }
-  case sapecng::abstract_builder::G:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::ConductanceItemType));
-      break;
-    }
-  case sapecng::abstract_builder::L:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::InductorItemType));
-      break;
-    }
-  case sapecng::abstract_builder::C:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::CapacitorItemType));
-      break;
-    }
-  case sapecng::abstract_builder::V:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::VoltageSourceItemType));
-      break;
-    }
-  case sapecng::abstract_builder::I:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::CurrentSourceItemType));
-      break;
-    }
-  case sapecng::abstract_builder::VM:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::VoltmeterItemType));
-      break;
-    }
-  case sapecng::abstract_builder::AM:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::AmmeterItemType));
-      break;
-    }
-  default:
-    break;
-  }
 
-  if(component) {
-    scene_.addSupportedItem(component, false);
-    prepare_item(component, props);
-    setup_properties(
-      (SchematicScene::SupportedItemType) component->data(0).toInt(),
-      component, name, value, symbolic, props);
-    mirror_and_rotate(component, props);
-    adjust_label(component, props);
-    items_.push_back(component);
+    if(component) {
+      scene_->addSupportedItem(component, false);
+      grid_coordinate(component, props);
+      setup_properties(component, name, value, symbolic, props);
+      mirror_and_rotate(component, props);
+      adjust_label(component, props);
+      items_.push_back(component);
+    }
   }
 }
 
@@ -477,65 +523,66 @@ void SchematicSceneBuilder::add_quad_component(
     std::map<std::string, std::string> props
   )
 {
-  Component* component = 0;
+  if(!discard(props)) {
+    Component* component = 0;
 
-  switch(c_type)
-  {
-  case sapecng::abstract_builder::VCCS:
+    switch(c_type)
     {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::VCCSItemType));
+    case sapecng::abstract_builder::VCCS:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::VCCSItemType));
+        break;
+      }
+    case sapecng::abstract_builder::VCVS:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::VCVSItemType));
+        break;
+      }
+    case sapecng::abstract_builder::CCCS:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::CCCSItemType));
+        break;
+      }
+    case sapecng::abstract_builder::CCVS:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::CCVSItemType));
+        break;
+      }
+    case sapecng::abstract_builder::AO:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::OpAmplItemType));
+        break;
+      }
+    case sapecng::abstract_builder::n:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(SchematicScene::TransformerItemType));
+        break;
+      }
+    case sapecng::abstract_builder::K:
+      {
+        component = static_cast<Component*>(
+          SchematicScene::itemByType(
+            SchematicScene::MutualInductanceItemType));
+        break;
+      }
+    default:
       break;
     }
-  case sapecng::abstract_builder::VCVS:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::VCVSItemType));
-      break;
-    }
-  case sapecng::abstract_builder::CCCS:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::CCCSItemType));
-      break;
-    }
-  case sapecng::abstract_builder::CCVS:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::CCVSItemType));
-      break;
-    }
-  case sapecng::abstract_builder::AO:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::OpAmplItemType));
-      break;
-    }
-  case sapecng::abstract_builder::n:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::TransformerItemType));
-      break;
-    }
-  case sapecng::abstract_builder::K:
-    {
-      component = static_cast<Component*>(
-        SchematicScene::itemByType(SchematicScene::MutualInductanceItemType));
-      break;
-    }
-  default:
-    break;
-  }
 
-  if(component) {
-    scene_.addSupportedItem(component, false);
-    prepare_item(component, props);
-    setup_properties(
-      (SchematicScene::SupportedItemType) component->data(0).toInt(),
-      component, name, value, symbolic, props);
-    mirror_and_rotate(component, props);
-    adjust_label(component, props);
-    items_.push_back(component);
+    if(component) {
+      scene_->addSupportedItem(component, false);
+      grid_coordinate(component, props);
+      setup_properties(component, name, value, symbolic, props);
+      mirror_and_rotate(component, props);
+      adjust_label(component, props);
+      items_.push_back(component);
+    }
   }
 }
 
@@ -544,44 +591,47 @@ void SchematicSceneBuilder::add_unknow_component(
     std::map<std::string, std::string> props
   )
 {
-  bool ok;
+  if(!discard(props)) {
+    bool ok;
 
-  SchematicScene::SupportedItemType type = (SchematicScene::SupportedItemType)
-    QString::fromStdString(props["type"]).toInt(&ok);
+    SchematicScene::SupportedItemType type =
+      (SchematicScene::SupportedItemType)
+        QString::fromStdString(props["type"]).toInt(&ok);
 
-  if(!ok)
-    type = SchematicScene::NilItemType;
+    if(!ok)
+      type = SchematicScene::NilItemType;
 
-  switch(type)
-  {
-  case SchematicScene::GroundItemType:
-  case SchematicScene::PortItemType:
+    switch(type)
     {
-      Item* item = static_cast<Item*>(
-        SchematicScene::itemByType(type));
+    case SchematicScene::GroundItemType:
+    case SchematicScene::PortItemType:
+      {
+        Item* item = static_cast<Item*>(
+          SchematicScene::itemByType(type));
 
-      scene_.addSupportedItem(item, false);
-      prepare_item(item, props);
-      mirror_and_rotate(item, props);
-      items_.push_back(item);
+        scene_->addSupportedItem(item, false);
+        grid_coordinate(item, props);
+        mirror_and_rotate(item, props);
+        items_.push_back(item);
 
+        break;
+      }
+    case SchematicScene::LabelItemType:
+      {
+        Label* item = static_cast<Label*>(
+          SchematicScene::itemByType(SchematicScene::LabelItemType));
+
+        scene_->addSupportedItem(item, false);
+        grid_coordinate(item, props);
+        mirror_and_rotate(item, props);
+        item->setText(QString::fromStdString(props["text"]));
+        items_.push_back(item);
+
+        break;
+      }
+    default:
       break;
     }
-  case SchematicScene::LabelItemType:
-    {
-      Label* item = static_cast<Label*>(
-        SchematicScene::itemByType(SchematicScene::LabelItemType));
-
-      scene_.addSupportedItem(item, false);
-      prepare_item(item, props);
-      mirror_and_rotate(item, props);
-      item->setText(QString::fromStdString(props["text"]));
-      items_.push_back(item);
-
-      break;
-    }
-  default:
-    break;
   }
 }
 
@@ -591,46 +641,45 @@ void SchematicSceneBuilder::begin_userdef_component(
     std::map<std::string,std::string> props
   )
 {
-  // TODO
-  // SchematicScene* def = new SchematicScene;
-  // stack_.push(&scene_);
-  // scene_ = *def;
+  QPair< SchematicScene*, QList<QGraphicsItem*> > pair(scene_, items_);
+  
+  stack_.push(pair);
+  scene_ = new SchematicScene;
+  items_.clear();
 }
 
 
-void SchematicSceneBuilder::end_userdef_component()
+void SchematicSceneBuilder::end_userdef_component(
+    std::string name,
+    std::map<std::string,std::string> props
+  )
 {
-  // TODO
-  //
-  // QByteArray md5 =  stack_.back()->registerUserDef(scene_);
-  // std::string rep = stack_.back()->queryUserDef(md5);
-  //
-  // delete &scene_;
-  // scene_ = *(stack_.pop());
+  int size = scene_->size();
+  QByteArray md5 = stack_.back().first->registerUserDef(*scene_);
+
+  Component* component = static_cast<Component*>(
+    SchematicScene::itemByType(SchematicScene::UserDefItemType));
   
-  /*
-    prepare_item(component, props);
-    add_supported??
-    
-    setup_properties(
-      (SchematicScene::SupportedItemType) component->data(0).toInt(),
-      component, name, value, symbolic, props);
-    mirror_and_rotate(component, props);
-    adjust_label(component, props);
-    
-    items_.push_back(item);
-    
-    scene --> registeruserdef
-    
-    scene --> queryuserdef
-    
-    addCommand = new AddUserDefItem(
-      this,
-      userDefMD5_,
-      userDefSize_,
-      userDefMap_.value(userDefMD5_),
-      item_->pos());
-  */
+  component->setPath(SchematicScene::userDefPath(size));
+  component->addNodes(SchematicScene::userDefNodes(size));
+  component->setData(99, md5);
+  
+  QPointer<qsapecng::SchematicScene> smart(scene_);
+  component->setData(101, qVariantFromValue(smart));
+  
+  QPair< SchematicScene*, QList<QGraphicsItem*> > pair = stack_.pop();
+  
+  items_.clear();
+  items_.append(pair.second);
+  scene_ = pair.first;
+  
+  scene_->addSupportedItem(component, false);
+  grid_coordinate(component, props);
+  setup_properties(component, name,
+    /* foo */ 0, /* foo */ false, /* foo */ props);
+  mirror_and_rotate(component, props);
+  adjust_label(component, props);
+  items_.push_back(component);
 }
 
 
@@ -645,14 +694,25 @@ void SchematicSceneBuilder::flush()
   }
 
   QPointF realOffset = offset_ - offset;
-  foreach(QGraphicsItem* item, items_) {
-    item->setPos(scene_.closestGridPoint(item->pos() + realOffset));
-    scene_.addItems(item);
-  }
+  foreach(QGraphicsItem* item, items_)
+    item->setPos(scene_->closestGridPoint(item->pos() + realOffset));
+  
+  scene_->addItems(items_);
 }
 
 
-void SchematicSceneBuilder::prepare_item(
+bool SchematicSceneBuilder::discard(std::map<std::string,std::string> props) {
+  bool ok;
+
+  int discard = QString::fromStdString(props["discard"]).toInt(&ok);
+  if(!ok)
+    discard = 0;
+  
+  return discard;
+}
+
+
+void SchematicSceneBuilder::grid_coordinate(
     Item* item, std::map<std::string, std::string> props
   )
 {
@@ -666,7 +726,7 @@ void SchematicSceneBuilder::prepare_item(
   if(!ok)
     y = 0;
 
-  item->setPos(scene_.closestGridPoint(QPointF(x, y)));
+  item->setPos(scene_->closestGridPoint(QPointF(x, y)));
 }
 
 
@@ -705,7 +765,6 @@ void SchematicSceneBuilder::adjust_label(
 
 
 void SchematicSceneBuilder::setup_properties(
-    SchematicScene::SupportedItemType type,
     Item* item,
     std::string name,
     double value,
@@ -755,54 +814,49 @@ void SchematicSceneBuilder::setup_properties(
           );
   }
 
-  switch(type)
-  {
-  case SchematicScene::MutualInductanceItemType:
-    if(subproperties.contains("lp:name")) {
-      QtStringPropertyManager* spm =
-        qobject_cast<QtStringPropertyManager*>(
-          subproperties.value("lp:name")->propertyManager());
-        if(spm)
-          spm->setValue(
-              subproperties.value("lp:name"),
-              QString::fromStdString(props["lp:name"])
-            );
-    }
-    if(subproperties.contains("lp:value")) {
-      QtDoublePropertyManager* dpm =
-        qobject_cast<QtDoublePropertyManager*>(
-          subproperties.value("lp:value")->propertyManager());
-        if(dpm)
-          dpm->setValue(
-              subproperties.value("lp:value"),
-              QString::fromStdString(props["lp:value"]).toDouble()
-            );
-    }
+  if(subproperties.contains("lp:name")) {
+    QtStringPropertyManager* spm =
+      qobject_cast<QtStringPropertyManager*>(
+        subproperties.value("lp:name")->propertyManager());
+      if(spm)
+        spm->setValue(
+            subproperties.value("lp:name"),
+            QString::fromStdString(props["lp:name"])
+          );
+  }
 
-    if(subproperties.contains("ls:name")) {
-      QtStringPropertyManager* spm =
-        qobject_cast<QtStringPropertyManager*>(
-          subproperties.value("ls:name")->propertyManager());
-        if(spm)
-          spm->setValue(
-              subproperties.value("ls:name"),
-              QString::fromStdString(props["ls:name"])
-            );
-    }
-    if(subproperties.contains("ls:value")) {
-      QtDoublePropertyManager* dpm =
-        qobject_cast<QtDoublePropertyManager*>(
-          subproperties.value("ls:value")->propertyManager());
-        if(dpm)
-          dpm->setValue(
-              subproperties.value("ls:value"),
-              QString::fromStdString(props["ls:value"]).toDouble()
-            );
-    }
-    break;
-  default:
-    break;
-  }  
+  if(subproperties.contains("lp:value")) {
+    QtDoublePropertyManager* dpm =
+      qobject_cast<QtDoublePropertyManager*>(
+        subproperties.value("lp:value")->propertyManager());
+      if(dpm)
+        dpm->setValue(
+            subproperties.value("lp:value"),
+            QString::fromStdString(props["lp:value"]).toDouble()
+          );
+  }
+
+  if(subproperties.contains("ls:name")) {
+    QtStringPropertyManager* spm =
+      qobject_cast<QtStringPropertyManager*>(
+        subproperties.value("ls:name")->propertyManager());
+      if(spm)
+        spm->setValue(
+            subproperties.value("ls:name"),
+            QString::fromStdString(props["ls:name"])
+          );
+  }
+
+  if(subproperties.contains("ls:value")) {
+    QtDoublePropertyManager* dpm =
+      qobject_cast<QtDoublePropertyManager*>(
+        subproperties.value("ls:value")->propertyManager());
+      if(dpm)
+        dpm->setValue(
+            subproperties.value("ls:value"),
+            QString::fromStdString(props["ls:value"]).toDouble()
+          );
+  }
 }
 
 

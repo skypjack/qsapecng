@@ -322,7 +322,7 @@ void ir_parser::parse_rec(
 
         builder.begin_userdef_component(name, imap);
         parse_rec(builder, &(ud.second.get_child("def")));
-        builder.end_userdef_component();
+        builder.end_userdef_component(name, imap);
       }
     }
 
@@ -582,7 +582,10 @@ void ir_builder::begin_userdef_component(
 }
 
 
-void ir_builder::end_userdef_component()
+void ir_builder::end_userdef_component(
+    std::string name,
+    std::map<std::string,std::string> props
+  )
 {
   head_ = stack_.top();
   stack_.pop();

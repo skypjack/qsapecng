@@ -119,7 +119,11 @@ public:
         std::map<std::string,std::string>()
     ) = 0;
 
-  virtual void end_userdef_component() = 0;
+  virtual void end_userdef_component(
+      std::string name,
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
+    ) = 0;
 
   virtual void flush() = 0;
 

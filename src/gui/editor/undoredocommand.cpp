@@ -26,9 +26,11 @@
 
 #include <QtCore/QSet>
 #include <QtCore/QFileInfo>
+#include <QtCore/QPointer>
 #include <QtGui/QGraphicsItem>
 
 #include <sstream>
+#include <memory>
 
 
 namespace qsapecng
@@ -182,7 +184,7 @@ AddUserDefItem::AddUserDefItem(
   static_cast<Component*>(item_)->addNodes(SchematicScene::userDefNodes(size));
   item_->setData(99, md5);
   
-  SchematicScene* rep = new SchematicScene(0);
+  SchematicScene* rep = new SchematicScene;
   sapecng::abstract_builder* builder = new SchematicSceneBuilder(*rep);
     
   std::istringstream in_file(info);
@@ -195,14 +197,14 @@ AddUserDefItem::AddUserDefItem(
   delete parser;
   delete builder;
   
-  item_->setData(101, qVariantFromValue((void*) rep));
+  QPointer<qsapecng::SchematicScene> smart(rep);
+  item_->setData(101, qVariantFromValue(smart));
 }
 
 
 AddUserDefItem::~AddUserDefItem()
 {
   scene_->clearSupportedItem(item_);
-  delete (SchematicScene*) item_->data(101).value<void*>();;
   delete item_;
 }
 

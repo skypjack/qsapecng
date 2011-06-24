@@ -331,7 +331,7 @@ int Wire::propagate(int value)
 
     foreach(GraphicsNode* setnode, node->itemSet())
       if(setnode->owner()->itemType() == Item::Wire)
-	static_cast<Wire*>(setnode->owner())->propagate(act);
+        static_cast<Wire*>(setnode->owner())->propagate(act);
 
   }
 

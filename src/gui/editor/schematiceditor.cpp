@@ -49,8 +49,8 @@ namespace qsapecng
 SchematicEditor::SchematicEditor(QWidget* parent, Qt::WindowFlags flags)
   : QMdiSubWindow(parent, flags), solved_(false)
 {
-  view_ = new SchematicView;
-  scene_ = new SchematicScene;
+  scene_ = new SchematicScene(this);
+  view_ = new SchematicView(this);
 
   view_->setScene(scene_);
   connect(scene_, SIGNAL(sceneRectChanged(const QRectF&)),
@@ -99,9 +99,9 @@ bool SchematicEditor::accept(WorkPlane& workplane)
     QMessageBox::StandardButton ret;
     ret = QMessageBox::warning(this, tr("Dirty circuit"),
       QString("'%1'").arg(userFriendlyCurrentFile()
-	+ tr(" has been modified.\n Solve the circuit?")),
+        + tr(" has been modified.\n Solve the circuit?")),
       QMessageBox::Yes | QMessageBox::No
-	| QMessageBox::Cancel
+        | QMessageBox::Cancel
     );
 
     if(ret == QMessageBox::Cancel)
@@ -121,25 +121,25 @@ bool SchematicEditor::accept(WorkPlane& workplane)
 
       QHash<QString, QString> subs;
       if(props) {
-	subs.insert("__NAME", props->valueText());
-	foreach(QtProperty* prop, props->subProperties())
-	  subs.insert(prop->propertyName(), prop->valueText());
+        subs.insert("__NAME", props->valueText());
+        foreach(QtProperty* prop, props->subProperties())
+          subs.insert(prop->propertyName(), prop->valueText());
       }
 
       if(subs.contains("Value"))
-	values[subs.value("__NAME").toStdString()]
-	  = subs.value("Value").toDouble();
+        values[subs.value("__NAME").toStdString()]
+          = subs.value("Value").toDouble();
       else if(subs.contains("M"))
-	values[subs.value("__NAME").toStdString()]
-	  = subs.value("M").toDouble();
+        values[subs.value("__NAME").toStdString()]
+          = subs.value("M").toDouble();
 
       if(subs.contains("lp:name") && subs.contains("lp:value"))
-	values[subs.value("lp:name").toStdString()]
-	  = subs.value("lp:value").toDouble();
+        values[subs.value("lp:name").toStdString()]
+          = subs.value("lp:value").toDouble();
 
       if(subs.contains("ls:name") && subs.contains("ls:value"))
-	values[subs.value("ls:name").toStdString()]
-	  = subs.value("ls:value").toDouble();
+        values[subs.value("ls:name").toStdString()]
+          = subs.value("ls:value").toDouble();
     }
 
   workplane.setData(
@@ -184,9 +184,9 @@ bool SchematicEditor::saveFile(const QString& fileName)
   if(!file.open(QFile::WriteOnly | QFile::Text)) {
     QMessageBox::warning(this, tr("Write file"),
       tr("Unable to write file ")
-	+ QString("%1:\n%2.")
-	  .arg(fileName)
-	  .arg(file.errorString())
+        + QString("%1:\n%2.")
+          .arg(fileName)
+          .arg(file.errorString())
     );
     return false;
   } else {
@@ -231,8 +231,8 @@ bool SchematicEditor::loadFile(const QString& fileName)
       QMessageBox::warning(this, tr("Read file"),
         tr("Unable to read file ")
         + QString("%1:\n%2.")
-	  .arg(fileName)
-	  .arg(file.errorString())
+          .arg(fileName)
+          .arg(file.errorString())
       );
       return false;
     } else {
@@ -251,7 +251,7 @@ bool SchematicEditor::loadFile(const QString& fileName)
     std::ifstream in_file(QFile::encodeName(fileName));
     sapecng::abstract_parser* parser =
       sapecng::parser_factory::parser(
-	fileInfo.suffix().toStdString(), in_file);
+        fileInfo.suffix().toStdString(), in_file);
 
     if(parser) {
       scene_->undoRedoStack()->beginMacro(QObject::tr("Load file"));
@@ -434,7 +434,7 @@ bool SchematicEditor::maybeSave()
     QMessageBox::StandardButton ret;
     ret = QMessageBox::warning(this, tr("Save file"),
       tr("'%1'").arg(userFriendlyCurrentFile()
-	+ QString(" has been modified.\n Save the file?")),
+        + QString(" has been modified.\n Save the file?")),
       QMessageBox::Save | QMessageBox::Discard
         | QMessageBox::Cancel
       );

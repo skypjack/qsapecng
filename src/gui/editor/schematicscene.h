@@ -29,6 +29,10 @@
 #include <QtCore/QHash>
 #include <QtCore/QPointF>
 #include <QtCore/QVariant>
+#include <QtCore/QMetaType>
+#include <QtCore/QPointer>
+
+#include <memory>
 
 
 class QMenu;
@@ -134,11 +138,9 @@ public:
   static QPainterPath userDefPath(uint ports);
   static QList<QPointF> userDefNodes(uint ports);
 
-  static int size(SchematicScene& scene) { return scene.portList_.size(); }
-
 public:
-  SchematicScene(QObject* parent = 0): QGraphicsScene(parent) { init(); }
-  ~SchematicScene() { delete undoRedoStack_; }
+  SchematicScene(QObject* parent = 0);
+  ~SchematicScene();
 
   QPointF closestGridPoint(const QPointF& pos) const;
   inline bool gridVisible() const { return gridVisible_; }
@@ -184,7 +186,9 @@ public:
   void initializeBrowser(QtAbstractPropertyBrowser* browser);
   inline QtProperty* properties() const { return properties_; }
 
-  void assignNodes();
+  QVector<int> ports();
+  inline int size() { return portList_.size(); }
+  void assignNodes(int seed = SchematicScene::Ground + 1);
 
 public slots:
   void resetNodes();
@@ -268,6 +272,7 @@ private:
 }
 
 
+Q_DECLARE_METATYPE(QPointer<qsapecng::SchematicScene>);
 Q_DECLARE_METATYPE(QtProperty*);
 
 

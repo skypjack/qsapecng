@@ -188,8 +188,8 @@ int Component::propagate(int value)
       node->node()->setValue(value++);
 
       foreach(GraphicsNode* setnode, node->itemSet())
-	if(setnode->owner()->itemType() == Item::Wire)
-	  static_cast<qsapecng::Wire*>(setnode->owner())->propagate(value);
+        if(setnode->owner()->itemType() == Item::Wire)
+          static_cast<qsapecng::Wire*>(setnode->owner())->propagate(value);
 
       node->showNodeValue();
     }

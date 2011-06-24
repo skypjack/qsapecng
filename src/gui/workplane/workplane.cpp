@@ -94,12 +94,12 @@ void MarkableCurve::moved(const QwtDoublePoint& pos)
     marker_->setLabel(label);
 
     Qt::Alignment H =
-	(data().x(idx) >= minXValue() + ((maxXValue() - minXValue()) / 2))
+        (data().x(idx) >= minXValue() + ((maxXValue() - minXValue()) / 2))
       ? Qt::AlignLeft
       : Qt::AlignRight
       ;
     Qt::Alignment V =
-	(data().y(idx) >= minYValue() + ((maxYValue() - minYValue()) / 2))
+        (data().y(idx) >= minYValue() + ((maxYValue() - minYValue()) / 2))
       ? Qt::AlignBottom
       : Qt::AlignTop
       ;
@@ -323,7 +323,7 @@ void WorkPlane::plot(WorkPlane::F f)
       std::pair< std::vector<double>, std::vector<double> > res;
       if(!curves_[f].second) {
         QLogger::info(QObject::tr("Calculate magnitude."));
-	std::map<std::string, double> values = actValues();
+        std::map<std::string, double> values = actValues();
         res = sapecng::magnitude(
             std::make_pair(startFreq_->value(), endFreq_->value()),
             stepFreq_->value()
@@ -360,7 +360,7 @@ void WorkPlane::plot(WorkPlane::F f)
       std::pair< std::vector<double>, std::vector<double> > res;
       if(!curves_[f].second) {
         QLogger::info(QObject::tr("Calculate phase."));
-	std::map<std::string, double> values = actValues();
+        std::map<std::string, double> values = actValues();
         res = sapecng::phase(
             std::make_pair(startFreq_->value(), endFreq_->value()),
             stepFreq_->value()
@@ -397,7 +397,7 @@ void WorkPlane::plot(WorkPlane::F f)
       std::pair< std::vector<double>, std::vector<double> > res;
       if(!curves_[f].second) {
         QLogger::info(QObject::tr("Calculate gain."));
-	std::map<std::string, double> values = actValues();
+        std::map<std::string, double> values = actValues();
         res = sapecng::gain(
             std::make_pair(startFreq_->value(), endFreq_->value()),
             stepFreq_->value()
@@ -434,7 +434,7 @@ void WorkPlane::plot(WorkPlane::F f)
       std::pair< std::vector<double>, std::vector<double> > res;
       if(!curves_[f].second) {
         QLogger::info(QObject::tr("Calculate loss."));
-	std::map<std::string, double> values = actValues();
+        std::map<std::string, double> values = actValues();
         res = sapecng::loss(
             std::make_pair(startFreq_->value(), endFreq_->value()),
             stepFreq_->value()
@@ -471,7 +471,7 @@ void WorkPlane::plot(WorkPlane::F f)
       std::pair< std::vector<double>, std::vector<double> > resZ;
       if(!curves_[ZEROS].second) {
         QLogger::info(QObject::tr("Looking for zeros."));
-	std::map<std::string, double> values = actValues();
+        std::map<std::string, double> values = actValues();
         resZ = sapecng::zeros()(num_, den_, values);
 
         unsigned int size = resZ.first.size() > resZ.second.size() ?
@@ -479,15 +479,15 @@ void WorkPlane::plot(WorkPlane::F f)
 
         for(unsigned int i = 0; i < size; ++i)
           QLogger::info(QObject::tr("Zero found near to ")
-	    + QString("(%1, %2)")
-	      .arg(QString::number(resZ.first.at(i)))
-	      .arg(QString::number(resZ.second.at(i))));
+            + QString("(%1, %2)")
+              .arg(QString::number(resZ.first.at(i)))
+              .arg(QString::number(resZ.second.at(i))));
       }
 
       std::pair< std::vector<double>, std::vector<double> > resP;
       if(!curves_[POLES].second) {
         QLogger::info(QObject::tr("Looking for poles."));
-	std::map<std::string, double> values = actValues();
+        std::map<std::string, double> values = actValues();
         resP = sapecng::poles()(num_, den_, values);
 
         unsigned int size = resP.first.size() > resP.second.size() ?
@@ -495,9 +495,9 @@ void WorkPlane::plot(WorkPlane::F f)
 
         for(unsigned int i = 0; i < size; ++i)
           QLogger::info(QObject::tr("Pole found near to ")
-	    + QString("(%1, %2)")
-	      .arg(QString::number(resP.first.at(i)))
-	      .arg(QString::number(resP.second.at(i))));
+            + QString("(%1, %2)")
+              .arg(QString::number(resP.first.at(i)))
+              .arg(QString::number(resP.second.at(i))));
       }
 
       plot_->setTitle(
@@ -552,7 +552,7 @@ std::map<std::string, double> WorkPlane::actValues() const
 
   for(int i = 0; i < data_->rowCount(); ++i)
     values[qobject_cast<const QLabel*>(
-	data_->cellWidget(i, 0))->text().toStdString()] =
+        data_->cellWidget(i, 0))->text().toStdString()] =
       qobject_cast<const QDoubleSpinBox*>(data_->cellWidget(i, 1))->value();
 
   return values;

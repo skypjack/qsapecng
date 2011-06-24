@@ -44,6 +44,7 @@
 
 #include <QtCore/QEvent>
 #include <QtCore/QCryptographicHash>
+#include <QtCore/QPointer>
 
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMenu>
@@ -58,6 +59,7 @@
 #include <QtGui/QClipboard>
 
 #include <sstream>
+#include <memory>
 
 
 namespace qsapecng
@@ -946,10 +948,14 @@ QPainterPath SchematicScene::userDefPath(uint ports)
     path.lineTo(step, 0);
   } else {
     path.moveTo(0, 0);
-    path.lineTo(0, step);
-    path.lineTo(step, step);
-    path.lineTo(step, 0);
+    path.lineTo(0, 2 * step);
+    path.lineTo(2 * step, 2 * step);
+    path.lineTo(2 * step, 0);
     path.lineTo(0, 0);
+    path.moveTo(0, 0);
+    path.lineTo(2 * step, 2 * step);
+    path.moveTo(2 * step, 0);
+    path.lineTo(0, 2 * step);
   }
 
   for(uint i = 0; i < side; ++i) {
@@ -988,6 +994,21 @@ QList<QPointF> SchematicScene::userDefNodes(uint ports)
     nodes.push_back(QPointF(6 * GridStep, GridStep * (2 * i + 1)));
 
   return nodes;
+}
+
+
+SchematicScene::SchematicScene(QObject* parent): QGraphicsScene(parent) {
+  setupProperties();
+  init();
+}
+
+
+SchematicScene::~SchematicScene() {
+  // delete itemized sub-circuits
+  foreach(Item* item, userDefList_)
+    delete item->data(101).value< QPointer<qsapecng::SchematicScene> >();
+
+  delete undoRedoStack_;
 }
 
 
@@ -1099,7 +1120,7 @@ void SchematicScene::setUserDefRequest()
     delete builder;
     
     QByteArray md5 = registerUserDef(*scene);
-    int size = SchematicScene::size(*scene);
+    int size = scene->size();
 
     delete scene;
     
@@ -1263,8 +1284,8 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
               name->addSubProperty(lsv);
             }
 
-            static_cast<Component*>(item)
-              ->label()->setPlainText(stringManager_->value(name));
+            static_cast<Component*>(item)->label()->setPlainText(
+              stringManager_->value(name));
             
             typeRootMap_[type]->addSubProperty(name);
             properties_->addSubProperty(typeRootMap_[type]);
@@ -1291,12 +1312,15 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
               SLOT(valueChanged(QtProperty*, const QString&))
             );
 
-            SchematicScene* rep = static_cast<SchematicScene*>(item->data(101).value<void*>());
+            QPointer<qsapecng::SchematicScene> rep =
+              item->data(101)
+                .value< QPointer<qsapecng::SchematicScene> >();
+
             name->addSubProperty(rep->properties());
             rep->initializeBrowser(browser_);
 
-            static_cast<Component*>(item)
-              ->label()->setPlainText(stringManager_->value(name));
+            static_cast<Component*>(item)->label()->setPlainText(
+              stringManager_->value(name));
 
             typeRootMap_[type]->addSubProperty(name);
             properties_->addSubProperty(typeRootMap_[type]);
@@ -1343,8 +1367,8 @@ void SchematicScene::removeSupportedItem(QGraphicsItem* gItem)
         {
           portList_.removeAll(item);
           for(QList<Item*>::size_type i = 0; i < portList_.size(); ++i)
-            static_cast<Component*>(portList_.at(i))
-              ->label()->setPlainText(QString::number(i + 1));
+            static_cast<Component*>(portList_.at(i))->label()->setPlainText(
+              QString::number(i + 1));
           break;
         }
       case OutItemType:
@@ -1456,8 +1480,8 @@ void SchematicScene::clearSupportedItem(QGraphicsItem* gItem)
         {
           portList_.removeAll(item);
           for(QList<Item*>::size_type i = 0; i < portList_.size(); ++i)
-            static_cast<Component*>(portList_.at(i))
-              ->label()->setPlainText(QString::number(i + 1));
+            static_cast<Component*>(portList_.at(i))->label()->setPlainText(
+              QString::number(i + 1));
           break;
         }
       case OutItemType:
@@ -1744,21 +1768,39 @@ void SchematicScene::initializeBrowser(QtAbstractPropertyBrowser* browser)
 }
 
 
-void SchematicScene::assignNodes()
+QVector<int> SchematicScene::ports() {
+  QVector<int> vector;
+  foreach(Item* item, portList_)
+    vector += static_cast<Component*>(item)->nodes();
+  
+  return vector;
+}
+
+
+void SchematicScene::assignNodes(int seed)
 {
   resetStatus();
-  int value = SchematicScene::Ground + 1;
 
   foreach(Item* item, groundList_)
     static_cast<Component*>(item)->propagate(SchematicScene::Ground);
   foreach(Item* item, wireList_)
-    value = static_cast<Wire*>(item)->propagate(value);
+    seed = static_cast<Wire*>(item)->propagate(seed);
   foreach(Item* item, standardList_)
-    value = static_cast<Component*>(item)->propagate(value);
+    seed = static_cast<Component*>(item)->propagate(seed);
+  foreach(Item* item, portList_)
+    seed = static_cast<Component*>(item)->propagate(seed);
   foreach(Item* item, userDefList_)
-    value = static_cast<Component*>(item)->propagate(value);
+    seed = static_cast<Component*>(item)->propagate(seed);
   if(out_)
-    value = static_cast<Component*>(out_)->propagate(value);
+    seed = static_cast<Component*>(out_)->propagate(seed);
+
+  // sub-circuits propagation
+  foreach(Item* item, userDefList_) {
+    QPointer<qsapecng::SchematicScene> rep =
+      item->data(101).value< QPointer<qsapecng::SchematicScene> >();
+
+    rep->assignNodes(seed);
+  }
 }
 
 
@@ -1770,10 +1812,17 @@ void SchematicScene::resetNodes()
     static_cast<Wire*>(item)->invalidate();
   foreach(Item* item, standardList_)
     static_cast<Component*>(item)->invalidate();
+  foreach(Item* item, portList_)
+    static_cast<Component*>(item)->invalidate();
   foreach(Item* item, userDefList_)
     static_cast<Component*>(item)->invalidate();
   if(out_)
     static_cast<Component*>(out_)->invalidate();
+
+  // sub-circuits reset
+  foreach(Item* item, userDefList_)
+    item->data(101)
+      .value< QPointer<qsapecng::SchematicScene> >()->resetNodes();
 }
 
 
@@ -2065,9 +2114,8 @@ void SchematicScene::dragEnterEvent(QGraphicsSceneDragDropEvent* event)
   }
 
   if(event->mimeData()->hasFormat("application/qsapecng-itemtype")) {
-    SupportedItemType type =
-      (SupportedItemType) event->mimeData()
-        ->data("application/qsapecng-itemtype").toInt();
+    SupportedItemType type = (SupportedItemType) event->mimeData()->data(
+      "application/qsapecng-itemtype").toInt();
 
     item_ = itemByType(type);
     if(item_) {
@@ -2172,7 +2220,6 @@ void SchematicScene::init()
       Qt::RoundJoin
     );
 
-  setupProperties();
   connect(undoRedoStack_, SIGNAL(indexChanged(int)),
     this, SLOT(resetNodes()));
 }
