@@ -2014,6 +2014,28 @@ void SchematicScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 }
 
 
+void SchematicScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+  if(!hasActiveItem() && !hasUserDefReq() && !hasPendingWire()
+      && itemAt(event->scenePos())) {
+    if(SchematicScene::itemType(itemAt(event->scenePos()))
+        == SchematicScene::UserDefItemType)
+    {
+      QGraphicsItem* item = itemAt(event->scenePos());
+      QPointer<qsapecng::SchematicScene> rep =
+        item->data(101).value< QPointer<qsapecng::SchematicScene> >();
+
+      emit(showUserDef(*rep));
+      event->accept();
+    }
+  }
+
+  if(SchematicScene::itemType(itemAt(event->scenePos()))
+      != SchematicScene::UserDefItemType)
+    QGraphicsScene::mousePressEvent(event);
+}
+
+
 void SchematicScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
 {
   if(!hasActiveItem() && !hasUserDefReq() && !hasPendingWire() && contextMenu_)

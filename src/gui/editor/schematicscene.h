@@ -195,10 +195,14 @@ public slots:
   void setGridVisible(bool visible = true);
   void resetStatus();
 
+signals:
+  void showUserDef(SchematicScene& scene);
+
 protected:
   void drawBackground(QPainter* painter, const QRectF& rect);
   void mousePressEvent(QGraphicsSceneMouseEvent* event);
   void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
   void contextMenuEvent(QGraphicsSceneContextMenuEvent* event);
   void keyPressEvent(QKeyEvent* event);
   bool event(QEvent* event);

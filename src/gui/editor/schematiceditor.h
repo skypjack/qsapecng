@@ -76,6 +76,7 @@ private slots:
   void fileNameChanged(const QString& fileName);
   void finished();
   void stateChanged(Qt::WindowStates oldState, Qt::WindowStates newState);
+  void showUserDef(SchematicScene& scene);
 
 protected:
   void closeEvent(QCloseEvent* event);

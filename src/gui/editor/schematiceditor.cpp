@@ -61,6 +61,8 @@ SchematicEditor::SchematicEditor(QWidget* parent, Qt::WindowFlags flags)
 
   setWidget(view_);
 
+  connect(scene_, SIGNAL(showUserDef(SchematicScene&)),
+    this, SLOT(showUserDef(SchematicScene&)));
   connect(scene_->undoRedoStack(), SIGNAL(indexChanged(int)),
     this, SLOT(setDirty()));
   connect(scene_->undoRedoStack(), SIGNAL(cleanChanged(bool)),
@@ -115,32 +117,40 @@ bool SchematicEditor::accept(WorkPlane& workplane)
 
   std::map<std::string, double> values;
   QList<Item*> items = scene_->activeItems();
-  foreach(Item* item, items)
-    if(SchematicScene::itemProperties(item)) {
-      QtProperty* props = SchematicScene::itemProperties(item);
+  while(!items.isEmpty()) {
+    Item* item = items.takeFirst();
+    
+    if(SchematicScene::itemType(item) == SchematicScene::UserDefItemType) {
+      items.append(item->data(101)
+        .value< QPointer<qsapecng::SchematicScene> >()->activeItems());
+    } else {
+      if(SchematicScene::itemProperties(item)) {
+        QtProperty* props = SchematicScene::itemProperties(item);
 
-      QHash<QString, QString> subs;
-      if(props) {
-        subs.insert("__NAME", props->valueText());
-        foreach(QtProperty* prop, props->subProperties())
-          subs.insert(prop->propertyName(), prop->valueText());
+        QHash<QString, QString> subs;
+        if(props) {
+          subs.insert("__NAME", props->valueText());
+          foreach(QtProperty* prop, props->subProperties())
+            subs.insert(prop->propertyName(), prop->valueText());
+        }
+
+        if(subs.contains("Value"))
+          values[subs.value("__NAME").toStdString()]
+            = subs.value("Value").toDouble();
+        else if(subs.contains("M"))
+          values[subs.value("__NAME").toStdString()]
+            = subs.value("M").toDouble();
+
+        if(subs.contains("lp:name") && subs.contains("lp:value"))
+          values[subs.value("lp:name").toStdString()]
+            = subs.value("lp:value").toDouble();
+
+        if(subs.contains("ls:name") && subs.contains("ls:value"))
+          values[subs.value("ls:name").toStdString()]
+            = subs.value("ls:value").toDouble();
       }
-
-      if(subs.contains("Value"))
-        values[subs.value("__NAME").toStdString()]
-          = subs.value("Value").toDouble();
-      else if(subs.contains("M"))
-        values[subs.value("__NAME").toStdString()]
-          = subs.value("M").toDouble();
-
-      if(subs.contains("lp:name") && subs.contains("lp:value"))
-        values[subs.value("lp:name").toStdString()]
-          = subs.value("lp:value").toDouble();
-
-      if(subs.contains("ls:name") && subs.contains("ls:value"))
-        values[subs.value("ls:name").toStdString()]
-          = subs.value("ls:value").toDouble();
     }
+  }
 
   workplane.setData(
       values,
@@ -332,6 +342,23 @@ void SchematicEditor::stateChanged(
 {
   scene_->undoRedoStack()->setActive(
     newState.testFlag(Qt::WindowActive) && !isRunning());
+}
+
+
+void SchematicEditor::showUserDef(SchematicScene& scene)
+{
+  SchematicView* view = new SchematicView;
+  view->setInteractive(false);
+  view->setScene(&scene);
+
+  QLayout* layout = new QVBoxLayout;
+  layout->addWidget(view);
+
+  QDialog* dialog = new QDialog(this);
+  dialog->setLayout(layout);
+  
+  dialog->exec();
+  delete dialog;
 }
 
 

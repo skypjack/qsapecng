@@ -14,6 +14,14 @@
     o http://stackoverflow.com/questions/30931/register-file-extensions-mime-types-in-linux
 - mantenendo la stessa icona, rederla più usabile su ambienti desktop
 
+- replotting nel workplane in thread separato o blocca tutto!! :-)
+
+- Application asked to unregister timer 0x34000004 which is not registered in this thread. Fix application.
+  Errore quando si passa al workplane... :-(
+
+- riscrivere il property editor, ad-hoc per QSapecNG!! :-(
+
+
 -------------------------------- REQUEST
 Dear Dr. Caini,
  
