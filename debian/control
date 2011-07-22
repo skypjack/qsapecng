@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Simone Rossetto <simros85@gmail.com>
 Uploaders: Georges Khaznadar <georgesk@ofset.org>
 Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6.0), libqt4-dev (>= 4.6.0), libqwt5-qt4-dev (>= 5.2.0), libboost-dev (>= 1.41.0), doxygen
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 Homepage: http://qsapecng.sourceforge.net/
 Vcs-Svn: https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/trunk
 Vcs-Browser: http://qsapecng.svn.sourceforge.net/viewvc/qsapecng/trunk
@@ -13,7 +13,7 @@ Package: qsapecng
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: qsapecng-doc (= ${binary:Version})
-Description: A Qt-based program for symbolic analysis of linear analog circuits.
+Description: symbolic analyzer and solver of linear analog circuits
  This program consists of two indipendent parts: the SapecNG framework engine
  and the GUI application QSapecNG.
  .
@@ -24,7 +24,9 @@ Description: A Qt-based program for symbolic analysis of linear analog circuits.
  compatibility on other platforms.
  .
  Through SapecNG/QSapecNG users can draw, solve and analyze analog circuits as
- well as manage them.
+ well as manage them. Since version 2.0.0beta1 there is also the full support
+ for sub-circuits that can be created, saved, reopened and added as part of
+ other circuits.
  .
  SapecNG/QSapecNG is freely available on SourceForge.net
  <https://sourceforge.net/projects/qsapecng/>. A previous version of SapecNG is
@@ -36,9 +38,11 @@ Section: doc
 Depends: ${misc:Depends}
 Recommends: qsapecng (= ${binary:Version})
 Suggests: doc-base
-Description: Documentation for QSapecNG program.
+Description: symbolic analyzer and solver of linear analog circuits (documentation)
  With QSapecNG users can draw, solve and analyze analog circuits as well as
- manage them.
+ manage them. Since version 2.0.0beta1 there is also the full support
+ for sub-circuits that can be created, saved, reopened and added as part of
+ other circuits.
  .
  This package contains the documentation of QSapecNG, that can also be read
  online at <http://qsapecng.sourceforge.net/>.

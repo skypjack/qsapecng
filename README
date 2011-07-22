@@ -1,6 +1,6 @@
 QSapecNG README
 ~~~~~~~~~~~~~~~~
-   QSapecNG v1.2.2
+   QSapecNG v2.0.0beta1
    Copyright (C) 2009-2011 Michele Caini
    GNU General Public License v3
 
@@ -24,7 +24,9 @@ What is it?
  order to give to the project a full compatibility on other platforms.
 
  Through SapecNG/QSapecNG users can draw, solve and analyze analog circuits as
- well as manage them.
+ well as manage them. Since version 2.0.0beta1 there is also the full support for
+ sub-circuits that can be created, saved, reopened and added as part of other
+ circuits.
 
  SapecNG/QSapecNG is freely available on SourceForge.net <https://sourceforge.net/projects/qsapecng/>.
  A previous version of SapecNG is available too, on SourceForge.net <https://sourceforge.net/projects/sapec-ng/>.
@@ -42,7 +44,10 @@ Installation
 
 ChangeLog
 ~~~~~~~~~
- * 1.2.2+svn (under development)
+ * 2.0.0beta1 (still under development)
+    o Added full support for sub-circuits that can be created, saved, reopened and
+      added as part of other circuits
+    o Minor fixes for memory leaks
     o Added 24x24 and 48x48 hicolor icons for GNU/Linux
     o ...
 
@@ -74,6 +79,9 @@ Requirements for building
    [optional, needed to generate tar.gz of source and binaries file on Unix]
  * tar+bzip (http://www.gnu.org/software/tar/ and http://www.bzip.org/)
    [optional, needed to generate tar.bz2 of source and binaries file on Unix]
+ 
+ Note for MacOS: in order to compile properly, you need the latest "MacOS compilation workaround"
+ patch available here https://sourceforge.net/tracker/?func=detail&aid=3269126&group_id=369990&atid=1541778
 
 
 Building and Installing
@@ -196,7 +204,7 @@ Note for (Slackware/Debian/RedHat)-based distributions
  
    checkinstall --default \
      --pkgname qsapecng \
-     --pkgversion 1.2.2 \
+     --pkgversion 2.0.0beta1 \
      --pkggroup electronics
 
 
@@ -222,7 +230,7 @@ Packages
 Translations
 ~~~~~~~~~~~~
  Currently only English language is supported.
- The Italian one is in progress and other ranslations are welcomed.
+ The Italian one is in progress and other translations are welcomed.
 
 
 Usage

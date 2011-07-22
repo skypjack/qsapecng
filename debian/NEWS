@@ -1,0 +1,10 @@
+qsapecng (2.0.0beta1-1) unstable; urgency=low
+
+    This new release has the full support for sub-circuits that can now be
+    created, saved, reopened and added as part of other circuits. This
+    functionality offers great flexibility for large and complex circuits,
+    in particular when a small portion of the circuit is repeated many times:
+    the small portion can be created and saved as a stand-alone circuit and
+    then added wherever needed in the bigger circuit.
+
+ -- Simone Rossetto <simros85@gmail.com>  Sun, 17 Jul 2011 11:25:10 +0200

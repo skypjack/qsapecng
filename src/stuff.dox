@@ -10,7 +10,8 @@
  * In fact, it consists of two indipendent parts: the SapecNG framework engine and the application gui QSapecNG. \n
  * It is an open source, multi-platform project, continuously enhanced by students and researchers of Department of Electronics and Telecommunications of the University of Florence. \n
  * It comes as continuation of SapWin for Windows, in order to give to the project a full compatibility on other platforms. \n
- * Through SapecNG/QSapecNG users can draw, solve and analyze analog circuits as well as manage them. \n
+ * Through SapecNG/QSapecNG users can draw, solve and analyze analog circuits as well as manage them. Since version 2.0.0beta1 there
+ * is also the full support for sub-circuits that can be created, saved, reopened and added as part of other circuits.\n
  * \n
  * SapecNG/QSapecNG is freely available on SourceForge.net (https://sourceforge.net/projects/qsapecng/). \n
  * A previous version of SapecNG is available too, on SourceForge.net (https://sourceforge.net/projects/sapec-ng/). \n
