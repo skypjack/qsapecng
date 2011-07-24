@@ -281,11 +281,17 @@ QPainterPath SchematicScene::ccvsPath()
   path.lineTo(4 * step, 5 * step);
   path.lineTo(5 * step, 5 * step);
 
-  path.moveTo(4 * step - step / 3, 2 * step + step / 4);
-  path.lineTo(4 * step, step - step / 4);
+  // path.moveTo(4 * step - step / 3, 2 * step + step / 4);
+  // path.lineTo(4 * step, step - step / 4);
 
-  path.moveTo(4 * step + step / 3, 2 * step + step / 4);
-  path.lineTo(4 * step, step - step / 4);
+  // path.moveTo(4 * step + step / 3, 2 * step + step / 4);
+  // path.lineTo(4 * step, step - step / 4);
+  
+  path.moveTo(4 * step - step / 3, 3 * step - step / 4);
+  path.lineTo(4 * step, 4 * step + step / 4);
+
+  path.moveTo(4 * step + step / 3, 3 * step - step / 4);
+  path.lineTo(4 * step, 4 * step + step / 4);
 
   return path;
 }
@@ -452,11 +458,11 @@ QPainterPath SchematicScene::vccsPath()
   path.moveTo(4 * step, 5 * step);
   path.lineTo(5 * step, 5 * step);
 
-  path.moveTo(4 * step, step - step / 4);
-  path.lineTo(4 * step, step + step / 4);
-
   path.moveTo(4 * step - step / 4, step);
   path.lineTo(4 * step + step / 4, step);
+
+  path.moveTo(4 * step, 4 * step - step / 4);
+  path.lineTo(4 * step, 4 * step + step / 4);
 
   path.moveTo(4 * step - step / 4, 4 * step);
   path.lineTo(4 * step + step / 4, 4 * step);
@@ -690,8 +696,8 @@ Item* SchematicScene::itemByType(SchematicScene::SupportedItemType type)
       QList<QPointF> nodes;
       nodes.push_back(QPointF(0, 0));
       nodes.push_back(QPointF(0, 5 * GridStep));
-      nodes.push_back(QPointF(5 * GridStep, 0));
       nodes.push_back(QPointF(5 * GridStep, 5 * GridStep));
+      nodes.push_back(QPointF(5 * GridStep, 0));
       item = new Component(ccvsPath(), nodes);
       break;
     }
@@ -741,8 +747,8 @@ Item* SchematicScene::itemByType(SchematicScene::SupportedItemType type)
       QList<QPointF> nodes;
       nodes.push_back(QPointF(0, 5 * GridStep));
       nodes.push_back(QPointF(0, 0));
-      nodes.push_back(QPointF(5 * GridStep, 0));
       nodes.push_back(QPointF(5 * GridStep, 5 * GridStep));
+      nodes.push_back(QPointF(5 * GridStep, 0));
       item = new Component(vccsPath(), nodes);
       break;
     }

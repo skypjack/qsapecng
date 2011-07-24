@@ -1,3 +1,8 @@
+****** to ChangeLog ******
+- CCVS / VCVS avevano modelli grafici non standard --> adattati i versi delle correnti / tensioni
+****** to ChangeLog ******
+
+
 - IMPORTANTE: port come oggetti a sé stile wire anziché component?
 
 - refactoring:
@@ -19,7 +24,14 @@
 - Application asked to unregister timer 0x34000004 which is not registered in this thread. Fix application.
   Errore quando si passa al workplane... :-(
 
-- riscrivere il property editor, ad-hoc per QSapecNG!! :-(
+- evolutiva: sarebbe utile un modo per scalare dentro gli userdef, con view annidate?
+
+- IMPORTANTE: riscrivere il property editor, ad-hoc per QSapecNG!! :-(
+  --> introdurrei piuttosto una combo box da giga e più a micro e giù... :-)
+
+- J.C.: Matlab function output
+- J.C.: output like 10k, 1p, etc.
+- J.C.: polarity on Ammeter / Voltmeter
 
 
 -------------------------------- REQUEST
