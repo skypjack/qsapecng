@@ -22,7 +22,6 @@
 
 
 #include <QtGui/QGraphicsScene>
-#include <QtGui/QUndoStack>
 
 #include <QtCore/QList>
 #include <QtCore/QRect>

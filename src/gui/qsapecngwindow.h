@@ -139,9 +139,9 @@ private slots:
   void updatePropertyBrowser();
   void updateDocks();
 
-  SchematicEditor* createSchematicEditor();
   void setActiveSubWindow(QWidget* window);
   void subWindowActivated(QMdiSubWindow* window);
+  void stackEditor(SchematicEditor* editor);
   
 signals:
   void toggleGrid(bool visible);
@@ -165,6 +165,8 @@ private:
 
   SchematicEditor* activeEditor();
   QMdiSubWindow* findEditor(const QString& fileName);
+  SchematicEditor* createSchematicEditor();
+  void setupSchematicEditor(SchematicEditor* editor);
 
   void updateRecentFileList(const QString& fileName);
   void loadRecentFileList();

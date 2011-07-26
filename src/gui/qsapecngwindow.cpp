@@ -728,33 +728,6 @@ void QSapecNGWindow::updateDocks()
 }
 
 
-SchematicEditor* QSapecNGWindow::createSchematicEditor()
-{
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  SchematicEditor* editor = new SchematicEditor;
-  editor->scene().initializeBrowser(treeBrowser_);
-  editor->scene().setGridVisible(toggleGridAct_->isChecked());
-  editor->scene().setContextMenu(sceneMenu_);
-
-  undoRedoGroup_->addStack(editor->scene().undoRedoStack());
-  editor->scene().undoRedoStack()->setActive(true);
-
-  connect(this, SIGNAL(toggleGrid(bool)),
-      &(editor->scene()), SLOT(setGridVisible(bool)));
-  connect(&(editor->scene()), SIGNAL(selectionChanged()),
-      this, SLOT(sceneSelectionChanged()));
-
-  editor->setAttribute(Qt::WA_DeleteOnClose);
-  editor->setWindowIcon(QIcon(":/images/grid.png"));
-  mdiArea_->addSubWindow(editor, Qt::SubWindow);
-
-  QApplication::restoreOverrideCursor();
-
-  return editor;
-}
-
-
 void QSapecNGWindow::createLogger()
 {
   policy_ = new QLogPolicy(this);
@@ -1441,6 +1414,41 @@ QMdiSubWindow* QSapecNGWindow::findEditor(const QString& fileName)
 }
 
 
+SchematicEditor* QSapecNGWindow::createSchematicEditor()
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  SchematicEditor* editor = new SchematicEditor;
+  setupSchematicEditor(editor);
+
+  QApplication::restoreOverrideCursor();
+
+  return editor;
+}
+
+
+void QSapecNGWindow::setupSchematicEditor(SchematicEditor* editor)
+{
+  editor->scene().initializeBrowser(treeBrowser_);
+  editor->scene().setGridVisible(toggleGridAct_->isChecked());
+  editor->scene().setContextMenu(sceneMenu_);
+
+  undoRedoGroup_->addStack(editor->scene().undoRedoStack());
+  editor->scene().undoRedoStack()->setActive(true);
+
+  connect(editor, SIGNAL(stackEditor(SchematicEditor*)),
+    this, SLOT(stackEditor(SchematicEditor*)));
+  connect(&(editor->scene()), SIGNAL(selectionChanged()),
+      this, SLOT(sceneSelectionChanged()));
+  connect(this, SIGNAL(toggleGrid(bool)),
+      &(editor->scene()), SLOT(setGridVisible(bool)));
+
+  editor->setAttribute(Qt::WA_DeleteOnClose);
+  editor->setWindowIcon(QIcon(":/images/grid.png"));
+  mdiArea_->addSubWindow(editor, Qt::SubWindow);
+}
+
+
 void QSapecNGWindow::updateRecentFileList(const QString& fileName)
 {
   QStringList files = Settings().recentFiles();
@@ -1582,6 +1590,17 @@ void QSapecNGWindow::subWindowActivated(QMdiSubWindow* window)
       undoRedoGroup_->setActiveStack(0);
     }
   }
+}
+
+
+void QSapecNGWindow::stackEditor(SchematicEditor* editor)
+{
+  setupSchematicEditor(editor);
+  central_->setCurrentWidget(mdiArea_);
+  setActiveSubWindow(editor);
+  editor->show();
+
+  statusBar()->showMessage(tr("Component loaded"), 2000);
 }
 
 

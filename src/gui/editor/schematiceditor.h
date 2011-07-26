@@ -43,16 +43,21 @@ class SchematicEditor: public QMdiSubWindow
 
 public:
   SchematicEditor(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+  SchematicEditor(
+      SchematicScene& scene,
+      QWidget* parent = 0,
+      Qt::WindowFlags flags = 0
+    );
 
-  SchematicView& view() const { return *view_; }
-  SchematicScene& scene() const { return *scene_; }
+  inline SchematicView& view() const { return *view_; }
+  inline SchematicScene& scene() const { return *scene_; }
 
   inline bool isUntitled() const { return isUntitled_; }
   QString userFriendlyCurrentFile() const;
   QString currentFile() const;
 
-  bool isRunning() const { return solver_.isRunning(); }
-  bool isSolved() const { return solved_; }
+  inline bool isRunning() const { return solver_.isRunning(); }
+  inline bool isSolved() const { return solved_; }
 
   bool accept(WorkPlane& workplane);
 
@@ -66,6 +71,8 @@ public slots:
   void cleanChanged(bool clean);
 
 signals:
+  void stackEditor(SchematicEditor* editor);
+  
   void fileSaved(const QString& fileName);
   void fileLoaded(const QString& fileName);
   void solved();
@@ -86,6 +93,7 @@ private:
   void setCurrentFile(const QString& fileName);
   QString strippedName(const QString& fullFileName) const;
   bool maybeSave();
+  void init();
 
 private:
   MetaCircuit_Thread solver_;

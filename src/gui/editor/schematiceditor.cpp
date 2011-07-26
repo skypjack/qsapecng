@@ -50,36 +50,18 @@ SchematicEditor::SchematicEditor(QWidget* parent, Qt::WindowFlags flags)
   : QMdiSubWindow(parent, flags), solved_(false)
 {
   scene_ = new SchematicScene(this);
-  view_ = new SchematicView(this);
+  init();
+}
 
-  view_->setScene(scene_);
-  connect(scene_, SIGNAL(sceneRectChanged(const QRectF&)),
-    view_, SLOT(updateSceneRect(const QRectF&)));
-//   scene_->setSceneRect(0, 0, 1024, 768);
-  scene_->setSceneRect(QRectF());
-  scene_->addRect(0, 0, 1E-99, 1E-99)->setVisible(false);
 
-  setWidget(view_);
-
-  connect(scene_, SIGNAL(showUserDef(SchematicScene&)),
-    this, SLOT(showUserDef(SchematicScene&)));
-  connect(scene_->undoRedoStack(), SIGNAL(indexChanged(int)),
-    this, SLOT(setDirty()));
-  connect(scene_->undoRedoStack(), SIGNAL(cleanChanged(bool)),
-    this, SLOT(cleanChanged(bool)));
-
-  connect(&solver_, SIGNAL(finished()), this, SLOT(finished()));
-
-  connect(this, SIGNAL(windowStateChanged(Qt::WindowStates,Qt::WindowStates)),
-    this, SLOT(stateChanged(Qt::WindowStates,Qt::WindowStates)));
-
-  isUntitled_ = true;
-  curFile_ = tr("Untitled");
-
-  setGeometry(0, 0, 640, 480);
-  setWindowTitle(curFile_ + "[*]");
-  setWindowIcon(QIcon(":/images/grid.png"));
-  setAttribute(Qt::WA_DeleteOnClose);
+SchematicEditor::SchematicEditor(
+    SchematicScene& scene,
+    QWidget* parent,
+    Qt::WindowFlags flags
+  ) : QMdiSubWindow(parent, flags), solved_(false)
+{
+  scene_ = &scene;
+  init();
 }
 
 
@@ -126,8 +108,8 @@ bool SchematicEditor::accept(WorkPlane& workplane)
     } else {
       if(SchematicScene::itemProperties(item)) {
         QtProperty* props = SchematicScene::itemProperties(item);
-
         QHash<QString, QString> subs;
+        
         if(props) {
           subs.insert("__NAME", props->valueText());
           foreach(QtProperty* prop, props->subProperties())
@@ -191,6 +173,7 @@ bool SchematicEditor::saveAs()
 bool SchematicEditor::saveFile(const QString& fileName)
 {
   QFile file(fileName);
+  
   if(!file.open(QFile::WriteOnly | QFile::Text)) {
     QMessageBox::warning(this, tr("Write file"),
       tr("Unable to write file ")
@@ -198,6 +181,7 @@ bool SchematicEditor::saveFile(const QString& fileName)
           .arg(fileName)
           .arg(file.errorString())
     );
+    
     return false;
   } else {
     file.close();
@@ -347,18 +331,16 @@ void SchematicEditor::stateChanged(
 
 void SchematicEditor::showUserDef(SchematicScene& scene)
 {
-  SchematicView* view = new SchematicView;
-  view->setInteractive(false);
-  view->setScene(&scene);
+  SchematicEditor* editor = new SchematicEditor(scene, this);
+  if(!isWindowModified())
+    editor->scene().undoRedoStack()->setClean();
 
-  QLayout* layout = new QVBoxLayout;
-  layout->addWidget(view);
+  disconnect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
+    editor, SLOT(cleanChanged(bool)));
+  connect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
+    this, SLOT(cleanChanged(bool)));
 
-  QDialog* dialog = new QDialog(this);
-  dialog->setLayout(layout);
-  
-  dialog->exec();
-  delete dialog;
+  emit(stackEditor(editor));
 }
 
 
@@ -367,6 +349,7 @@ void SchematicEditor::closeEvent(QCloseEvent *event)
   if(maybeSave()) {
     if(solver_.isRunning())
       solver_.wait();
+    
     QMdiSubWindow::closeEvent(event);
     event->accept();
   } else {
@@ -465,6 +448,7 @@ bool SchematicEditor::maybeSave()
       QMessageBox::Save | QMessageBox::Discard
         | QMessageBox::Cancel
       );
+    
     if(ret == QMessageBox::Save)
       return save();
     else if(ret == QMessageBox::Cancel)
@@ -472,6 +456,41 @@ bool SchematicEditor::maybeSave()
   }
 
   return true;
+}
+
+
+void SchematicEditor::init()
+{
+  view_ = new SchematicView(this);
+
+  view_->setScene(scene_);
+  connect(scene_, SIGNAL(sceneRectChanged(const QRectF&)),
+    view_, SLOT(updateSceneRect(const QRectF&)));
+//   scene_->setSceneRect(0, 0, 1024, 768);
+  scene_->setSceneRect(QRectF());
+  scene_->addRect(0, 0, 1E-99, 1E-99)->setVisible(false);
+
+  setWidget(view_);
+
+  connect(scene_, SIGNAL(showUserDef(SchematicScene&)),
+    this, SLOT(showUserDef(SchematicScene&)));
+  connect(scene_->undoRedoStack(), SIGNAL(indexChanged(int)),
+    this, SLOT(setDirty()));
+  connect(scene_->undoRedoStack(), SIGNAL(cleanChanged(bool)),
+    this, SLOT(cleanChanged(bool)));
+
+  connect(&solver_, SIGNAL(finished()), this, SLOT(finished()));
+
+  connect(this, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)),
+    this, SLOT(stateChanged(Qt::WindowStates, Qt::WindowStates)));
+
+  isUntitled_ = true;
+  curFile_ = tr("Untitled");
+
+  setGeometry(0, 0, 640, 480);
+  setWindowTitle(curFile_ + "[*]");
+  setWindowIcon(QIcon(":/images/grid.png"));
+  setAttribute(Qt::WA_DeleteOnClose);
 }
 
 

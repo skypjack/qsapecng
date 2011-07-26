@@ -1,5 +1,6 @@
 ****** to ChangeLog ******
 - CCVS / VCVS avevano modelli grafici non standard --> adattati i versi delle correnti / tensioni
+- editing in-place dei sottocircuiti (editor anziché dialog di visualizzazione)
 ****** to ChangeLog ******
 
 
@@ -24,14 +25,16 @@
 - Application asked to unregister timer 0x34000004 which is not registered in this thread. Fix application.
   Errore quando si passa al workplane... :-(
 
-- evolutiva: sarebbe utile un modo per scalare dentro gli userdef, con view annidate?
+- closeEvent in qsapecngwindow.cpp non torna mica tanto!! :-D
 
-- IMPORTANTE: riscrivere il property editor, ad-hoc per QSapecNG!! :-(
-  --> introdurrei piuttosto una combo box da giga e più a micro e giù... :-)
+
+- PROPERTY EDITOR
+bridge + composite, con traits per widget e concept checking; generatore albero di editing automatico.
 
 - J.C.: Matlab function output
 - J.C.: output like 10k, 1p, etc.
 - J.C.: polarity on Ammeter / Voltmeter
+- J.C.: Approximate solution (vedi Luchetta e SapWin)
 
 
 -------------------------------- REQUEST
