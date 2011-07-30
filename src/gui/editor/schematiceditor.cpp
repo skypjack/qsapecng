@@ -27,6 +27,7 @@
 #include "gui/settings.h"
 #include "gui/qlogger.h"
 
+#include <QtCore/QPointer>
 #include <QtCore/QFileInfo>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
@@ -291,12 +292,6 @@ void SchematicEditor::solve()
 }
 
 
-void SchematicEditor::cleanChanged(bool clean)
-{
-  setWindowModified(!clean);
-}
-
-
 void SchematicEditor::reset()
 {
   scene_->clearSchematicScene();
@@ -332,15 +327,27 @@ void SchematicEditor::stateChanged(
 void SchematicEditor::showUserDef(SchematicScene& scene)
 {
   SchematicEditor* editor = new SchematicEditor(scene, this);
-  if(!isWindowModified())
-    editor->scene().undoRedoStack()->setClean();
+  editor->scene().undoRedoStack()->setClean();
 
   disconnect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
     editor, SLOT(cleanChanged(bool)));
   connect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
-    this, SLOT(cleanChanged(bool)));
+    this, SLOT(userDefCleanChanged(bool)));
+  connect(this, SIGNAL(aboutToCloseEditor()), editor, SLOT(close()));
 
   emit(stackEditor(editor));
+}
+
+
+void SchematicEditor::cleanChanged(bool clean)
+{
+  setWindowModified(!clean);
+}
+
+
+void SchematicEditor::userDefCleanChanged(bool clean)
+{
+  cleanChanged(!isWindowModified() && clean);
 }
 
 
@@ -351,6 +358,7 @@ void SchematicEditor::closeEvent(QCloseEvent *event)
       solver_.wait();
     
     QMdiSubWindow::closeEvent(event);
+    emit(aboutToCloseEditor());
     event->accept();
   } else {
     event->ignore();

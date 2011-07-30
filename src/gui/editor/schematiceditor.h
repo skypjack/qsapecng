@@ -68,10 +68,9 @@ public slots:
   bool loadFile(const QString& fileName);
   void solve();
 
-  void cleanChanged(bool clean);
-
 signals:
   void stackEditor(SchematicEditor* editor);
+  void aboutToCloseEditor();
   
   void fileSaved(const QString& fileName);
   void fileLoaded(const QString& fileName);
@@ -84,6 +83,8 @@ private slots:
   void finished();
   void stateChanged(Qt::WindowStates oldState, Qt::WindowStates newState);
   void showUserDef(SchematicScene& scene);
+  void userDefCleanChanged(bool clean);
+  void cleanChanged(bool clean);
 
 protected:
   void closeEvent(QCloseEvent* event);

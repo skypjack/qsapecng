@@ -1,5 +1,5 @@
 /*
-    SapecNG - Next Generation Symbolic Analysis Program for Electric Circuit
+    QSapecNG - Qt based SapecNG GUI front-end
     Copyright (C) 2009, Michele Caini
 
     This program is free software: you can redistribute it and/or modify
