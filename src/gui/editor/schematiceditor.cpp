@@ -164,6 +164,7 @@ bool SchematicEditor::saveAs()
         .arg(tr("XML files (*.xml)"))
         .arg(tr("Netlist files (*.crc)"))
     );
+
   if(fileName.isEmpty())
     return false;
 
@@ -208,6 +209,7 @@ bool SchematicEditor::saveFile(const QString& fileName)
   delete out;
 
   setCurrentFile(fileName);
+  externalCleanChanged_ = true;
   scene_->undoRedoStack()->setClean();
   emit fileSaved(fileName);
 
@@ -258,6 +260,7 @@ bool SchematicEditor::loadFile(const QString& fileName)
     delete out;
 
     setCurrentFile(fileName);
+    externalCleanChanged_ = true;
     scene_->undoRedoStack()->setClean();
     emit fileLoaded(fileName);
 
@@ -332,22 +335,24 @@ void SchematicEditor::showUserDef(SchematicScene& scene)
   disconnect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
     editor, SLOT(cleanChanged(bool)));
   connect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
-    this, SLOT(userDefCleanChanged(bool)));
+    this, SLOT(externalCleanChanged()));
   connect(this, SIGNAL(aboutToCloseEditor()), editor, SLOT(close()));
 
   emit(stackEditor(editor));
 }
 
 
-void SchematicEditor::cleanChanged(bool clean)
+void SchematicEditor::externalCleanChanged()
 {
-  setWindowModified(!clean);
+  externalCleanChanged_ = false;
+  cleanChanged();
 }
 
 
-void SchematicEditor::userDefCleanChanged(bool clean)
+void SchematicEditor::cleanChanged(bool clean)
 {
-  cleanChanged(!isWindowModified() && clean);
+  setWindowModified(!externalCleanChanged_ || !clean);
+  setDirty();
 }
 
 
@@ -480,10 +485,10 @@ void SchematicEditor::init()
 
   setWidget(view_);
 
+  connect(scene_, SIGNAL(propertyChanged()),
+    this, SLOT(externalCleanChanged()));
   connect(scene_, SIGNAL(showUserDef(SchematicScene&)),
     this, SLOT(showUserDef(SchematicScene&)));
-  connect(scene_->undoRedoStack(), SIGNAL(indexChanged(int)),
-    this, SLOT(setDirty()));
   connect(scene_->undoRedoStack(), SIGNAL(cleanChanged(bool)),
     this, SLOT(cleanChanged(bool)));
 
@@ -492,8 +497,9 @@ void SchematicEditor::init()
   connect(this, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)),
     this, SLOT(stateChanged(Qt::WindowStates, Qt::WindowStates)));
 
-  isUntitled_ = true;
   curFile_ = tr("Untitled");
+  isUntitled_ = true;
+  externalCleanChanged_ = true;
 
   setGeometry(0, 0, 640, 480);
   setWindowTitle(curFile_ + "[*]");

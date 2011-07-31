@@ -23,10 +23,13 @@
 #include "gui/functor/functor_traits.hpp"
 #include "gui/qlogger.h"
 
+#include <QtCore/QRegExp>
+#include <QtGui/QRegExpValidator>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFormLayout>
 #include <QtGui/QGroupBox>
+#include <QtGui/QLineEdit>
 #include <QtGui/QDoubleSpinBox>
 #include <QtGui/QPushButton>
 #include <QtGui/QLabel>
@@ -223,10 +226,13 @@ void WorkPlane::setData(
   {
     QLabel* left = new QLabel(QString::fromStdString(i->first));
     left->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    QDoubleSpinBox* right = new QDoubleSpinBox;
-    right->setMaximum(std::numeric_limits<double>::max());
-    right->setMinimum(std::numeric_limits<double>::min());
-    right->setValue(i->second);
+    
+    QLineEdit* right = new QLineEdit;
+    right->setText(QString::number(i->second));
+    QRegExp sn("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+    QRegExpValidator* validator = new QRegExpValidator(sn, right);
+    right->setValidator(validator);
+    
     data_->setCellWidget(row, 0, left);
     data_->setCellWidget(row, 1, right);
   }
@@ -553,7 +559,8 @@ std::map<std::string, double> WorkPlane::actValues() const
   for(int i = 0; i < data_->rowCount(); ++i)
     values[qobject_cast<const QLabel*>(
         data_->cellWidget(i, 0))->text().toStdString()] =
-      qobject_cast<const QDoubleSpinBox*>(data_->cellWidget(i, 1))->value();
+      qobject_cast<const QLineEdit*>(
+	data_->cellWidget(i, 1))->text().toDouble();
 
   return values;
 }

@@ -78,19 +78,19 @@ signals:
 
 private slots:
   void reset();
-  void setDirty() { solved_ = false; }
   void fileNameChanged(const QString& fileName);
   void finished();
   void stateChanged(Qt::WindowStates oldState, Qt::WindowStates newState);
   void showUserDef(SchematicScene& scene);
-  void userDefCleanChanged(bool clean);
-  void cleanChanged(bool clean);
+  void cleanChanged(bool clean = false);
+  void externalCleanChanged();
 
 protected:
   void closeEvent(QCloseEvent* event);
 
 private:
   void showResult();
+  void setDirty() { solved_ = false; }
   void setCurrentFile(const QString& fileName);
   QString strippedName(const QString& fullFileName) const;
   bool maybeSave();
@@ -105,6 +105,7 @@ private:
 
   QString curFile_;
   bool isUntitled_;
+  bool externalCleanChanged_;
 
 };
 

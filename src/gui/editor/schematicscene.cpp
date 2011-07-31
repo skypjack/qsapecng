@@ -33,16 +33,15 @@
 #include "gui/qtsolutions/qtpropertyeditor/QtBoolPropertyManager"
 #include "gui/qtsolutions/qtpropertyeditor/QtGroupPropertyManager"
 #include "gui/qtsolutions/qtpropertyeditor/QtStringPropertyManager"
-#include "gui/qtsolutions/qtpropertyeditor/QtDoublePropertyManager"
 
 #include "gui/qtsolutions/qtpropertyeditor/QtLineEditFactory"
 #include "gui/qtsolutions/qtpropertyeditor/QtCheckBoxFactory"
-#include "gui/qtsolutions/qtpropertyeditor/QtDoubleSpinBoxFactory"
 
 #include "gui/qtsolutions/qtpropertyeditor/QtAbstractPropertyBrowser"
 #include "gui/qtsolutions/qtpropertyeditor/QtProperty"
 
 #include <QtCore/QEvent>
+#include <QtCore/QRegExp>
 #include <QtCore/QCryptographicHash>
 #include <QtCore/QPointer>
 
@@ -1253,20 +1252,24 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
               boolManager_->setValue(pS, true);
 
               QtProperty* pV =
-                doubleManager_->addProperty(
+                stringManager_->addProperty(
                     type == MutualInductanceItemType
                   ? tr("M")
                   : tr("Value")
                 );
 
-              doubleManager_->setValue(pV, 1.0);
+              stringManager_->setValue(pV, "1.0");
               if(type == CapacitorItemType
                   || type == ConductanceItemType
                   || type == InductorItemType
                   || type == ResistorItemType
                 )
               {
-                doubleManager_->setMinimum(pV, 0.0);
+                QRegExp sn("[+]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+                stringManager_->setRegExp(pV, sn);
+              } else {
+                QRegExp sn("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+                stringManager_->setRegExp(pV, sn);
               }
 
               name->addSubProperty(pS);
@@ -1275,14 +1278,18 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
 
             if(type == MutualInductanceItemType) {
               QtProperty* lpn = stringManager_->addProperty(tr("lp:name"));
-              QtProperty* lpv = doubleManager_->addProperty(tr("lp:value"));
+              QtProperty* lpv = stringManager_->addProperty(tr("lp:value"));
               QtProperty* lsn = stringManager_->addProperty(tr("ls:name"));
-              QtProperty* lsv = doubleManager_->addProperty(tr("ls:value"));
+              QtProperty* lsv = stringManager_->addProperty(tr("ls:value"));
 
               stringManager_->setValue(lpn, name->valueText() + "_Lp");
               stringManager_->setValue(lsn, name->valueText() + "_Ls");
-              doubleManager_->setValue(lpv, 1.0);
-              doubleManager_->setValue(lsv, 1.0);
+
+              QRegExp sn("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+              stringManager_->setRegExp(lpv, sn);
+              stringManager_->setValue(lpv, "1.0");
+              stringManager_->setRegExp(lsv, sn);
+              stringManager_->setValue(lsv, "1.0");
 
               name->addSubProperty(lpn);
               name->addSubProperty(lpv);
@@ -1770,7 +1777,6 @@ void SchematicScene::initializeBrowser(QtAbstractPropertyBrowser* browser)
   browser_ = browser;
   browser_->setFactoryForManager(boolManager_, checkBoxFactory_);
   browser_->setFactoryForManager(stringManager_, lineEditFactory_);
-  browser_->setFactoryForManager(doubleManager_, spinBoxFactory_);
 }
 
 
@@ -2259,15 +2265,17 @@ void SchematicScene::setupProperties()
 
   boolManager_ = new QtBoolPropertyManager(this);
   stringManager_ = new QtStringPropertyManager(this);
-  doubleManager_ = new QtDoublePropertyManager(this);
+
+  connect(boolManager_, SIGNAL(propertyChanged(QtProperty*)),
+    this, SIGNAL(propertyChanged()));
+  connect(stringManager_, SIGNAL(propertyChanged(QtProperty*)),
+    this, SIGNAL(propertyChanged()));
 
   lineEditFactory_ = new QtLineEditFactory(this);
   checkBoxFactory_ = new QtCheckBoxFactory(this);
-  spinBoxFactory_ = new QtDoubleSpinBoxFactory(this);
 
   lineEditFactory_->addPropertyManager(stringManager_);
   checkBoxFactory_->addPropertyManager(boolManager_);
-  spinBoxFactory_->addPropertyManager(doubleManager_);
 
   properties_ = groupManager_->addProperty(tr("Circuit"));
 

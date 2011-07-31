@@ -1,6 +1,10 @@
 ****** to ChangeLog ******
-- CCVS / VCVS avevano modelli grafici non standard --> adattati i versi delle correnti / tensioni
-- editing in-place dei sottocircuiti (editor anziché dialog di visualizzazione)
+- CCVS / VCVS standard graphic models
+- subcircuits in-place editing
+- property editor support for scientific notation
+- workplane support for scientific notation
+- properties changes aware schematic editor
+- enhanced control on schematic editor dirty state
 ****** to ChangeLog ******
 
 
@@ -26,9 +30,6 @@
   Errore quando si passa al workplane... :-(
 
 - closeEvent in qsapecngwindow non torna mica tanto! :-D
-
-- PROPERTY EDITOR
-bridge + composite, con traits per widget e concept checking; generatore albero di editing automatico.
 
 - J.C.: Matlab function output
 - J.C.: output like 10k, 1p, etc.

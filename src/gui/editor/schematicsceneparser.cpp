@@ -25,7 +25,6 @@
 
 #include "gui/qtsolutions/qtpropertyeditor/QtBoolPropertyManager"
 #include "gui/qtsolutions/qtpropertyeditor/QtStringPropertyManager"
-#include "gui/qtsolutions/qtpropertyeditor/QtDoublePropertyManager"
 #include "gui/qtsolutions/qtpropertyeditor/QtProperty"
 
 #include <QtCore/QPointF>
@@ -793,13 +792,13 @@ void SchematicSceneBuilder::setup_properties(
   }
 
   if(subproperties.contains("Value")) {
-    QtDoublePropertyManager* dpm =
-      qobject_cast<QtDoublePropertyManager*>(
+    QtStringPropertyManager* spm =
+      qobject_cast<QtStringPropertyManager*>(
         subproperties.value("Value")->propertyManager());
-      if(dpm)
-        dpm->setValue(
+      if(spm)
+        spm->setValue(
             subproperties.value("Value"),
-            value
+            QString::number(value)
           );
   }
 
@@ -826,13 +825,14 @@ void SchematicSceneBuilder::setup_properties(
   }
 
   if(subproperties.contains("lp:value")) {
-    QtDoublePropertyManager* dpm =
-      qobject_cast<QtDoublePropertyManager*>(
+    QtStringPropertyManager* spm =
+      qobject_cast<QtStringPropertyManager*>(
         subproperties.value("lp:value")->propertyManager());
-      if(dpm)
-        dpm->setValue(
+      if(spm)
+        spm->setValue(
             subproperties.value("lp:value"),
-            QString::fromStdString(props["lp:value"]).toDouble()
+            QString::number(
+              QString::fromStdString(props["lp:value"]).toDouble())
           );
   }
 
@@ -848,13 +848,14 @@ void SchematicSceneBuilder::setup_properties(
   }
 
   if(subproperties.contains("ls:value")) {
-    QtDoublePropertyManager* dpm =
-      qobject_cast<QtDoublePropertyManager*>(
+    QtStringPropertyManager* spm =
+      qobject_cast<QtStringPropertyManager*>(
         subproperties.value("ls:value")->propertyManager());
-      if(dpm)
-        dpm->setValue(
+      if(spm)
+        spm->setValue(
             subproperties.value("ls:value"),
-            QString::fromStdString(props["ls:value"]).toDouble()
+            QString::number(
+              QString::fromStdString(props["ls:value"]).toDouble())
           );
   }
 }

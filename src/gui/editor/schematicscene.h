@@ -48,11 +48,9 @@ class QGraphicsSceneContextMenuEvent;
 class QtBoolPropertyManager;
 class QtGroupPropertyManager;
 class QtStringPropertyManager;
-class QtDoublePropertyManager;
 
 class QtLineEditFactory;
 class QtCheckBoxFactory;
-class QtDoubleSpinBoxFactory;
 
 class QtAbstractPropertyBrowser;
 class QtProperty;
@@ -196,6 +194,7 @@ public slots:
 
 signals:
   void showUserDef(SchematicScene& scene);
+  void propertyChanged();
 
 protected:
   void drawBackground(QPainter* painter, const QRectF& rect);
@@ -260,10 +259,8 @@ private:
   QtBoolPropertyManager* boolManager_;
   QtGroupPropertyManager* groupManager_;
   QtStringPropertyManager* stringManager_;
-  QtDoublePropertyManager* doubleManager_;
   QtLineEditFactory* lineEditFactory_;
   QtCheckBoxFactory* checkBoxFactory_;
-  QtDoubleSpinBoxFactory* spinBoxFactory_;
 
   QtProperty* properties_;
   QHash<SupportedItemType, unsigned int> itemCntMap_;
