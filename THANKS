@@ -1,3 +1,6 @@
+Thanks to Droscy and his work as packager.
+
+
 Thanks to C. R. Bond for Jenkins-Traub real polynomial root finder implementation.
   [http://www.crbond.com/download/misc/rpoly.cpp]
 Source code has been used as-is, filtered by an adapter function.
