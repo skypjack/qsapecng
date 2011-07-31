@@ -332,9 +332,7 @@ void SchematicEditor::showUserDef(SchematicScene& scene)
   SchematicEditor* editor = new SchematicEditor(scene, this);
   editor->scene().undoRedoStack()->setClean();
 
-  disconnect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
-    editor, SLOT(cleanChanged(bool)));
-  connect(editor->scene().undoRedoStack(), SIGNAL(cleanChanged(bool)),
+  connect(editor, SIGNAL(dirtyChanged(bool)),
     this, SLOT(externalCleanChanged()));
   connect(this, SIGNAL(aboutToCloseEditor()), editor, SLOT(close()));
 
@@ -368,6 +366,13 @@ void SchematicEditor::closeEvent(QCloseEvent *event)
   } else {
     event->ignore();
   }
+}
+
+
+void SchematicEditor::setDirty()
+{
+  solved_ = false;
+  emit dirtyChanged(solved_);
 }
 
 
@@ -491,6 +496,8 @@ void SchematicEditor::init()
     this, SLOT(showUserDef(SchematicScene&)));
   connect(scene_->undoRedoStack(), SIGNAL(cleanChanged(bool)),
     this, SLOT(cleanChanged(bool)));
+  connect(scene_->undoRedoStack(), SIGNAL(indexChanged(int)),
+    this, SLOT(cleanChanged()));
 
   connect(&solver_, SIGNAL(finished()), this, SLOT(finished()));
 

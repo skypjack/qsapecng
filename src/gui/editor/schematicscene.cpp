@@ -157,6 +157,15 @@ QPainterPath SchematicScene::voltmeterPath()
   path.lineTo(step, 3 * step);
   path.lineTo(step + step / 2, 2 * step);
 
+  path.moveTo(step + step / 2, step / 2 - step / 4);
+  path.lineTo(step + step / 2, step / 2 + step / 4);
+
+  path.moveTo(step + step / 2 - step / 4, step / 2);
+  path.lineTo(step + step / 2 + step / 4, step / 2);
+
+  path.moveTo(step + step / 2 - step / 4, 4 * step + step / 2);
+  path.lineTo(step + step / 2 + step / 4, 4 * step + step / 2);
+
   return path;
 }
 
@@ -183,6 +192,13 @@ QPainterPath SchematicScene::ammeterPath()
 
   path.moveTo(step + step / 4, 2 * step + step / 2);
   path.lineTo(step - step / 4, 2 * step + step / 2);
+
+  path.moveTo(step / 2, 5 * step / 4);
+  path.lineTo(step / 2, step / 4);
+  path.moveTo(step / 2 - step / 4, 2 * step / 4);
+  path.lineTo(step / 2, step / 4);
+  path.moveTo(step / 2 + step / 4, 2 * step / 4);
+  path.lineTo(step / 2, step / 4);
 
   return path;
 }
@@ -219,8 +235,8 @@ QPainterPath SchematicScene::cccsPath()
   path.lineTo(2 * step, 3 * step + step / 2);
   path.lineTo(3 * step, 2 * step + step / 2);
   path.lineTo(2 * step, step + step / 2);
-  path.moveTo(2 * step, 3 * step + step / 2);
 
+  path.moveTo(2 * step, 3 * step + step / 2);
   path.lineTo(2 * step, 5 * step);
   path.lineTo(0, 5 * step);
 
@@ -261,8 +277,8 @@ QPainterPath SchematicScene::ccvsPath()
   path.lineTo(2 * step, 3 * step + step / 2);
   path.lineTo(3 * step, 2 * step + step / 2);
   path.lineTo(2 * step, step + step / 2);
-  path.moveTo(2 * step, 3 * step + step / 2);
 
+  path.moveTo(2 * step, 3 * step + step / 2);
   path.lineTo(2 * step, 5 * step);
   path.lineTo(0, 5 * step);
 
@@ -438,8 +454,8 @@ QPainterPath SchematicScene::vccsPath()
   path.lineTo(2 * step, 3 * step + step / 2);
   path.lineTo(3 * step, 2 * step + step / 2);
   path.lineTo(2 * step, step + step / 2);
-  path.moveTo(2 * step, 3 * step + step / 2);
 
+  path.moveTo(2 * step, 3 * step + step / 2);
   path.lineTo(2 * step, 5 * step);
   path.lineTo(0, 5 * step);
 
@@ -483,8 +499,8 @@ QPainterPath SchematicScene::vcvsPath()
   path.lineTo(2 * step, 3 * step + step / 2);
   path.lineTo(3 * step, 2 * step + step / 2);
   path.lineTo(2 * step, step + step / 2);
-  path.moveTo(2 * step, 3 * step + step / 2);
 
+  path.moveTo(2 * step, 3 * step + step / 2);
   path.lineTo(2 * step, 5 * step);
   path.lineTo(0, 5 * step);
 

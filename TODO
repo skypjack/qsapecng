@@ -1,5 +1,6 @@
 ****** to ChangeLog ******
 - CCVS / VCVS standard graphic models
+- Ammeter / Voltmeter fixed graphic models
 - subcircuits in-place editing
 - property editor support for scientific notation
 - workplane support for scientific notation

@@ -72,6 +72,8 @@ signals:
   void stackEditor(SchematicEditor* editor);
   void aboutToCloseEditor();
   
+  void dirtyChanged(bool dirty);
+  
   void fileSaved(const QString& fileName);
   void fileLoaded(const QString& fileName);
   void solved();
@@ -89,8 +91,8 @@ protected:
   void closeEvent(QCloseEvent* event);
 
 private:
+  void setDirty();
   void showResult();
-  void setDirty() { solved_ = false; }
   void setCurrentFile(const QString& fileName);
   QString strippedName(const QString& fullFileName) const;
   bool maybeSave();
