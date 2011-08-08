@@ -21,5 +21,8 @@
 
 - closeEvent in qsapecngwindow non torna mica tanto! :-D
 
+- frequency box in workplane più piccolo e notazione scientifica anche nelle frequenze
+- miglioramento del supporto alla notazione scientifica (attualmente molto rigido)
+
 - J.C.: Matlab function output
 - J.C.: Approximate solution (vedi Luchetta e SapWin)
