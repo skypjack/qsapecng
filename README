@@ -1,6 +1,6 @@
 QSapecNG README
 ~~~~~~~~~~~~~~~~
-   QSapecNG v2.0.0beta1
+   QSapecNG v2.0.0
    Copyright (C) 2009-2011 Michele Caini
    GNU General Public License v3
 
@@ -44,14 +44,19 @@ Installation
 
 ChangeLog
 ~~~~~~~~~
- * 2.0.0beta1 (still under development)
-    o Added full support for sub-circuits that can be created, saved, reopened and
-      added as part of other circuits
+ * 2.0.0 (current stable release)
+    o Subcircuits support with in-place editing (was Dialog Explosion into
+      the 2.0.0beta1 release)
     o Minor fixes for memory leaks
     o Added 24x24 and 48x48 hicolor icons for GNU/Linux
-    o ...
+    o CCVS / VCVS standard graphic models
+    o Ammeter / Voltmeter fixed graphic models
+    o Property Editor now supports scientific notation
+    o Workplane now supports scientific notation
+    o Schematic Editor awares of properties modification
+    o Enhanced control on dirty state of Schematic Editor
 
- * 1.2.2 (current stable release)
+ * 1.2.2
     o Fixed the inverted sign produced by some components
     o Adapted the debian/copyright file in order to respect the DEP-5 proposal
     o Created required files to install an entry in the Debian menu
@@ -204,7 +209,7 @@ Note for (Slackware/Debian/RedHat)-based distributions
  
    checkinstall --default \
      --pkgname qsapecng \
-     --pkgversion 2.0.0beta1 \
+     --pkgversion 2.0.0 \
      --pkggroup electronics
 
 

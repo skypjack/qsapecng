@@ -1,10 +1,9 @@
-qsapecng (2.0.0beta1-1) unstable; urgency=low
+qsapecng (2.0.0-1) unstable; urgency=low
 
   * New upstream release.
-  * Added full support for sub-circuits that can be created, saved, reopened
-    and added as part of other circuits.
+  * Added full support for sub-circuits with in-place editing.
 
- -- Simone Rossetto <simros85@gmail.com>  Sun, 17 Jul 2011 11:25:10 +0200
+ -- Simone Rossetto <simros85@gmail.com>  Sun, 07 Aug 2011 22:18:41 +0200
 
 qsapecng (1.2.2-1) unstable; urgency=low
 

@@ -20,7 +20,7 @@
 .\" or with groff -t -e -mandoc -Tps qsapecng.1 > qsapecng.ps
 .\" or with nroff -man qsapecng.1 | less
 
-.TH QSAPECNG 1 "2010-11-14" "GNU GPLv3" "Program Description"
+.TH QSAPECNG 1 "2011-08-07" "GNU GPLv3" "Program Description"
 .SH NAME
 qsapecng \- symbolic analyzer of linear analog circuits
 .SH SYNOPSIS
@@ -37,7 +37,9 @@ the University of Florence. It comes as continuation of SapWin for Windows, in
 order to give to the project a full compatibility on other platforms.
 
 Through QSapecNG users can draw, solve and analyze analog circuits as well as
-manage them.
+manage them. Since version 2.0.0beta1 there is also the full support for
+sub-circuits that can be created, saved, reopened and added as part of other
+circuits.
 
 QSapecNG is freely available on SourceForge
 .UR https://sourceforge.net/projects/qsapecng/
@@ -48,7 +50,7 @@ A previous version of SapecNG is available too, on SourceForge
 .UE .
 Pre-compiled packages will be also available from projects related pages.
 .SH USAGE
-TODO
+TODO (see the website)
 .SH COPYRIGHT
 Copyright (C) 2009-2011
 .MT michele.caini@gmail.com
@@ -63,10 +65,31 @@ the Free Software Foundation, either version 3 of the License, or
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY.
 .SH "THANKS TO"
-QSapecNG is based in part on the work of the
+.MT simros85@gmail.com
+Simone Rossetto
+.ME
+and his work as a packager.
+
+.UR http://www.crbond.com/download/misc/rpoly.cpp
+C. R. Bond
+.UE
+for Jenkins-Traub real polynomial root finder implementation. Source code has
+been used as-is, filtered by an adapter function.
+
 .UR http://qwt.sf.net
 Qwt Project
 .UE
+for their work. Source code has been used as-is.
+
+Nokia and the not yet supported project
+.UR http://qt.gitorious.org/qt-solutions/qt-solutions/trees/master/qtpropertybrowser
+QtPropertyBrowser
+.UE
+(on
+.UR http://qt.nokia.com/products/qt-addons/solutions-archive/index
+Qt Solutions Archive
+.UE
+). Source code has been used as-is.
 
 Project coordinators are:
 .IP - 2
@@ -78,5 +101,5 @@ Prof. A. Luchetta
 .P
 Debian packager and maintainer is
 .MT simros85@gmail.com
-S. Rossetto
+Simone Rossetto
 .ME

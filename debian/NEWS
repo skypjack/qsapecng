@@ -1,4 +1,4 @@
-qsapecng (2.0.0beta1-1) unstable; urgency=low
+qsapecng (2.0.0-1) unstable; urgency=low
 
     This new release has the full support for sub-circuits that can now be
     created, saved, reopened and added as part of other circuits. This

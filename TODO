@@ -1,14 +1,3 @@
-****** to ChangeLog ******
-- CCVS / VCVS standard graphic models
-- Ammeter / Voltmeter fixed graphic models
-- subcircuits in-place editing
-- property editor support for scientific notation
-- workplane support for scientific notation
-- properties changes aware schematic editor
-- enhanced control on schematic editor dirty state
-****** to ChangeLog ******
-
-
 - IMPORTANTE: port come oggetti a sé stile wire anziché component?
 
 - refactoring:
