@@ -3,11 +3,17 @@ Section: electronics
 Priority: optional
 Maintainer: Simone Rossetto <simros85@gmail.com>
 Uploaders: Georges Khaznadar <georgesk@ofset.org>
-Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6.0), libqt4-dev (>= 4.6.0), libqwt5-qt4-dev (>= 5.2.0), libboost-dev (>= 1.41.0), doxygen
+Build-Depends:
+ debhelper (>= 7.0.50~),
+ cmake (>= 2.6.0),
+ libqt4-dev (>= 4.6.0),
+ libqwt5-qt4-dev (>= 5.1.2) | libqwt-dev (>= 6.0.0),
+ libboost-dev (>= 1.41.0),
+ doxygen
 Standards-Version: 3.9.2
 Homepage: http://qsapecng.sourceforge.net/
-Vcs-Svn: https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/trunk
-Vcs-Browser: http://qsapecng.svn.sourceforge.net/viewvc/qsapecng/trunk
+Vcs-Svn: https://qsapecng.svn.sourceforge.net/svnroot/qsapecng
+Vcs-Browser: http://qsapecng.svn.sourceforge.net/viewvc/qsapecng
 
 Package: qsapecng
 Architecture: any

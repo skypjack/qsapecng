@@ -1,9 +1,15 @@
 qsapecng (2.0.0-1) unstable; urgency=low
 
   * New upstream release.
-  * Added full support for sub-circuits with in-place editing.
+  * Updated debian/control:
+     - changed Standards-Version to 3.9.2.
+     - changed Build-Depends for Qwt libraries: libqwt5-qt4-dev | libqwt-dev.
+     - changed Description to reflect the original one in the upstream README.
+  * Removed unneeded compile flags (compile_flags.patch): debug symbols were
+    always added to the final binaries even in the 'Release' target.
+  * Solved incompatibility with Qwt version 6 (libqwt6_fix.patch).
 
- -- Simone Rossetto <simros85@gmail.com>  Sun, 07 Aug 2011 22:18:41 +0200
+ -- Simone Rossetto <simros85@gmail.com>  Thu, 11 Aug 2011 21:15:50 +0200
 
 qsapecng (1.2.2-1) unstable; urgency=low
 
