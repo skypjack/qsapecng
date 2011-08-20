@@ -1,3 +1,15 @@
+qsapecng (2.0.0-2) unstable; urgency=low
+
+  * Fixed "FTBFS: obsolete build dependency libqwt5-qt4-dev". Removed from
+    debian/control obsolete libqwt5-qt4-dev dependency. (Closes: #638365)
+  * Fixed the lintian warning "embedded-javascript-library" due to the file
+    jquery.js previously included in the qsapecng-doc package. That file has
+    been substituted with a symlink to the file installed with the package
+    libjs-jquery.
+  * Added libjs-jquery as a dependency for the qsapecng-doc package.
+
+ -- Simone Rossetto <simros85@gmail.com>  Sat, 20 Aug 2011 19:59:06 +0200
+
 qsapecng (2.0.0-1) unstable; urgency=low
 
   * New upstream release.

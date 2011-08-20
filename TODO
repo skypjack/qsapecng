@@ -1,5 +1,11 @@
 - IMPORTANTE: port come oggetti a sé stile wire anziché component?
 
+- IMPORTANTE per v2.1.0:
+    o compatibilita' con Qwt6 e define di compilazione per usare anche Qwt5 se necessario
+    o passare a Qt 4.7
+    o lasciare compatibilita' con Boost 1.41.0
+    o avvio da riga di comando passando il file circuito in ingresso
+
 - refactoring:
     introdurre progetti
     eliminare workspace
@@ -7,7 +13,6 @@
 - traduzione in italiano (lupdate e compagnia)
 
 - scrivere la sezione "Usage" sia nel README che in debian/qsapecng.1
-- avvio da riga di comando passando il file circuito in ingresso.
 - leggere per i tipi MIME
     o http://www.debian.org/doc/packaging-manuals/mime-policy/
     o http://wiki.debian.org/MimeTypesSupport

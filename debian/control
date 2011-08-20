@@ -7,7 +7,7 @@ Build-Depends:
  debhelper (>= 7.0.50~),
  cmake (>= 2.6.0),
  libqt4-dev (>= 4.6.0),
- libqwt5-qt4-dev (>= 5.1.2) | libqwt-dev (>= 6.0.0),
+ libqwt-dev (>= 6.0.0),
  libboost-dev (>= 1.41.0),
  doxygen
 Standards-Version: 3.9.2
@@ -41,7 +41,7 @@ Description: symbolic analyzer and solver of linear analog circuits
 Package: qsapecng-doc
 Architecture: all
 Section: doc
-Depends: ${misc:Depends}
+Depends: libjs-jquery, ${misc:Depends}
 Recommends: qsapecng (= ${binary:Version})
 Suggests: doc-base
 Description: symbolic analyzer and solver of linear analog circuits (documentation)

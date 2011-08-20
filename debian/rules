@@ -12,6 +12,8 @@ override_dh_auto_configure:
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_BUILD_TYPE=Release
 	doxygen doxy.cfg
+	rm -f doc/html/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js doc/html/jquery.js
 
 override_dh_auto_clean:
 	dh_auto_clean
