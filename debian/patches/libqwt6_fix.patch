@@ -1,4 +1,11 @@
-Fast fix to build QSapecNG v2.0.0 also with Qwt libraries version 6.
+Description: Fast fix to build QSapecNG v2.0.0 also with Qwt6 libraries.
+ Upstream sources can be build only with Qwt version 5, this patch edits
+ some source files in order to make them compatible with version 6
+ of Qwt libraries. If both Qwt5 and Qwt6 are found in the system, the
+ version 5 is used.
+Forwarded: https://sourceforge.net/tracker/?func=detail&aid=3396943&group_id=369990&atid=1541778
+Author: Simone Rossetto <simros85@gmail.com>
+Last-Update: 2011-08-23
 --- a/cmake/Modules/FindQwt5.cmake
 +++ b/cmake/Modules/FindQwt5.cmake
 @@ -36,10 +36,11 @@

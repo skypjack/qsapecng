@@ -5,7 +5,14 @@ set(
   CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   "${CMAKE_SOURCE_DIR}/cmake/Modules/"
 )
-set( CMAKE_BUILD_TYPE "Release" )
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif(NOT CMAKE_BUILD_TYPE)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+  add_definitions(-DQT_NO_DEBUG_OUTPUT)
+endif(NOT CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 
 set( PROJECT_VERSION_MAJOR 2 )
 set( PROJECT_VERSION_MINOR 0 )
@@ -27,8 +34,7 @@ set( PACKAGE_CHEF "${PROJECT_AUTHOR} <${PROJECT_AUTHOR_EMAIL}>" )
 configure_file("${PROJECT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" IMMEDIATE @ONLY)
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-add_definitions( -ansi -Wall -O0 -g )
-# add_definitions( -ansi -Wall -O2 )
+add_definitions( -ansi -Wall )
 add_definitions(
   -DPACKAGE_NAME="${PACKAGE_NAME}"
   -DPACKAGE_VERSION="${PACKAGE_VERSION}"

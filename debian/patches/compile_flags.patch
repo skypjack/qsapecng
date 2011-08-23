@@ -1,5 +1,9 @@
-The default CMakeLists.txt always adds debug symbols to the final binaries,
-this patch fixes that behaviour setting the right flags using CMake variables.
+Description: Compilation flags now controlled directly by CMake variables.
+ The upstream CMakeLists.txt always adds debug symbols to the final binaries,
+ this patch fixes that behaviour setting the right flags using CMake variables.
+Forwarded: yes (applied since revision 39 on upstream SVN)
+Author: Simone Rossetto <simros85@gmail.com>
+Last-Update: 2011-08-11
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -5,7 +5,14 @@
