@@ -152,20 +152,20 @@ if(WIN32 AND NOT UNIX)
     "${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\gui\\\\images\\\\qsapecng-ico.ico"
   )
   
-  # la variabile CPACK_PACKAGE_ICON vuole una bmp da 150x57 pixel
-  # la variabile CPACK_NSIS_INSTALLER_MUI_ICON_CODE vuole una bmp da 164x314 pixel
+  # the variable CPACK_PACKAGE_ICON require a bmp file of 150x57 pixels
+  # the variable CPACK_NSIS_INSTALLER_MUI_ICON_CODE equire a bmp file of 164x314 pixels
   #set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\gui\\\\images\\\\qsapecng_nsis_header.bmp" )
   #set( CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP '${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\gui\\\\images\\\\qsapecng_nsis_welcome.bmp'" )
   
-  # Codice per far creare il link sul desktop se l'utente lo seleziona durante
-  # l'installazione da setup: CMake crea un checkbox che non funziona!!!
+  # Code to create the link on Windows Desktop if the user checks the appropriate box
+  # during setup: CMake creates a checkbox that doesn't work!!!
   set( CPACK_NSIS_DESKTOP_LINK_NAME "QSapecNG" )
   set( CPACK_NSIS_EXTRA_INSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nCreateShortcut '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk' '$instdir\\\\${OUTPUT_BIN_FOLDER}\\\\${OUTPUT_BIN_NAME}.exe'\nnodesktoplink:\n" )
   set( CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nDelete '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk'\nnodesktoplink:\n" )
 
 elseif(APPLE)
 
-  set( CPACK_DMG_VOLUME_NAME "${CPACK_PACKAGE_NAME}_${PROJECT_VERSION}" ) # da testare
+  set( CPACK_DMG_VOLUME_NAME "${CPACK_PACKAGE_NAME}_${PROJECT_VERSION}" ) # to be tested
   set( CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}" )
   set( CPACK_GENERATOR DragNDrop )
   set( CPACK_SOURCE_GENERATOR TGZ ZIP )
