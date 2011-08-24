@@ -46,6 +46,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QDialogButtonBox>
 
+#include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtGui/QFileDialog>
 
@@ -1601,6 +1602,15 @@ void QSapecNGWindow::stackEditor(SchematicEditor* editor)
   editor->show();
 
   statusBar()->showMessage(tr("Component loaded"), 2000);
+}
+
+
+QSapecNGWindow& operator<<(QSapecNGWindow& window, const QString& str)
+{
+  if(QFile::exists(str))
+    window.open(str);
+
+  return window;
 }
 
 

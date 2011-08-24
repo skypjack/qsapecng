@@ -76,6 +76,11 @@ class QSapecNGWindow: public QMainWindow
 
 public:
   QSapecNGWindow();
+  
+  friend QSapecNGWindow& operator<<(
+      QSapecNGWindow& window,
+      const QString& str
+    );
 
 protected:
   void closeEvent(QCloseEvent* event);

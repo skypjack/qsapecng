@@ -6,7 +6,6 @@
     o compatibilita' con Qwt6 e define di compilazione per usare anche Qwt5 se necessario
     o passare a Qt 4.7
     o lasciare compatibilita' con Boost 1.41.0
-    o avvio da riga di comando passando il file circuito in ingresso
 
 - refactoring:
     introdurre progetti
@@ -41,3 +40,9 @@
     pico/P, nano/N, micro/U, milli/M, kilo/K, mega/MEG, giga/G, tera/T)
 
 ==> MANUALE
+
+
+---------------------------------------------------------------------------------------------------------
+
+ChangeLog:
+- avvio da riga di comando passando il/i file circuito in ingresso
