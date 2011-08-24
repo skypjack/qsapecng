@@ -24,6 +24,7 @@
 #include <QtCore/QPoint>
 #include <QtCore/QSize>
 #include <QtCore/QByteArray>
+#include <QtCore/QRegExp>
 
 #include <QtGui/QFont>
 #include <QtGui/QColor>
@@ -49,6 +50,9 @@ public:
 
   void load();
   void save();
+
+  inline QRegExp notation() const
+    { return notation_; }
 
   inline QPoint mwPos() const
     { return mwPos_; }
@@ -87,6 +91,8 @@ public:
     { return recentFiles_; }
 
 private:
+  static QRegExp notation_;
+
   static QPoint mwPos_;
   static QSize mwSize_;
   static QByteArray mwState_;
@@ -111,6 +117,9 @@ class SettingsManager
 {
 
 public:
+  inline void setNotation(const QRegExp& notation)
+    { Settings::notation_ = notation; }
+
   inline void setMWPos(const QPoint& pos)
     { Settings::mwPos_ = pos; }
 

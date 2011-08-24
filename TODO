@@ -29,7 +29,6 @@
 
 - frequency box in workplane più piccolo e notazione scientifica anche nelle frequenze
 - miglioramento del supporto alla notazione scientifica (attualmente molto rigido)
-- centralizzare notazione scientifica (così da non doverla cambiare in mille punti!!)
 
 ==> [IMPORTANTE] porting Qwt6
 
@@ -46,3 +45,4 @@
 
 ChangeLog:
 - avvio da riga di comando passando il/i file circuito in ingresso
+- centralizzazione della notazione scientifica all'interno dei Settings

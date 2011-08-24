@@ -22,6 +22,7 @@
 #include "gui/workplane/workplane.h"
 #include "gui/functor/functor_traits.hpp"
 #include "gui/qlogger.h"
+#include "gui/settings.h"
 
 #include <QtCore/QRegExp>
 #include <QtGui/QRegExpValidator>
@@ -229,7 +230,7 @@ void WorkPlane::setData(
     
     QLineEdit* right = new QLineEdit;
     right->setText(QString::number(i->second));
-    QRegExp sn("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+    QRegExp sn = Settings().notation();
     QRegExpValidator* validator = new QRegExpValidator(sn, right);
     right->setValidator(validator);
     

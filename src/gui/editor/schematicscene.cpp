@@ -1281,10 +1281,10 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
                   || type == ResistorItemType
                 )
               {
-                QRegExp sn("[+]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+                QRegExp sn = Settings().notation();
                 stringManager_->setRegExp(pV, sn);
               } else {
-                QRegExp sn("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+                QRegExp sn = Settings().notation();
                 stringManager_->setRegExp(pV, sn);
               }
 
@@ -1301,7 +1301,7 @@ void SchematicScene::addSupportedItem(QGraphicsItem* gItem, bool init)
               stringManager_->setValue(lpn, name->valueText() + "_Lp");
               stringManager_->setValue(lsn, name->valueText() + "_Ls");
 
-              QRegExp sn("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?");
+              QRegExp sn = Settings().notation();
               stringManager_->setRegExp(lpv, sn);
               stringManager_->setValue(lpv, "1.0");
               stringManager_->setRegExp(lsv, sn);
@@ -1961,9 +1961,11 @@ void SchematicScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         RotateItems* rotateCommand = 0;
 
         if(hasUserDefReq()) {
-          rotateCommand = new RotateItems(static_cast<AddUserDefItem*>(addCommand)->item());
+          rotateCommand = new RotateItems(
+            static_cast<AddUserDefItem*>(addCommand)->item());
         } else {
-          rotateCommand = new RotateItems(static_cast<AddSupportedItem*>(addCommand)->item());
+          rotateCommand = new RotateItems(
+            static_cast<AddSupportedItem*>(addCommand)->item());
         }
 
         undoRedoStack_->push(rotateCommand);

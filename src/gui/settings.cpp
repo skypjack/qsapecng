@@ -21,6 +21,7 @@
 #include "gui/settings.h"
 
 #include <QtCore/QSettings>
+#include <QtCore/QRegExp>
 #include <QtCore/QDir>
 
 
@@ -28,20 +29,22 @@ namespace qsapecng
 {
 
 
-QPoint Settings::mwPos_ = QPoint(200, 200);
-QSize Settings::mwSize_ = QSize(400, 400);
+QRegExp Settings::notation_;
+
+QPoint Settings::mwPos_;
+QSize Settings::mwSize_;
 QByteArray Settings::mwState_;
 
-QString Settings::workspace_ = QDir::homePath();
+QString Settings::workspace_;
 
 QFont Settings::appFont_;
 
-int Settings::logLvl_ = 0;
-QColor Settings::debugColor_ = QColor(Qt::black);
-QColor Settings::infoColor_ = QColor(Qt::black);
-QColor Settings::warningColor_ = QColor(Qt::blue);
-QColor Settings::errorColor_ = QColor(Qt::red);
-QColor Settings::fatalColor_ = QColor(Qt::darkRed);
+int Settings::logLvl_;
+QColor Settings::debugColor_;
+QColor Settings::infoColor_;
+QColor Settings::warningColor_;
+QColor Settings::errorColor_;
+QColor Settings::fatalColor_;
 
 QStringList Settings::recentFiles_;
 
@@ -52,24 +55,34 @@ void Settings::load()
   QSettings settings(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION);
 
   settings.beginGroup("Application");
-    appFont_ = qvariant_cast<QFont>(settings.value("font"));
-    recentFiles_ = settings.value("recents").toStringList();
-    workspace_ = settings.value("workspace", QDir::homePath()).toString();
+    appFont_ = settings.value("font").value<QFont>();
+    recentFiles_ = settings.value("recents").value<QStringList>();
+    workspace_ =
+      settings.value("workspace", QDir::homePath()).value<QString>();
+    notation_ = settings.value(
+        "notation",
+        QRegExp("[+]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?")
+      ).value<QRegExp>();
   settings.endGroup();
 
   settings.beginGroup("MainWindow");
-    mwPos_ = settings.value("pos", QPoint(200, 200)).toPoint();
-    mwSize_ = settings.value("size", QSize(400, 400)).toSize();
-    mwState_ = settings.value("state").toByteArray();
+    mwPos_ = settings.value("pos", QPoint(200, 200)).value<QPoint>();
+    mwSize_ = settings.value("size", QSize(400, 400)).value<QSize>();
+    mwState_ = settings.value("state").value<QByteArray>();
   settings.endGroup();
 
   settings.beginGroup("Log");
-    logLvl_ = settings.value("logLvl").toInt();
-    debugColor_ = qvariant_cast<QColor>(settings.value("debugColor", QColor(Qt::black)));
-    infoColor_ = qvariant_cast<QColor>(settings.value("infoColor", QColor(Qt::black)));
-    warningColor_ = qvariant_cast<QColor>(settings.value("warningColor", QColor(Qt::blue)));
-    errorColor_ = qvariant_cast<QColor>(settings.value("errorColor", QColor(Qt::red)));
-    fatalColor_ = qvariant_cast<QColor>(settings.value("fatalColor", QColor(Qt::darkRed)));
+    logLvl_ = settings.value("logLvl", QVariant(0)).value<int>();
+    debugColor_ =
+      settings.value("debugColor", QColor(Qt::black)).value<QColor>();
+    infoColor_ =
+      settings.value("infoColor", QColor(Qt::black)).value<QColor>();
+    warningColor_ =
+      settings.value("warningColor", QColor(Qt::blue)).value<QColor>();
+    errorColor_ =
+      settings.value("errorColor", QColor(Qt::red)).value<QColor>();
+    fatalColor_ =
+      settings.value("fatalColor", QColor(Qt::darkRed)).value<QColor>();
   settings.endGroup();
 }
 
@@ -82,6 +95,7 @@ void Settings::save()
     settings.setValue("font", appFont_);
     settings.setValue("recents", recentFiles_);
     settings.setValue("workspace", workspace_);
+    settings.setValue("notation", notation_);
   settings.endGroup();
 
   settings.beginGroup("MainWindow");
