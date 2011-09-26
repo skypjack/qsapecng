@@ -1,3 +1,20 @@
+qsapecng (2.0.0-4~rc1) unstable; urgency=low
+
+  * Fixed new lintian warning 'missing-license-paragraph-in-dep5-copyright'
+    for paragraph 5 with public-domain license: the comment has been converted
+    to the license paragraph.
+
+ -- Simone Rossetto <simros85@gmail.com>  Mon, 26 Sep 2011 18:49:39 +0200
+
+qsapecng (2.0.0-3) unstable; urgency=low
+
+  * fixed a typo in debian/rules "rm -dfr" => "rm -fr".
+    Closes: #642675
+  * added a set of files to clean, probably due to some mistake in upstream
+    clean routines; added a clean instruction for src/libqwt6_fix.h
+
+ -- Georges Khaznadar <georgesk@ofset.org>  Mon, 26 Sep 2011 07:35:42 +0200
+
 qsapecng (2.0.0-2) unstable; urgency=low
 
   * Fixed "FTBFS: obsolete build dependency libqwt5-qt4-dev". Removed from

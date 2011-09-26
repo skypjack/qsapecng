@@ -17,4 +17,7 @@ override_dh_auto_configure:
 
 override_dh_auto_clean:
 	dh_auto_clean
-	rm -dfr doc/html doc/latex
+	rm -fr doc/html doc/latex
+	rm -f src/gui/qtsolutions/qtpropertyeditor/moc_*
+	rm -f src/gui/qtsolutions/qtpropertyeditor/*.moc
+	rm -f src/libqwt6_fix.h

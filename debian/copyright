@@ -18,7 +18,7 @@ License: BSD-3-Clause
 Files: src/functor/rpoly.cpp
 Copyright: 2000 C. Bond <crb@crbond.com>
 License: public-domain
-Comment: This software is offered freely and without restriction. This notice
+ This software is offered freely and without restriction. This notice
  has been added to the file rpoly.cpp with the permission of the author in
  order to release that file under a Public Domain-like license. The permission
  has been granted with these two e-mails:
