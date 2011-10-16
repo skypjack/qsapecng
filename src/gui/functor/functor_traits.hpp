@@ -40,26 +40,29 @@ struct functor_traits { };
 template < >
 struct functor_traits< sapecng::magnitude >
 {
-  static QString title;
-  static QString xLabel;
-  static QString yLabel;
-  static QwtPlotCurve::CurveStyle style;
-  static QwtPlotCurve::CurveAttribute attribute;
-  static QwtSymbol::Style symbol;
-  static int ssize;
-  static QPen pen;
+  static const QString title;
+  static const QString xLabel;
+  static const QString yLabel;
+  static const QwtPlotCurve::CurveStyle style;
+  static const QwtPlotCurve::CurveAttribute attribute;
+  static const QwtSymbol::Style symbol;
+  static const int ssize;
+  static const QPen pen;
 };
-QString functor_traits<sapecng::magnitude>::title = QObject::tr("Magnitude");
-QString functor_traits<sapecng::magnitude>::xLabel = QObject::tr("Frequency");
-QString functor_traits<sapecng::magnitude>::yLabel = QObject::tr("Value");
-QwtPlotCurve::CurveStyle
+const QString
+  functor_traits<sapecng::magnitude>::title = QObject::tr("Magnitude");
+const QString
+  functor_traits<sapecng::magnitude>::xLabel = QObject::tr("Frequency");
+const QString
+  functor_traits<sapecng::magnitude>::yLabel = QObject::tr("Value");
+const QwtPlotCurve::CurveStyle
   functor_traits<sapecng::magnitude>::style = QwtPlotCurve::Lines;
-QwtPlotCurve::CurveAttribute
+const QwtPlotCurve::CurveAttribute
   functor_traits<sapecng::magnitude>::attribute = QwtPlotCurve::Fitted;
-QwtSymbol::Style
+const QwtSymbol::Style
   functor_traits<sapecng::magnitude>::symbol = QwtSymbol::NoSymbol;
-int functor_traits<sapecng::magnitude>::ssize = 0;
-QPen functor_traits<sapecng::magnitude>::pen =
+const int functor_traits<sapecng::magnitude>::ssize = 0;
+const QPen functor_traits<sapecng::magnitude>::pen =
   QPen(Qt::SolidPattern, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
 
@@ -67,26 +70,27 @@ QPen functor_traits<sapecng::magnitude>::pen =
 template < >
 struct functor_traits< sapecng::phase >
 {
-  static QString title;
-  static QString xLabel;
-  static QString yLabel;
-  static QwtPlotCurve::CurveStyle style;
-  static QwtPlotCurve::CurveAttribute attribute;
-  static QwtSymbol::Style symbol;
-  static int ssize;
-  static QPen pen;
+  static const QString title;
+  static const QString xLabel;
+  static const QString yLabel;
+  static const QwtPlotCurve::CurveStyle style;
+  static const QwtPlotCurve::CurveAttribute attribute;
+  static const QwtSymbol::Style symbol;
+  static const int ssize;
+  static const QPen pen;
 };
-QString functor_traits<sapecng::phase>::title = QObject::tr("Phase");
-QString functor_traits<sapecng::phase>::xLabel = QObject::tr("Frequency");
-QString functor_traits<sapecng::phase>::yLabel = QObject::tr("Value");
-QwtPlotCurve::CurveStyle
+const QString functor_traits<sapecng::phase>::title = QObject::tr("Phase");
+const QString
+  functor_traits<sapecng::phase>::xLabel = QObject::tr("Frequency");
+const QString functor_traits<sapecng::phase>::yLabel = QObject::tr("Value");
+const QwtPlotCurve::CurveStyle
   functor_traits<sapecng::phase>::style = QwtPlotCurve::Lines;
-QwtPlotCurve::CurveAttribute
+const QwtPlotCurve::CurveAttribute
   functor_traits<sapecng::phase>::attribute = QwtPlotCurve::Fitted;
-QwtSymbol::Style
+const QwtSymbol::Style
   functor_traits<sapecng::phase>::symbol = QwtSymbol::NoSymbol;
-int functor_traits<sapecng::phase>::ssize = 0;
-QPen functor_traits<sapecng::phase>::pen =
+const int functor_traits<sapecng::phase>::ssize = 0;
+const QPen functor_traits<sapecng::phase>::pen =
   QPen(Qt::SolidPattern, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
 
@@ -94,26 +98,27 @@ QPen functor_traits<sapecng::phase>::pen =
 template < >
 struct functor_traits< sapecng::gain >
 {
-  static QString title;
-  static QString xLabel;
-  static QString yLabel;
-  static QwtPlotCurve::CurveStyle style;
-  static QwtPlotCurve::CurveAttribute attribute;
-  static QwtSymbol::Style symbol;
-  static int ssize;
-  static QPen pen;
+  static const QString title;
+  static const QString xLabel;
+  static const QString yLabel;
+  static const QwtPlotCurve::CurveStyle style;
+  static const QwtPlotCurve::CurveAttribute attribute;
+  static const QwtSymbol::Style symbol;
+  static const int ssize;
+  static const QPen pen;
 };
-QString functor_traits<sapecng::gain>::title = QObject::tr("Gain");
-QString functor_traits<sapecng::gain>::xLabel = QObject::tr("Frequency");
-QString functor_traits<sapecng::gain>::yLabel = QObject::tr("dB");
-QwtPlotCurve::CurveStyle
+const QString functor_traits<sapecng::gain>::title = QObject::tr("Gain");
+const QString
+  functor_traits<sapecng::gain>::xLabel = QObject::tr("Frequency");
+const QString functor_traits<sapecng::gain>::yLabel = QObject::tr("dB");
+const QwtPlotCurve::CurveStyle
   functor_traits<sapecng::gain>::style = QwtPlotCurve::Lines;
-QwtPlotCurve::CurveAttribute
+const QwtPlotCurve::CurveAttribute
   functor_traits<sapecng::gain>::attribute = QwtPlotCurve::Fitted;
-QwtSymbol::Style
+const QwtSymbol::Style
   functor_traits<sapecng::gain>::symbol = QwtSymbol::NoSymbol;
-int functor_traits<sapecng::gain>::ssize = 0;
-QPen functor_traits<sapecng::gain>::pen =
+const int functor_traits<sapecng::gain>::ssize = 0;
+const QPen functor_traits<sapecng::gain>::pen =
   QPen(Qt::SolidPattern, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
 
@@ -121,26 +126,27 @@ QPen functor_traits<sapecng::gain>::pen =
 template < >
 struct functor_traits< sapecng::loss >
 {
-  static QString title;
-  static QString xLabel;
-  static QString yLabel;
-  static QwtPlotCurve::CurveStyle style;
-  static QwtPlotCurve::CurveAttribute attribute;
-  static QwtSymbol::Style symbol;
-  static int ssize;
-  static QPen pen;
+  static const QString title;
+  static const QString xLabel;
+  static const QString yLabel;
+  static const QwtPlotCurve::CurveStyle style;
+  static const QwtPlotCurve::CurveAttribute attribute;
+  static const QwtSymbol::Style symbol;
+  static const int ssize;
+  static const QPen pen;
 };
-QString functor_traits<sapecng::loss>::title = QObject::tr("Loss");
-QString functor_traits<sapecng::loss>::xLabel = QObject::tr("Frequency");
-QString functor_traits<sapecng::loss>::yLabel = QObject::tr("dB");
-QwtPlotCurve::CurveStyle
+const QString functor_traits<sapecng::loss>::title = QObject::tr("Loss");
+const QString
+  functor_traits<sapecng::loss>::xLabel = QObject::tr("Frequency");
+const QString functor_traits<sapecng::loss>::yLabel = QObject::tr("dB");
+const QwtPlotCurve::CurveStyle
   functor_traits<sapecng::loss>::style = QwtPlotCurve::Lines;
-QwtPlotCurve::CurveAttribute
+const QwtPlotCurve::CurveAttribute
   functor_traits<sapecng::loss>::attribute = QwtPlotCurve::Fitted;
-QwtSymbol::Style
+const QwtSymbol::Style
   functor_traits<sapecng::loss>::symbol = QwtSymbol::NoSymbol;
-int functor_traits<sapecng::loss>::ssize = 0;
-QPen functor_traits<sapecng::loss>::pen =
+const int functor_traits<sapecng::loss>::ssize = 0;
+const QPen functor_traits<sapecng::loss>::pen =
   QPen(Qt::SolidPattern, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
 
@@ -148,52 +154,56 @@ QPen functor_traits<sapecng::loss>::pen =
 template < >
 struct functor_traits< sapecng::zeros >
 {
-  static QString title;
-  static QString xLabel;
-  static QString yLabel;
-  static QwtPlotCurve::CurveStyle style;
-  static QwtPlotCurve::CurveAttribute attribute;
-  static QwtSymbol::Style symbol;
-  static int ssize;
-  static QPen pen;
+  static const QString title;
+  static const QString xLabel;
+  static const QString yLabel;
+  static const QwtPlotCurve::CurveStyle style;
+  static const QwtPlotCurve::CurveAttribute attribute;
+  static const QwtSymbol::Style symbol;
+  static const int ssize;
+  static const QPen pen;
 };
-QString functor_traits<sapecng::zeros>::title = QObject::tr("Zeros");
-QString functor_traits<sapecng::zeros>::xLabel = QObject::tr("Real part");
-QString functor_traits<sapecng::zeros>::yLabel = QObject::tr("Img part");
-QwtPlotCurve::CurveStyle
+const QString functor_traits<sapecng::zeros>::title = QObject::tr("Zeros");
+const QString
+  functor_traits<sapecng::zeros>::xLabel = QObject::tr("Real part");
+const QString
+  functor_traits<sapecng::zeros>::yLabel = QObject::tr("Img part");
+const QwtPlotCurve::CurveStyle
   functor_traits<sapecng::zeros>::style = QwtPlotCurve::NoCurve;
-QwtPlotCurve::CurveAttribute
+const QwtPlotCurve::CurveAttribute
   functor_traits<sapecng::zeros>::attribute = QwtPlotCurve::Fitted;
-QwtSymbol::Style
+const QwtSymbol::Style
   functor_traits<sapecng::zeros>::symbol = QwtSymbol::Ellipse;
-int functor_traits<sapecng::zeros>::ssize = 7;
-QPen functor_traits<sapecng::zeros>::pen = QPen();
+const int functor_traits<sapecng::zeros>::ssize = 7;
+const QPen functor_traits<sapecng::zeros>::pen = QPen();
 
 
 
 template < >
 struct functor_traits< sapecng::poles >
 {
-  static QString title;
-  static QString xLabel;
-  static QString yLabel;
-  static QwtPlotCurve::CurveStyle style;
-  static QwtPlotCurve::CurveAttribute attribute;
-  static QwtSymbol::Style symbol;
-  static int ssize;
-  static QPen pen;
+  static const QString title;
+  static const QString xLabel;
+  static const QString yLabel;
+  static const QwtPlotCurve::CurveStyle style;
+  static const QwtPlotCurve::CurveAttribute attribute;
+  static const QwtSymbol::Style symbol;
+  static const int ssize;
+  static const QPen pen;
 };
-QString functor_traits<sapecng::poles>::title = QObject::tr("Poles");
-QString functor_traits<sapecng::poles>::xLabel = QObject::tr("Real part");
-QString functor_traits<sapecng::poles>::yLabel = QObject::tr("Img part");
-QwtPlotCurve::CurveStyle
+const QString functor_traits<sapecng::poles>::title = QObject::tr("Poles");
+const QString
+  functor_traits<sapecng::poles>::xLabel = QObject::tr("Real part");
+const QString
+  functor_traits<sapecng::poles>::yLabel = QObject::tr("Img part");
+const QwtPlotCurve::CurveStyle
   functor_traits<sapecng::poles>::style = QwtPlotCurve::NoCurve;
-QwtPlotCurve::CurveAttribute
+const QwtPlotCurve::CurveAttribute
   functor_traits<sapecng::poles>::attribute = QwtPlotCurve::Fitted;
-QwtSymbol::Style
+const QwtSymbol::Style
   functor_traits<sapecng::poles>::symbol = QwtSymbol::XCross;
-int functor_traits<sapecng::poles>::ssize = 7;
-QPen functor_traits<sapecng::poles>::pen = QPen();
+const int functor_traits<sapecng::poles>::ssize = 7;
+const QPen functor_traits<sapecng::poles>::pen = QPen();
 
 
 

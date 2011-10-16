@@ -78,9 +78,9 @@ mark_as_advanced( TAR_EXECUTABLE )
 ##################                             ##################
 #################################################################
 
-if(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT5_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
+if(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT6_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
 	include( InstallRequiredSystemLibraries )
-endif(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT5_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
+endif(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT6_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
 
 
 set( CPACK_GENERATOR "TZ;TGZ;TBZ2" )
@@ -185,7 +185,7 @@ else()
      "libstdc++6 (>=4.3.2-1.1),
       libqt4-core (>=4.6),
       libqt4-gui (>=4.6),
-      libqwt5-qt4 (>=5.0)"
+      libqwt6-qt4 (>=6.0)"
   )
 
 endif(WIN32 AND NOT UNIX)

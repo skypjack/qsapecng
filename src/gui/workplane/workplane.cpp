@@ -42,7 +42,11 @@
 #include <qwt_plot_canvas.h>
 #include <qwt_plot_picker.h>
 #include <qwt_plot_marker.h>
+#include <qwt_plot_renderer.h>
 #include <qwt_scale_engine.h>
+#include <qwt_curve_fitter.h>
+#include <qwt_picker_machine.h>
+#include <qwt_symbol.h>
 
 #include <map>
 #include <limits>
@@ -56,6 +60,7 @@ MarkableCurve::~MarkableCurve()
 {
     marker_->detach();
     delete marker_;
+    // delete symbol_;
 }
 
 
@@ -76,7 +81,7 @@ void MarkableCurve::selected()
 }
 
 
-void MarkableCurve::appended(const QwtDoublePoint& pos)
+void MarkableCurve::appended(const QPointF& pos)
 {
   if(isVisible()) {
     marker_->setVisible(true);
@@ -85,25 +90,25 @@ void MarkableCurve::appended(const QwtDoublePoint& pos)
 }
 
 
-void MarkableCurve::moved(const QwtDoublePoint& pos)
+void MarkableCurve::moved(const QPointF& pos)
 {
   if(isVisible()) {
     std::size_t idx;
-    for(idx = 0; idx < (data().size() - 1) && data().x(idx + 1) < pos.x(); ++idx);
-    marker_->setValue(data().x(idx), data().y(idx));
+    for(idx = 0; idx < (data()->size() - 1) && data()->sample(idx + 1).x() < pos.x(); ++idx);
+    marker_->setValue(data()->sample(idx).x(), data()->sample(idx).y());
 
-    QString label = "( " + QString::number(data().x(idx)) + ", "
-      + QString::number(data().y(idx)) + " ) ["
+    QString label = "( " + QString::number(data()->sample(idx).x()) + ", "
+      + QString::number(data()->sample(idx).y()) + " ) ["
       + QString::number(idx) + "]";
     marker_->setLabel(label);
 
     Qt::Alignment H =
-        (data().x(idx) >= minXValue() + ((maxXValue() - minXValue()) / 2))
+        (data()->sample(idx).x() >= minXValue() + ((maxXValue() - minXValue()) / 2))
       ? Qt::AlignLeft
       : Qt::AlignRight
       ;
     Qt::Alignment V =
-        (data().y(idx) >= minYValue() + ((maxYValue() - minYValue()) / 2))
+        (data()->sample(idx).y() >= minYValue() + ((maxYValue() - minYValue()) / 2))
       ? Qt::AlignBottom
       : Qt::AlignTop
       ;
@@ -116,13 +121,13 @@ void MarkableCurve::moved(const QwtDoublePoint& pos)
 
 void MarkableCurve::initialize()
 {
-  QwtSymbol symbol;
-  symbol.setStyle(QwtSymbol::Ellipse);
-  symbol.setSize(QSize(5, 5));
+  symbol_ = new QwtSymbol;
+  symbol_->setStyle(QwtSymbol::Ellipse);
+  symbol_->setSize(QSize(5, 5));
 
   marker_ = new QwtPlotMarker;
   marker_->setLineStyle(QwtPlotMarker::NoLine);
-  marker_->setSymbol(symbol);
+  marker_->setSymbol(symbol_);
   marker_->setVisible(false);
 }
 
@@ -153,14 +158,14 @@ void MarkedCurve::replotMarker()
 {
   resetMarker();
 
-  for(std::size_t i = 0; i < data().size(); ++i) {
+  for(std::size_t i = 0; i < data()->size(); ++i) {
     QwtPlotMarker* marker = new QwtPlotMarker;
     marker->setLineStyle(QwtPlotMarker::NoLine);
     marker->setLabelAlignment(Qt::AlignBottom);
-    marker->setValue(data().x(i), data().y(i));
+    marker->setValue(data()->sample(i).x(), data()->sample(i).y());
 
-    QString label = "( " + QString::number(data().x(i)) + ", "
-      + QString::number(data().y(i)) + " )";
+    QString label = "( " + QString::number(data()->sample(i).x()) + ", "
+      + QString::number(data()->sample(i).y()) + " )";
     marker->setLabel(label);
 
     markers_.push_back(marker);
@@ -200,11 +205,19 @@ WorkPlane::WorkPlane(QWidget* parent)
 
 WorkPlane::~WorkPlane()
 {
-  for(int i = 0; i < curves_.size(); ++i)
-    delete curves_[i].first;
+  // delete clickPointMachine_;
 
-  curves_.clear();
+  for(int i = 0; i < curves_.size(); ++i) {
+    // delete curves_[i].first->curveFitter();
+    // delete curves_[i].first->symbol();
+    delete curves_[i].first;
+  }
+
   attached_.clear();
+  curves_.clear();
+
+  grid_->detach();
+  delete grid_;
 }
 
 
@@ -553,6 +566,11 @@ void WorkPlane::redraw()
 }
 
 
+void WorkPlane::print(QPrinter& printer) {
+  QwtPlotRenderer().renderTo(plot_, printer);
+}
+
+
 std::map<std::string, double> WorkPlane::actValues() const
 {
   std::map<std::string, double> values;
@@ -576,8 +594,8 @@ void WorkPlane::createMainLayout()
   startFreq_ = new QDoubleSpinBox;
   startFreq_->setMaximum(std::numeric_limits<double>::max());
   startFreq_->setDecimals(5);
-  startFreq_->setValue(0.00001);
-  oldStartFreq_ = 0.01;
+  startFreq_->setValue(0.001);
+  oldStartFreq_ = 0.001;
   endFreq_ = new QDoubleSpinBox;
   endFreq_->setMaximum(std::numeric_limits<double>::max());
   endFreq_->setDecimals(5);
@@ -618,7 +636,8 @@ void WorkPlane::createMainLayout()
   plot_->setAutoReplot(true);
 
   tracker_ = new QwtPlotPicker(plot_->canvas());
-  tracker_->setSelectionFlags(QwtPicker::PointSelection);
+  clickPointMachine_ = new QwtPickerDragPointMachine;
+  tracker_->setStateMachine(clickPointMachine_);
   tracker_->setRubberBand(QwtPicker::VLineRubberBand);
   tracker_->setTrackerMode(QwtPicker::AlwaysOff);
 
@@ -647,179 +666,180 @@ void WorkPlane::createMainLayout()
 void WorkPlane::setupCurves()
 {
   curves_ = QVector< QPair< QwtPlotCurve*, bool > >(NOOP);
-  QwtSymbol symbol;
+  QwtSymbol* symbol;
 
-  symbol.setStyle(functor_traits<sapecng::magnitude>::symbol);
-  symbol.setSize(functor_traits<sapecng::magnitude>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::magnitude>::symbol);
+  symbol->setSize(functor_traits<sapecng::magnitude>::ssize);
   curves_[MAGNITUDE].first = new MarkableCurve;
   curves_[MAGNITUDE].first->setPen(functor_traits<sapecng::magnitude>::pen);
   curves_[MAGNITUDE].first->setStyle(functor_traits<sapecng::magnitude>::style);
   curves_[MAGNITUDE].first->setSymbol(symbol);
   curves_[MAGNITUDE].first->setCurveAttribute(
     functor_traits<sapecng::magnitude>::attribute);
-  curves_[MAGNITUDE].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[MAGNITUDE].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
     (MarkableCurve*) curves_[MAGNITUDE].first,
-    SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
+    SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
     (MarkableCurve*) curves_[MAGNITUDE].first,
-    SLOT(moved(const QwtDoublePoint&)));
+    SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::magnitude>::symbol);
-  symbol.setSize(functor_traits<sapecng::magnitude>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::magnitude>::symbol);
+  symbol->setSize(functor_traits<sapecng::magnitude>::ssize);
   curves_[MAGNITUDE_RAD].first = new MarkableCurve;
   curves_[MAGNITUDE_RAD].first->setPen(functor_traits<sapecng::magnitude>::pen);
   curves_[MAGNITUDE_RAD].first->setStyle(functor_traits<sapecng::magnitude>::style);
   curves_[MAGNITUDE_RAD].first->setSymbol(symbol);
   curves_[MAGNITUDE_RAD].first->setCurveAttribute(
     functor_traits<sapecng::magnitude>::attribute);
-  curves_[MAGNITUDE_RAD].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[MAGNITUDE_RAD].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
     (MarkableCurve*) curves_[MAGNITUDE_RAD].first,
-    SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
+    SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
     (MarkableCurve*) curves_[MAGNITUDE_RAD].first,
-    SLOT(moved(const QwtDoublePoint&)));
+    SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::phase>::symbol);
-  symbol.setSize(functor_traits<sapecng::phase>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::phase>::symbol);
+  symbol->setSize(functor_traits<sapecng::phase>::ssize);
   curves_[PHASE].first = new MarkableCurve;
   curves_[PHASE].first->setPen(functor_traits<sapecng::phase>::pen);
   curves_[PHASE].first->setStyle(functor_traits<sapecng::phase>::style);
   curves_[PHASE].first->setSymbol(symbol);
   curves_[PHASE].first->setCurveAttribute(
     functor_traits<sapecng::phase>::attribute);
-  curves_[PHASE].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[PHASE].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
     (MarkableCurve*) curves_[PHASE].first,
-    SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
-    (MarkableCurve*) curves_[PHASE].first, SLOT(moved(const QwtDoublePoint&)));
+    SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
+    (MarkableCurve*) curves_[PHASE].first, SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::phase>::symbol);
-  symbol.setSize(functor_traits<sapecng::phase>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::phase>::symbol);
+  symbol->setSize(functor_traits<sapecng::phase>::ssize);
   curves_[PHASE_RAD].first = new MarkableCurve;
   curves_[PHASE_RAD].first->setPen(functor_traits<sapecng::phase>::pen);
   curves_[PHASE_RAD].first->setStyle(functor_traits<sapecng::phase>::style);
   curves_[PHASE_RAD].first->setSymbol(symbol);
   curves_[PHASE_RAD].first->setCurveAttribute(
     functor_traits<sapecng::phase>::attribute);
-  curves_[PHASE_RAD].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[PHASE_RAD].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
     (MarkableCurve*) curves_[PHASE_RAD].first,
-    SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
+    SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
     (MarkableCurve*) curves_[PHASE_RAD].first,
-    SLOT(moved(const QwtDoublePoint&)));
+    SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::gain>::symbol);
-  symbol.setSize(functor_traits<sapecng::gain>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::gain>::symbol);
+  symbol->setSize(functor_traits<sapecng::gain>::ssize);
   curves_[GAIN].first = new MarkableCurve;
   curves_[GAIN].first->setPen(functor_traits<sapecng::gain>::pen);
   curves_[GAIN].first->setStyle(functor_traits<sapecng::gain>::style);
   curves_[GAIN].first->setSymbol(symbol);
   curves_[GAIN].first->setCurveAttribute(
     functor_traits<sapecng::gain>::attribute);
-  curves_[GAIN].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[GAIN].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
     (MarkableCurve*) curves_[GAIN].first,
-    SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
-    (MarkableCurve*) curves_[GAIN].first, SLOT(moved(const QwtDoublePoint&)));
+    SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
+    (MarkableCurve*) curves_[GAIN].first, SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::gain>::symbol);
-  symbol.setSize(functor_traits<sapecng::gain>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::gain>::symbol);
+  symbol->setSize(functor_traits<sapecng::gain>::ssize);
   curves_[GAIN_RAD].first = new MarkableCurve;
   curves_[GAIN_RAD].first->setPen(functor_traits<sapecng::gain>::pen);
   curves_[GAIN_RAD].first->setStyle(functor_traits<sapecng::gain>::style);
   curves_[GAIN_RAD].first->setSymbol(symbol);
   curves_[GAIN_RAD].first->setCurveAttribute(
     functor_traits<sapecng::gain>::attribute);
-  curves_[GAIN_RAD].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[GAIN_RAD].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
     (MarkableCurve*) curves_[GAIN_RAD].first,
-    SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
+    SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
     (MarkableCurve*) curves_[GAIN_RAD].first,
-    SLOT(moved(const QwtDoublePoint&)));
+    SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::loss>::symbol);
-  symbol.setSize(functor_traits<sapecng::loss>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::loss>::symbol);
+  symbol->setSize(functor_traits<sapecng::loss>::ssize);
   curves_[LOSS].first = new MarkableCurve;
   curves_[LOSS].first->setPen(functor_traits<sapecng::loss>::pen);
   curves_[LOSS].first->setStyle(functor_traits<sapecng::loss>::style);
   curves_[LOSS].first->setSymbol(symbol);
   curves_[LOSS].first->setCurveAttribute(
     functor_traits<sapecng::loss>::attribute);
-  curves_[LOSS].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[LOSS].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
-    (MarkableCurve*) curves_[LOSS].first, SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
-    (MarkableCurve*) curves_[LOSS].first, SLOT(moved(const QwtDoublePoint&)));
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
+    (MarkableCurve*) curves_[LOSS].first, SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
+    (MarkableCurve*) curves_[LOSS].first, SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::loss>::symbol);
-  symbol.setSize(functor_traits<sapecng::loss>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::loss>::symbol);
+  symbol->setSize(functor_traits<sapecng::loss>::ssize);
   curves_[LOSS_RAD].first = new MarkableCurve;
   curves_[LOSS_RAD].first->setPen(functor_traits<sapecng::loss>::pen);
   curves_[LOSS_RAD].first->setStyle(functor_traits<sapecng::loss>::style);
   curves_[LOSS_RAD].first->setSymbol(symbol);
   curves_[LOSS_RAD].first->setCurveAttribute(
     functor_traits<sapecng::loss>::attribute);
-  curves_[LOSS_RAD].second = false;
 
-  connect(tracker_, SIGNAL(selected(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(selected(const QPointF&)),
     (MarkableCurve*) curves_[LOSS_RAD].first, SLOT(selected()));
-  connect(tracker_, SIGNAL(appended(const QwtDoublePoint&)),
+  connect(tracker_, SIGNAL(appended(const QPointF&)),
     (MarkableCurve*) curves_[LOSS_RAD].first,
-    SLOT(appended(const QwtDoublePoint&)));
-  connect(tracker_, SIGNAL(moved(const QwtDoublePoint&)),
+    SLOT(appended(const QPointF&)));
+  connect(tracker_, SIGNAL(moved(const QPointF&)),
     (MarkableCurve*) curves_[LOSS_RAD].first,
-    SLOT(moved(const QwtDoublePoint&)));
+    SLOT(moved(const QPointF&)));
 
-  symbol.setStyle(functor_traits<sapecng::zeros>::symbol);
-  symbol.setSize(functor_traits<sapecng::zeros>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::zeros>::symbol);
+  symbol->setSize(functor_traits<sapecng::zeros>::ssize);
   curves_[ZEROS].first = new MarkedCurve;
   curves_[ZEROS].first->setPen(functor_traits<sapecng::zeros>::pen);
   curves_[ZEROS].first->setStyle(functor_traits<sapecng::zeros>::style);
   curves_[ZEROS].first->setSymbol(symbol);
   curves_[ZEROS].first->setCurveAttribute(
     functor_traits<sapecng::zeros>::attribute);
-  curves_[ZEROS].second = false;
 
-  symbol.setStyle(functor_traits<sapecng::poles>::symbol);
-  symbol.setSize(functor_traits<sapecng::poles>::ssize);
+  symbol = new QwtSymbol;
+  symbol->setStyle(functor_traits<sapecng::poles>::symbol);
+  symbol->setSize(functor_traits<sapecng::poles>::ssize);
   curves_[POLES].first = new MarkedCurve;
   curves_[POLES].first->setPen(functor_traits<sapecng::poles>::pen);
   curves_[POLES].first->setStyle(functor_traits<sapecng::poles>::style);
   curves_[POLES].first->setSymbol(symbol);
   curves_[POLES].first->setCurveAttribute(
     functor_traits<sapecng::poles>::attribute);
-  curves_[POLES].second = false;
 
-  for(int i = 0; i < NOOP; ++i) {
-    curves_[i].first->attach(plot_);
+  for(int i = 0; i < curves_.size(); ++i) {
+    curves_[i].first->setCurveFitter(new QwtWeedingCurveFitter);
     curves_[i].first->setVisible(false);
+    curves_[i].second = false;
   }
 
   lastId_ = NOOP;
@@ -839,7 +859,7 @@ void WorkPlane::setupCurve(
     double* y = new double [data.second.size()];
     std::copy(data.second.begin(), data.second.end(), y);
 
-    curves_[f].first->setData(x, y,
+    curves_[f].first->setSamples(x, y,
         data.first.size() < data.second.size() ?
             data.first.size()
           : data.second.size()

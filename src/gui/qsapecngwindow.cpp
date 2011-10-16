@@ -443,7 +443,7 @@ void QSapecNGWindow::print()
     if(QPrintDialog(&printer).exec() != QDialog::Accepted)
       return;
 
-    workplane_->const_plot().print(printer);
+    workplane_->print(printer);
   }
 }
 

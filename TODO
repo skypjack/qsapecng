@@ -3,7 +3,6 @@
 - IMPORTANTE per v2.1.0:
     o primo componente messo nell'angolo in alto a sinistra per MacOS
       https://sourceforge.net/tracker/?func=detail&aid=3131134&group_id=369990&atid=1541776
-    o compatibilita' con Qwt6 e define di compilazione per usare anche Qwt5 se necessario
     o passare a Qt 4.7
     o lasciare compatibilita' con Boost 1.41.0
 
@@ -30,6 +29,15 @@
 - frequency box in workplane più piccolo e notazione scientifica anche nelle frequenze
 - miglioramento del supporto alla notazione scientifica (attualmente molto rigido)
 
+- risultati: non solo fdt tensione ma anche voltage gain (Kv), current gain (Ki),
+    input impedance with output shorted (Zin, short),
+    input impedance with output opne (Zin, open),
+    output impedance with output shorted (Zout, short),
+    output impedance with output opne (Zout, open),
+    Zt, Yt, sensitivity
+
+- parser crc per esecuzione da riga di comando (netlist)
+
 ==> [IMPORTANTE] porting Qwt6
 
 - J.C.: Matlab function output
@@ -37,6 +45,16 @@
 - J.C.: shortcut per componenti per editing al volo (configurabile dall'utente, pure)
 - J.C.: aggiungere alla regex anche il supporto alle unità con abbreviazione (femto/F,
     pico/P, nano/N, micro/U, milli/M, kilo/K, mega/MEG, giga/G, tera/T)
+- J.C.:  It would be great if there was a way to do symbolic analysis based on
+    a text file rather than having to enter with the schematic capture
+    tool. I can envision a point where I might want to do symbolic
+    analysis on schematics that I have created in a circuit design
+    schematic capture tool and then generate a netlist. The other caveat
+    to making this practical is that internal node names are not only
+    numbers but text and with "_" characters as well. What this does is
+    prevents someone from having to generate the schematic twice in two
+    different tools. Anyway, it is just a thought.
+
 
 ==> MANUALE
 

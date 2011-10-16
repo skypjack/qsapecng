@@ -26,6 +26,7 @@
 #include <QtGui/QWidget>
 #include <QtGui/QMenu>
 #include <QtGui/QContextMenuEvent>
+#include <QtGui/QPrinter>
 
 #include <QtCore/QObject>
 #include <QtCore/QVector>
@@ -44,8 +45,10 @@ class QDoubleSpinBox;
 class QTableWidget;
 
 class QwtPlotGrid;
+class QwtPickerMachine;
 class QwtPlotPicker;
 class QwtPlotMarker;
+class QwtSymbol;
 
 
 namespace qsapecng
@@ -96,14 +99,15 @@ public:
 
 public slots:
   void selected();
-  void appended(const QwtDoublePoint& pos);
-  void moved(const QwtDoublePoint& pos);
+  void appended(const QPointF& pos);
+  void moved(const QPointF& pos);
 
 private:
   void initialize();
 
 private:
   QwtPlotMarker* marker_;
+  QwtSymbol* symbol_;
 
 };
 
@@ -171,6 +175,7 @@ public slots:
   void plot(WorkPlane::F f);
   void plot(int f);
   void redraw();
+  void print(QPrinter& printer);
 
 private:
   std::map<std::string, double> actValues() const;
@@ -189,6 +194,7 @@ private:
   QwtPlot_ContextMenu* plot_;
   QVector< QwtPlotCurve* > attached_;
   QVector< QPair< QwtPlotCurve*, bool > > curves_;
+  QwtPickerMachine *clickPointMachine_;
   QwtPlotPicker* tracker_;
   F lastId_;
 
