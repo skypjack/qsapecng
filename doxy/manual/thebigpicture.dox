@@ -1,0 +1,42 @@
+/*!
+ * \page thebigpicture The Big Picture
+ *
+ * \section software_sec The software
+ *
+ * Here you can find a little introduction about what you can do using QSapecNG
+ * and what can do for you SapecNG. \n
+ * Please, do not forget that SapecNG is the core framework, while QSapecNG
+ * represents the GUI. It means that SapecNG will do the dirty work behind the
+ * scenes, while users can interact with the software using QSapecNG.
+ *
+ * \subsection sapecng_subsec SapecNG
+ *
+ * SapecNG has been developed entirely with C/C++ and designed around common
+ * design patterns for better code. \n
+ * It offers several services like an embedded minimal logger, functors and
+ * utilities for input/output. Most important, SapecNG is shipped with data
+ * structures for circuits and graphs, as well as functions that can be used
+ * to convert a circuit in its graph-like representation. \n
+ * The aim of SapecNG can be resumed as look for the common spanning trees of
+ * two graphs, that is a complex problem. The core framework implements the MRT
+ * algorithm (available as academic article) and it offers a solution compliant
+ * with the Boost C++ Libraries' model.
+ *
+ * \subsection qsapecng_subsec QSapecNG
+ *
+ * QSapecNG is mainly focused on two parts:
+ * - \a the designer
+ * - \a the workplane
+ * 
+ * The former can be used to develop circuits, using items availabe within the
+ * components list and from the toolbar. The designer is structured as a
+ * magnetic grid, which attracts components and places them correctly. The
+ * designer also takes care to assign the node numbers to the junction points
+ * and may initiate the resolution of the circuit. \n
+ * The latter can be used to analyze the function obtained from the resolution
+ * of the circuit. You can plot several representations and curves, according
+ * to the selected operation and the preferred frequencies.
+ *
+ * \sa \ref designer
+ * \sa \ref workplane
+ */

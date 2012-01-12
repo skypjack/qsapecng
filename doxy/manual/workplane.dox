@@ -1,0 +1,26 @@
+/*!
+ * \page workplane Workplane
+ *
+ * \section workplane_sec The workplane
+ *
+ * The workplane is where users can interact with the functions obtained from
+ * the resolution of the circuit. Interacting with these functions means
+ * operating with the aim of draw different types of curves. Users can also
+ * modify the values ​​associated with the components, in addition to selecting
+ * the favorite frequencies to define a range for plotting.
+ *
+ * The available functions can be selected from the menu or using right mouse
+ * button on the plotting surface. \n
+ * Below is a summary list:
+ * - Magnitude
+ * - Magnitude (rad/s)
+ * - Phase
+ * - Phase (rad/s)
+ * - Gain
+ * - Gain (rad/s)
+ * - Loss
+ * - Loss (rad/s)
+ * - Zeros/Poles
+ *
+ * More functions will be introduced with future versions of the software.
+ */

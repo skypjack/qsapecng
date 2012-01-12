@@ -1,0 +1,28 @@
+/*!
+ * \page userdef User Defined Components
+ *
+ * \section userdef_sec Introduction
+ *
+ * The user defined components are one of the most important feature of the
+ * software. Users can develop a circuit as a composition of different parts,
+ * as well as define libraries of complex components for use in the future.
+ *
+ * Here are some of the main characteristics:
+ * - flexibility: users can define a custom component with no limits on the
+ *     number of junction points to the outside
+ * - low coupling: the insertion of a user defined component in a circuit will
+ *     copy the entire definition, so the circuit will not depend on the
+ *     component; this means that the custom components can be modified at any
+ *     time without affecting the circuits that use them
+ * - editing on the fly: users can include custom components in a project,
+ *     then double-click them to access the embedded circuit so that they can
+ *     make changes to its structure, finally close or even save it first and
+ *     make it available as a new component
+ * - user defined components are circuits: this means that users can use probes
+ *     to extract the functions when the component is used as a circuit and the
+ *     probes will be turned off when used as a component in another circuit;
+ *     in addition, functions can be used in the workplane
+ *
+ * \attention
+ * ... TO BE FINISHED ... :-)
+ */

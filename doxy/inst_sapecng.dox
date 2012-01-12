@@ -1,0 +1,21 @@
+/*!
+ * \page inst_sapecng HowTo - Compile SapecNG
+ * 
+ * \section inst_sapecng_sec Compile SapecNG
+ *
+ * The process of building an executable of SapecNG is quite easy, on both
+ * GNU/Linux and Microsoft Windows systems. \n
+ * If you intend to compile SapecNG under Microsoft Windows systems, we suggest
+ * to use MinGW - Minimalist GNU for Windows (http://www.mingw.org/).
+ *
+ * To compile the latest stable version, follow these steps:
+ *  - download the software with the command:
+ *    - svn co
+ *        https://sapec-ng.svn.sourceforge.net/svnroot/sapec-ng/branches/1.8.2 sapec-ng
+ *  - jump into the \a sapec-ng directory
+ *  - compile software with the command:
+ *    - ./configure && make all
+ *
+ * You will find the executable into \a sapec-ng/src directory.
+ * That's all.
+ */

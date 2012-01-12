@@ -1,0 +1,73 @@
+/*!
+ * \page inst_qsapecng HowTo - Compile QSapecNG
+ *
+ * \section inst_qsapecng_sec Compile QSapecNG
+ *
+ * Working both on GNU/Linux and Microsoft Windows systems, you need several
+ * steps to prepare your environment. \n
+ * Users of Unix-like systems may be able to recover pre-compiled packages from
+ * a package manager dedicated to the purpose, otherwise it is possible to
+ * download everything from the development stream.
+ *
+ * \b Attention: if you want to compile QSapecNG, the headers and libraries for
+ * developers are needed, not only shared (or static) libraries.
+ *
+ * These are the libraries you need:
+ *  - Qt - Cross-platform application and UI framework, from
+ *      <a href="http://qt.nokia.com/">here</a> (version 4.6, or newer)
+ *  - Boost C++ Libraries, from <a href="http://www.boost.org/">here</a>
+ *      (version 1.42, or newer)
+ *  - Qwt - Qt Widgets for Technical Applications, from
+ *      <a href="http://qwt.sourceforge.net/">here</a> (version 5.x)
+ *  - CMake - the cross-platform, open-source build system, from
+ *      <a href="http://www.cmake.org/">here</a> (version 2.6, or newer)
+ *  - nullsoft scriptable install system, from
+ *      <a href="http://nsis.sourceforge.net/">here</a>
+ *      (if you would like to prepare a package for Microsoft Windows systems)
+ *
+ * At the end, you will be ready to compile QSapecNG. \n
+ * If you will encounter difficulties, keep in mind that pre-compiled packages
+ * are available (or will be soon) for download from
+ * <a href="http://sourceforge.net/projects/qsapecng/">SourceForge.net</a>.
+ *
+ * To compile QSapecNG, please see the section on your system.
+ *
+ * \subsection qsapecng_lin_sec Compile QSapecNG on GNU/Linux systems
+ *
+ * Once the environment has been prepared, these are the steps you have to
+ * follow to compile the software:
+ *  - download the latest snapshot of the software with the command:
+ *    - svn co
+ *        https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/trunk qsapecng
+ *  - if you prefer a stable tag, use the command:
+ *    - svn co
+ *        https://qsapecng.svn.sourceforge.net/svnroot/qsapecng/tags/qsapecng-x.y.z
+ *        qsapecng \n
+ *        where \a x, \a y, and \a z are respectively \a major, \a minor, and
+ *        \a patches release number
+ *  - jump into the \a qsapecng directory
+ *  - check your system with the command:
+ *    - cmake CMakeLists.txt
+ *  - then compile as follow:
+ *    - make all
+ *  - working as root, you can install the executable into the system
+ *      (\a /usr/local/bin/qsapecng) executing:
+ *    - make install
+ *
+ * If it works, you will find an executable called \a qsapecng into the \a bin
+ * subdirectory, or as a system-wide executable.
+ *
+ * If you need to pack the compiled software, you can use \a cpack, a software
+ * shipped with \a cmake. To do that, execute from the main directory:
+ *  - cpack
+ *
+ * You will find the packages QSapecNG-x.y.z.[deb|tar.bz2|tar.gz|tar.Z] into
+ * the main directory.
+ *
+ * \subsection qsapecng_win_sec Compile QSapecNG on Microsoft Windows systems
+ *
+ * On Microsoft Windows systems, you can prepare the environment using cmake by
+ * command line as previously shown. \n
+ * Finally you can build the software with Visual Studio or another IDEs,
+ * provided it supports the structure of the Makefile. That's all.
+ */

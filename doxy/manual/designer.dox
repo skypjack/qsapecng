@@ -1,0 +1,93 @@
+/*!
+ * \page designer Designer
+ *
+ * \section designer_sec The designer
+ *
+ * The designer is quite simple to use. \n
+ * Users can start a new project from the menu as well as open an existing
+ * circuit from the workspace, dragging and dropping the file into the central
+ * area.
+ *
+ * There are several items available into the components panel, which users can
+ * drag and drop onto the grid. Users can find a group of actions from the menu
+ * bar and within the context menu, which can be used to interact with
+ * items (i.e. mirror, rotate and so on). Once a component on the grid has been
+ * selected, all the properties associated with an item are published for
+ * editing into the property panel. Properties are also accessibile as a dialog
+ * using the action properties from the menu bar or the contex menu.
+ *
+ * \note
+ * Not all types of interaction are described here, so please try to click,
+ * double-click, select, drag and drop and do whatever comes to mind. \n
+ * For example, users can select items from the dedicated panel with one click,
+ * then move the mouse pointer over the grid and click with right mouse button
+ * to rotate them, or create an instance of the component with the left mouse
+ * button. \n
+ * Have you ever tried it?
+ *
+ * Some components are referred to as output or probe. At least one of them
+ * should be present in the circuit, because the symbolic analysis produces the
+ * function associated with them. There may be also more than one at a time but
+ * only one will be active (ie the last inserted).
+ *
+ * Other components are referred to as generators. Such components are not
+ * necessary. However, if you want to extract something meaningful, it should
+ * be inserted at least one.
+ *
+ * Items offer junction points to connect each other. A junction point is
+ * represented by a black circle and all items have at least one of them. \n
+ * By overlaying several junction points, users can create relations between
+ * different items. \n
+ * The junction points are also referred to as nodes.
+ *
+ * Despite the simplicity, there are few components that require to be treated
+ * separately.
+ *
+ * \subsection wire_subsec Wires
+ *
+ * There are two types of wire: simple and cross. \n
+ * Simple wire acts as a point-to-point connection between components junction
+ * points. This type of wire does not permit to connect more than two
+ * components. \n
+ * Crossed wire acts as a bus. Each junction point overlaid on this type of
+ * wire contributes to create a link between the owner of the item and all
+ * other connected components.
+ *
+ * \subsection outprobes_subsec Out probes
+ *
+ * The out probe can be used to compute the voltage (as a function) associated
+ * with a specific node, with respect to the ground. \n
+ * To interact with the out probe, users only have to connect the probe's
+ * junction point to components or wires.
+ *
+ * \subsection voltageprobes_subsec Voltage probes
+ *
+ * The voltage probe can be used to compute the voltage (as a function)
+ * associated with a specific node, with respect to another node. \n
+ * To interact with the voltage probe, users have to connect the probe's
+ * junction points to components or wires. The voltage probe has a direction
+ * indicated by the references of the two poles. \n
+ * In fact, this type of probe is internally translated to a voltage controlled
+ * voltage source (VCVS) and an out probe properly connected to the circuit.
+ *
+ * \subsection currentprobes_subsec Current probes
+ *
+ * The current probe can be used to compute the current (as a function) that
+ * flows between different nodes. \n
+ * To interact with the current probe, users have to connect the probe's
+ * junction points to components or wires. The current probe has a direction
+ * indicated by an arrow. \n
+ * In fact, this type of probe is internally translated to a current controlled
+ * voltage source (CCVS) and an out probe properly connected to the circuit.
+ *
+ * \subsection userdef_subsec User defined components
+ *
+ * One of the most important feature of the software is the ability to create
+ * personalized components. These are described in a separate section of
+ * the manual. \n
+ * Ports are also an important components type. They are involved into the
+ * definition of the user defined components and hence described in the
+ * dedicated section.
+ *
+ * \sa \ref userdef
+ */

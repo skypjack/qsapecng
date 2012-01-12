@@ -364,7 +364,7 @@ void WorkPlane::plot(WorkPlane::F f)
       setupCurve(res, MAGNITUDE);
       std::vector<double> rad = res.first;
       for(std::vector<double>::iterator i = rad.begin(); i < rad.end(); ++i)
-        *i = 2. * 4.0 * std::atan(1.0) * *i;
+        *i = 2. * 4. * std::atan(1.) * *i;
       res.first = rad;
       setupCurve(res, MAGNITUDE_RAD);
 
@@ -401,7 +401,7 @@ void WorkPlane::plot(WorkPlane::F f)
       setupCurve(res, PHASE);
       std::vector<double> rad = res.first;
       for(std::vector<double>::iterator i = rad.begin(); i < rad.end(); ++i)
-        *i = 2. * 4.0 * std::atan(1.0) * *i;
+        *i = 2. * 4. * std::atan(1.) * *i;
       res.first = rad;
       setupCurve(res, PHASE_RAD);
 
@@ -438,7 +438,7 @@ void WorkPlane::plot(WorkPlane::F f)
       setupCurve(res, GAIN);
       std::vector<double> rad = res.first;
       for(std::vector<double>::iterator i = rad.begin(); i < rad.end(); ++i)
-        *i = 2. * 4.0 * std::atan(1.0) * *i;
+        *i = 2. * 4. * std::atan(1.) * *i;
       res.first = rad;
       setupCurve(res, GAIN_RAD);
 
@@ -475,7 +475,7 @@ void WorkPlane::plot(WorkPlane::F f)
       setupCurve(res, LOSS);
       std::vector<double> rad = res.first;
       for(std::vector<double>::iterator i = rad.begin(); i < rad.end(); ++i)
-        *i = 2. * 4.0 * std::atan(1.0) * *i;
+        *i = 2. * 4. * std::atan(1.) * *i;
       res.first = rad;
       setupCurve(res, LOSS_RAD);
 
@@ -588,8 +588,13 @@ std::map<std::string, double> WorkPlane::actValues() const
 void WorkPlane::createMainLayout()
 {
   data_ = new QTableWidget;
-  data_->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   data_->horizontalHeader()->setStretchLastSection(true);
+
+  QLayout* dataLayout = new QHBoxLayout;
+  dataLayout->addWidget(data_);
+  QGroupBox* dataBox = new QGroupBox(tr("Data box"));
+  dataBox->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding));
+  dataBox->setLayout(dataLayout);
 
   startFreq_ = new QDoubleSpinBox;
   startFreq_->setMaximum(std::numeric_limits<double>::max());
@@ -616,19 +621,9 @@ void WorkPlane::createMainLayout()
   freqBox->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   freqBox->setLayout(freqLayout);
 
-  QHBoxLayout* replotLayout = new QHBoxLayout;
-  QPushButton* replot = new QPushButton(tr("Replot"));
-  replotLayout->addStretch();
-  replotLayout->addWidget(replot);
-  replotLayout->addStretch();
-  connect(replot, SIGNAL(clicked(bool)), this, SLOT(redraw()));
-
   dataLayout_ = new QVBoxLayout;
-  dataLayout_->addWidget(data_);
+  dataLayout_->addWidget(dataBox, 5);
   dataLayout_->addWidget(freqBox);
-  dataLayout_->addStretch(1);
-  dataLayout_->addLayout(replotLayout);
-  dataLayout_->addStretch(2);
 
   plot_ = new QwtPlot_ContextMenu(this);
   plot_->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);

@@ -37,6 +37,9 @@
     Zt, Yt, sensitivity
 
 - parser crc per esecuzione da riga di comando (netlist)
+- parser netlist per risoluzione gui-less e workplane diretto
+
+- abilitazione/disabilitazione out, V/I probe senza doverli eliminare
 
 ==> [IMPORTANTE] porting Qwt6
 

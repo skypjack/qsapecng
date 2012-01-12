@@ -1,0 +1,41 @@
+/*!
+ * \page manual Manual
+ *
+ * \date 2012.01.12
+ *
+ * \note
+ * This is a short manual that will guide users using SapecNG/QSapecNG. \n
+ * The manual is a work in progress, and of course it lacks completeness.
+ *
+ * \section intro_sec Introduction
+ *
+ * The software consists of two indipendent parts: the SapecNG framework and
+ * the application gui QSapecNG.
+ *
+ * SapecNG is something like a library of data structures and algorithms. It
+ * offers the basis for symbolic analysis. \n
+ * Upon SapecNG, the core component of the software, a GUI can be developed as
+ * well as a command line tool. \n
+ * A specialized algorithm, general purpose and performance oriented, has been
+ * developed around the problem of found the common spanning trees of two
+ * graphs. \n
+ * This algorithm looks like the others implemented within the Boost Graph
+ * Library (BGL) and it aims to be included into the Boost C++ Libraries.
+ *
+ * \sa mrt.hpp
+ *
+ * QSapecNG has been designed to serve as an integrated development
+ * environment. It is a Qt based GUI for SapecNG. \n
+ * Users can easily build circuits as well as solve them. The complexity of the
+ * underlying framework is completely obfuscated. \n
+ * This manual mainly describes how to use the GUI.
+ *
+ * \section toc_sec Table of Contents
+ *
+ * - \subpage thebigpicture
+ * - \subpage designer
+ * - \subpage userdef
+ * - \subpage workplane
+ * - \subpage howto
+ * - \subpage examples
+ */
