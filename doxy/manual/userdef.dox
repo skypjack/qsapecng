@@ -23,6 +23,47 @@
  *     probes will be turned off when used as a component in another circuit;
  *     in addition, functions can be used in the workplane
  *
- * \attention
- * ... TO BE FINISHED ... :-)
+ * \subsection newuserdef_subsec Create a user defined component
+ *
+ * Create new user defined components is as simple as develop a new circuit. In
+ * fact, users need to really design a new circuit. \n
+ * Once the circuit has been developed, can be analyzed like any other circuit.
+ * The resulting function can also be used in the workplane. There are really
+ * no restrictions on the type of items that may be involved in designing the
+ * component.
+ *
+ * When the design work is finished, the ports must be added to the circuit, so
+ * that it can be called user defined component. Each circuit can contain any
+ * number of ports. A port represents a junction point which can be used by
+ * users of the component to connect whatever they want to this item. \n
+ * Each port has an integer identifier. When a custom component is included in
+ * a circuit, its junction points are numbered accordingly (ie, establishes a
+ * relationship between the ports contained internally and external junction
+ * points).
+ *
+ * \subsection useuserdef_subsec Include a user defined component in a circuit
+ *
+ * Through the menu, the toolbar or the context menu, a user defined component
+ * can be included in a circuit. On the grid, it looks like an integrated
+ * circuit. The component has a number of junction points equal to the number
+ * of ports contained internally. Users can connect the component to the other
+ * elements using these junction points, as can be done with any other item. \n
+ * That is, user defined components are like any other normal component because
+ * they act really just like any other normal component.
+ *
+ * \subsection workuserdef_subsec Work with the user defined components
+ *
+ * A user defined component included in a circuit can be edited on the fly with
+ * a double-click. Thus, a new window will open, containing the circuit that is
+ * contained in the component. \n
+ * The circuit can then be modified as any other project. Once finished, users
+ * can choose to save the modified circuit as a new project or simply close it
+ * without saving it: in this case, the changes will be stored only in the
+ * circuit containing the user defined component.
+ *
+ * \note
+ * Two elements that reference the same user defined component, however, does
+ * not also refer to the same circuit. \n
+ * This means that users can edit embedded circuits indipendently, without
+ * influence each other.
  */

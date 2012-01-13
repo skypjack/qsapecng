@@ -14,7 +14,11 @@
  * items (i.e. mirror, rotate and so on). Once a component on the grid has been
  * selected, all the properties associated with an item are published for
  * editing into the property panel. Properties are also accessibile as a dialog
- * using the action properties from the menu bar or the contex menu.
+ * using the action properties from the menu bar or the contex menu. \n
+ * Please, note that components may be involved within in the process of
+ * symbolic analysis as numeric or symbolic part. This means that users can
+ * get functions mixed with some dynamic symbolic part and a numeric part
+ * fixed.
  *
  * \note
  * Not all types of interaction are described here, so please try to click,

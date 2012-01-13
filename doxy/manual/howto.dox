@@ -1,6 +1,29 @@
 /*!
  * \page howto How-to
  *
- * \attention
- * ... TODO ... :-)
+ * \section tutorial_sec From the empty grid to the workplane
+ *
+ * Design a circuit and solve it is a matter of a few simple steps:
+ * - First of all, open a new project from the menu, the toolbar or the context
+ *     menu
+ * - Drag and drop components from the panel or choose them from the menu or
+ *     the context menu
+ * - Place the components on the grid, adjust them and set their properties
+ * - Add to the circuit the wires and at least one probe (ie out probe or
+ *     voltage probe or current probe)
+ * - Assign nodes to the circuit using the action from the menu, the toolbar or
+ *     the context menu (this is necessary to identify involved junction
+ *     points)
+ * - Resolve the circuit using the action from the menu, the toolbar or the
+ *     context menu (this means calculate the requested output function)
+ * - Switch to the workplane to better analyze the function obtained from the
+ *     previous step
+ *
+ * That's all. Nothing more.
+ *
+ * \note
+ * Design a user defined component is a matter of a few steps, too. \n
+ * See the dedicated section for more details.
+ *
+ * \sa \ref userdef
  */
