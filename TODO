@@ -41,8 +41,6 @@
 
 - abilitazione/disabilitazione out, V/I probe senza doverli eliminare
 
-==> [IMPORTANTE] porting Qwt6
-
 - J.C.: Matlab function output
 - J.C.: Approximate solution (vedi doc/reference: Approx_Gielen, Approx_Yu)
 - J.C.: shortcut per componenti per editing al volo (configurabile dall'utente, pure)
@@ -57,9 +55,6 @@
     numbers but text and with "_" characters as well. What this does is
     prevents someone from having to generate the schematic twice in two
     different tools. Anyway, it is just a thought.
-
-
-==> MANUALE
 
 
 ---------------------------------------------------------------------------------------------------------
