@@ -576,8 +576,9 @@ void QSapecNGWindow::license()
 void QSapecNGWindow::about()
 {
   QMessageBox::about(this, tr("QSapecNG"),
-    QString("%1%2%3")
-      .arg(tr("QSapecNG: Qt-based GUI for SapecNG\n\n"))
+    QString("%1%2%3%4")
+      .arg(tr("QSapecNG - SUPSI: Qt-based GUI for SapecNG\n"))
+      .arg(tr("(SUSPI customization)\n\n"))
       .arg(tr("QSapecNG is based in part on the work of "))
       .arg(tr("the Qwt project (http://qwt.sf.net)."))
   );
