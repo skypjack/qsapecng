@@ -25,8 +25,6 @@
   Errore quando si passa al workplane... :-( ... o è il metacoso che risolve? :-D
 
 - closeEvent in qsapecngwindow non torna mica tanto! :-D
-
-- frequency box in workplane più piccolo e notazione scientifica anche nelle frequenze
 - miglioramento del supporto alla notazione scientifica (attualmente molto rigido)
 
 - risultati: non solo fdt tensione ma anche voltage gain (Kv), current gain (Ki),
@@ -60,5 +58,8 @@
 ---------------------------------------------------------------------------------------------------------
 
 ChangeLog:
+- passaggio completo a qwt6
 - avvio da riga di comando passando il/i file circuito in ingresso
 - centralizzazione della notazione scientifica all'interno dei Settings
+- workplane design fixed (frequencies box ridotta in dimensioni)
+- manuale completo
