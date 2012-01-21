@@ -1,6 +1,6 @@
-find_package( Boost 1.41.0 REQUIRED )
-find_package( Qt4 COMPONENTS QtCore QtGui REQUIRED )
-find_package( Qwt6 REQUIRED )
+find_package( Boost 1.46.0 REQUIRED )
+find_package( Qt4 4.6.2 COMPONENTS QtCore QtGui REQUIRED )
+find_package( Qwt 6.0.0 REQUIRED )
 
 
 if(WIN32)
@@ -12,7 +12,7 @@ add_definitions( ${QT_DEFINITIONS} )
 
 include_directories(
   ${QT_INCLUDES}
-  ${Qwt6_INCLUDE_DIR}
+  ${QWT_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -60,7 +60,7 @@ elseif(APPLE)
   # this section is to fixup the bundle after it has been created
   set(FIXUP_BUNDLE_PATH "${PROJECT_BINARY_DIR}/${OUTPUT_BIN_FOLDER}/${OUTPUT_BIN_NAME}.app")
   set(FIXUP_BUNDLE_LIBS "")
-  set(FIXUP_BUNDLE_DIRS "${Qwt6_INCLUDE_DIR}/../lib")
+  set(FIXUP_BUNDLE_DIRS "${QWT_ROOT_DIR}/lib")
   configure_file("${PROJECT_SOURCE_DIR}/cmake/MacOSXBundle_fixup_bundle.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/fixup_bundle.cmake" @ONLY)
 
   if(INCLUDE_REQUIRED_LIBRARIES_INTO_BUNDLE)
@@ -89,12 +89,12 @@ elseif(WIN32)
     NO_DEFAULT_PATH
   )
 
-  unset(QWT6_DLL_DIR CACHE)
-  find_path(QWT6_DLL_DIR
-    NAMES "qwt6.dll"
+  unset(QWT_DLL_DIR CACHE)
+  find_path(QWT_DLL_DIR
+    NAMES "qwt.dll"
     PATHS
-      "${Qwt6_INCLUDE_DIR}/../lib"
-      "${Qwt6_INCLUDE_DIR}/../bin"
+      "${QWT_INCLUDE_DIR}/../lib"
+      "${QWT_INCLUDE_DIR}/../bin"
     PATH_SUFFIXES lib bin
     ENV PATH
     DOC "path of the Qwt DLL files to be included in the binary packages"
@@ -109,21 +109,21 @@ elseif(WIN32)
     mark_as_advanced(QT_DLL_DIR)
   endif(NOT QT_DLL_DIR STREQUAL "QT_DLL_DIR-NOTFOUND" AND NOT QT_CONFIG MATCHES "static")
 
-  if(NOT QWT6_DLL_DIR STREQUAL "QWT6_DLL_DIR-NOTFOUND")
-    option(INCLUDE_QWT6_DLL_IN_BIN_PACKAGE "Enable this option to include Qwt DLL files in binary packages (default ON)" ON)
-  else(NOT QWT6_DLL_DIR STREQUAL "QWT6_DLL_DIR-NOTFOUND")
-    unset(INCLUDE_QWT6_DLL_IN_BIN_PACKAGE CACHE)
-    set(INCLUDE_QWT6_DLL_IN_BIN_PACKAGE OFF)
-    mark_as_advanced(INCLUDE_QWT6_DLL_IN_BIN_PACKAGE)
-    mark_as_advanced(QWT6_DLL_DIR)
-  endif(NOT QWT6_DLL_DIR STREQUAL "QWT6_DLL_DIR-NOTFOUND")
+  if(NOT QWT_DLL_DIR STREQUAL "QWT_DLL_DIR-NOTFOUND")
+    option(INCLUDE_QWT_DLL_IN_BIN_PACKAGE "Enable this option to include Qwt DLL files in binary packages (default ON)" ON)
+  else(NOT QWT_DLL_DIR STREQUAL "QWT_DLL_DIR-NOTFOUND")
+    unset(INCLUDE_QWT_DLL_IN_BIN_PACKAGE CACHE)
+    set(INCLUDE_QWT_DLL_IN_BIN_PACKAGE OFF)
+    mark_as_advanced(INCLUDE_QWT_DLL_IN_BIN_PACKAGE)
+    mark_as_advanced(QWT_DLL_DIR)
+  endif(NOT QWT_DLL_DIR STREQUAL "QWT_DLL_DIR-NOTFOUND")
 endif()
 
 set(
   LIBS
   ${LIBS} 
   ${QT_LIBRARIES}
-  ${Qwt6_Qt4_LIBRARY}
+  ${QWT_LIBRARIES}
 )
 
 IF(WIN32)
@@ -325,8 +325,8 @@ if(UNIX AND NOT APPLE AND NOT WIN32)
     RENAME qsapecng.png
   )
   install(
-    FILES gui/images/qsapecng-24x24.png
-    DESTINATION share/icons/hicolor/24x24/apps
+    FILES gui/images/qsapecng-22x22.png
+    DESTINATION share/icons/hicolor/22x22/apps
     RENAME qsapecng.png
   )
   install(
@@ -370,12 +370,12 @@ if(WIN32)
     )
   endif(INCLUDE_QT_DLL_IN_BIN_PACKAGE)
 
-  if(INCLUDE_QWT6_DLL_IN_BIN_PACKAGE)
+  if(INCLUDE_QWT_DLL_IN_BIN_PACKAGE)
     install(
-      FILES "${QWT6_DLL_DIR}/qwt6.dll"
+      FILES "${QWT_DLL_DIR}/qwt.dll"
       DESTINATION "${OUTPUT_BIN_FOLDER}"
     )
-  endif(INCLUDE_QWT6_DLL_IN_BIN_PACKAGE)
+  endif(INCLUDE_QWT_DLL_IN_BIN_PACKAGE)
 endif(WIN32)
 
 if(APPLE)

@@ -3,8 +3,6 @@
 - IMPORTANTE per v2.1.0:
     o primo componente messo nell'angolo in alto a sinistra per MacOS
       https://sourceforge.net/tracker/?func=detail&aid=3131134&group_id=369990&atid=1541776
-    o passare a Qt 4.7
-    o lasciare compatibilita' con Boost 1.41.0
 
 - refactoring:
     introdurre progetti

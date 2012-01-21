@@ -1,7 +1,7 @@
 QSapecNG README
 ~~~~~~~~~~~~~~~~
-   QSapecNG v2.0.0
-   Copyright (C) 2009-2011 Michele Caini
+   QSapecNG v2.1.0~beta1
+   Copyright (C) 2009-2012 Michele Caini
    GNU General Public License v3
 
  This program is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@ What is it?
  In fact, it consists of two indipendent parts: the SapecNG framework engine
  and the application gui QSapecNG.
 
- It is an open source, multi-platform project, continuously enhanced by students
+ It is an open source, multi-platform project, continuously enhanced by students 
  and researchers of Department of Electronics and Telecommunications (DET) of
  the University of Florence. It comes as continuation of SapWin for Windows, in
  order to give to the project a full compatibility on other platforms.
 
  Through SapecNG/QSapecNG users can draw, solve and analyze analog circuits as
- well as manage them. Since version 2.0.0beta1 there is also the full support for
+ well as manage them. Since version 2.0.0~beta1 there is also the full support for
  sub-circuits that can be created, saved, reopened and added as part of other
  circuits.
 
@@ -42,53 +42,15 @@ Installation
  * MacOSX: open the dmg file and copy the application bundle to the Applications folder
 
 
-ChangeLog
-~~~~~~~~~
- * 2.0.0+svn (under development)
-    o Working on bug https://sourceforge.net/tracker/?func=detail&aid=3131134&group_id=369990&atid=1541776
-    o Working on compatibility with Qwt version 6 (starting from patch
-      https://sourceforge.net/tracker/?func=detail&aid=3396943&group_id=369990&atid=1541778
-      written for Debian)
-    o Debug symbols added to final binaries, using CMake variables, only
-      for 'Debug' and 'RelWithDebInfo' targets.
-    o ...
-
- * 2.0.0 (current stable release)
-    o Subcircuits support with in-place editing (was Dialog Explosion into
-      the 2.0.0beta1 release)
-    o Minor fixes for memory leaks
-    o Added 24x24 and 48x48 hicolor icons for GNU/Linux
-    o CCVS / VCVS standard graphic models
-    o Ammeter / Voltmeter fixed graphic models
-    o Property Editor now supports scientific notation
-    o Workplane now supports scientific notation
-    o Schematic Editor awares of properties modification
-    o Enhanced control on dirty state of Schematic Editor
-
- * 1.2.2
-    o Fixed the inverted sign produced by some components
-    o Adapted the debian/copyright file in order to respect the DEP-5 proposal
-    o Created required files to install an entry in the Debian menu
-    o Added VCS data to the debian/control file
-
- * 1.2.1
-    o Added support for MacOSX
-    o Added debian subfolder
-    o Minor bugs fixed
-    o Created this README
-    o Created the file src/functor/README.rpoly with the license of the
-      rpoly.cpp source file
-
-
 Requirements for building
 ~~~~~~~~~~~~~~~~~~~~~~~~~
- * Qt v4.6.0 (http://qt.nokia.com/) [QtCore and QtGui are required]
- * Boost v1.41.0 (http://www.boost.org/) [required] 
- * Qwt v5.1.2 (http://qwt.sourceforge.net/) [required]     
- * CMake v2.6 (http://www.cmake.org/) [optional, only for building]
+ * Qt v4.6.2 (http://qt.nokia.com/) [QtCore and QtGui are required]
+ * Boost v1.46.0 (http://www.boost.org/) [required] 
+ * Qwt v6.0.0 (http://qwt.sourceforge.net/) [required]     
+ * CMake v2.8 (http://www.cmake.org/) [optional, only for building]
  * Doxygen (http://www.doxygen.org/) [optional, needed to generate the html documentation]
  * NSIS (http://nsis.sourceforge.net/) [optional, needed to generate Setup file on Windows]
- * 7-Zip (http://www.7-zip.org/) [optional, needed to generate zip of source and binaries file on Windows]
+ * 7-Zip (http://www.7-zip.org/) [optional, needed to generate zip of source and binary files on Windows]
  * tar+gzip (http://www.gnu.org/software/tar/ and http://www.gzip.org/)
    [optional, needed to generate tar.gz of source and binaries file on Unix]
  * tar+bzip (http://www.gnu.org/software/tar/ and http://www.bzip.org/)
@@ -218,7 +180,7 @@ Note for (Slackware/Debian/RedHat)-based distributions
  
    checkinstall --default \
      --pkgname qsapecng \
-     --pkgversion 2.0.0 \
+     --pkgversion 2.1.0~beta1 \
      --pkggroup electronics
 
 

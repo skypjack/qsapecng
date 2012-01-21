@@ -3,9 +3,9 @@
  *
  * \section inst_qsapecng_sec Compile QSapecNG
  *
- * Working both on GNU/Linux and Microsoft Windows systems, you need several
+ * Working on GNU/Linux, Microsoft Windows and MacOS systems, you need several
  * steps to prepare your environment. \n
- * Users of Unix-like systems may be able to recover pre-compiled packages from
+ * Users of GNU/Linux systems may be able to recover pre-compiled packages from
  * a package manager dedicated to the purpose, otherwise it is possible to
  * download everything from the development stream.
  *
@@ -14,16 +14,18 @@
  *
  * These are the libraries you need:
  *  - Qt - Cross-platform application and UI framework, from
- *      <a href="http://qt.nokia.com/">here</a> (version 4.6, or newer)
+ *      <a href="http://qt.nokia.com/">here</a> (version 4.6.2, or newer)
  *  - Boost C++ Libraries, from <a href="http://www.boost.org/">here</a>
- *      (version 1.42, or newer)
+ *      (version 1.46.0, or newer)
  *  - Qwt - Qt Widgets for Technical Applications, from
- *      <a href="http://qwt.sourceforge.net/">here</a> (version 5.x)
+ *      <a href="http://qwt.sourceforge.net/">here</a> (version 6.0.0, or newer)
  *  - CMake - the cross-platform, open-source build system, from
- *      <a href="http://www.cmake.org/">here</a> (version 2.6, or newer)
+ *      <a href="http://www.cmake.org/">here</a> (version 2.8, or newer)
  *  - nullsoft scriptable install system, from
  *      <a href="http://nsis.sourceforge.net/">here</a>
  *      (if you would like to prepare a package for Microsoft Windows systems)
+ *  - 7-Zip from <a href="http://www.7-zip.org/">here</a>
+ *      (needed to generate zip archive of source and binary files on Windows)
  *
  * At the end, you will be ready to compile QSapecNG. \n
  * If you will encounter difficulties, keep in mind that pre-compiled packages
@@ -32,7 +34,7 @@
  *
  * To compile QSapecNG, please see the section on your system.
  *
- * \subsection qsapecng_lin_sec Compile QSapecNG on GNU/Linux systems
+ * \subsection qsapecng_lin_sec Compile QSapecNG on GNU/Linux and MacOS systems
  *
  * Once the environment has been prepared, these are the steps you have to
  * follow to compile the software:
@@ -53,21 +55,30 @@
  *  - working as root, you can install the executable into the system
  *      (\a /usr/local/bin/qsapecng) executing:
  *    - make install
+ *    It's better to avoid the \a make \a install command on MacOS,
+ *    see below how to create packages.
  *
  * If it works, you will find an executable called \a qsapecng into the \a bin
  * subdirectory, or as a system-wide executable.
  *
  * If you need to pack the compiled software, you can use \a cpack, a software
- * shipped with \a cmake. To do that, execute from the main directory:
- *  - cpack
+ * shipped with CMake. To do that, execute from the main directory:
+ *  - make package
  *
- * You will find the packages QSapecNG-x.y.z.[deb|tar.bz2|tar.gz|tar.Z] into
+ * You will find the packages QSapecNG-x.y.z.[deb|tar.bz2|tar.gz|tar.Z|exe|dmg] into
  * the main directory.
  *
  * \subsection qsapecng_win_sec Compile QSapecNG on Microsoft Windows systems
  *
  * On Microsoft Windows systems, you can prepare the environment using cmake by
- * command line as previously shown. \n
- * Finally you can build the software with Visual Studio or another IDEs,
- * provided it supports the structure of the Makefile. That's all.
+ * command line as previously shown or open the program "CMake" or "cmake-gui" than
+ *  - browse the filesystem and select the root directory of the source files
+ *  - select the destination build directory (usually "${src_path}/build")
+ *  - click on "Configure" button and select the wanted output project (i.e. Visual Studio)
+ *  - click again on "Configure" and than on "Generate"
+ * 
+ * The project is now ready to be opened with Visual Studio. Select "Release"
+ * instead of "Debug" and build QSapecNG. After building if you want to install
+ * the program simply compile the "INSTALL" project, if you want to create the
+ * runnable setup compile the "PACKAGE" project. That's all.
  */
