@@ -1,0 +1,9 @@
+QSapecNG-supsi CHANGELOG
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+ Note: this changelog is on top of base QSapecNG changelog.
+ 
+ * 2.1.0~beta1 (under development)
+    o Edited the icon to add a SUPSI logo
+    o Added an "About" dialog to describe the SUPSI branch
+    o ...
