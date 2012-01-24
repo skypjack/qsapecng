@@ -553,7 +553,7 @@ void QSapecNGWindow::license()
   QString title = tr("License");
   QString body =
     "QSapecNG, Qt-based GUI for SapecNG<br>"
-    "Copyright (C) 2009-2011, Michele Caini<br>"
+    "Copyright (C) 2009, Michele Caini<br>"
     "<br>"
     "This program is free software: you can redistribute it and/or modify "
     "it under the terms of the GNU General Public License as published by "
@@ -575,11 +575,12 @@ void QSapecNGWindow::license()
 
 void QSapecNGWindow::about()
 {
-  QMessageBox::about(this, tr("QSapecNG"),
-    QString("%1%2%3%4")
-      .arg(tr("QSapecNG - SUPSI: Qt-based GUI for SapecNG\n"))
-      .arg(tr("(SUSPI customization)\n\n"))
-      .arg(tr("QSapecNG is based in part on the work of "))
+  QMessageBox::about(this, tr(PACKAGE_NAME),
+    QString("%1%2%3%4%5")
+      .arg(PACKAGE_NAME)
+      .arg(tr(": Qt-based GUI for SapecNG\n\n"))
+      .arg(PACKAGE_NAME)
+      .arg(tr(" is based in part on the work of "))
       .arg(tr("the Qwt project (http://qwt.sf.net)."))
   );
 }
