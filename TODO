@@ -61,3 +61,4 @@ ChangeLog:
 - centralizzazione della notazione scientifica all'interno dei Settings
 - workplane design fixed (frequencies box ridotta in dimensioni)
 - manuale completo
+- pre-assegna i nodi al salvataggio (salvataggio consistente)

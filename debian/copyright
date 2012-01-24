@@ -4,19 +4,19 @@ Upstream-Contact: Michele Caini <michele.caini@gmail.com>
 Source: http://qsapecng.sourceforge.net/
 
 Files: *
-Copyright: 2009-2011 Michele Caini <michele.caini@gmail.com>
+Copyright: 2009, Michele Caini <michele.caini@gmail.com>
 License: GPL-3.0+
 
 Files: debian/*
-Copyright: 2010-2011 Simone Rossetto <simros85@gmail.com>
+Copyright: 2010, Simone Rossetto <simros85@gmail.com>
 License: GPL-3.0+
 
 Files: cmake/Modules/FindQwt5.cmake
-Copyright: 2007 Pau Garcia i Quiles <pgquiles@elpauer.org>
+Copyright: 2007, Pau Garcia i Quiles <pgquiles@elpauer.org>
 License: BSD-3-Clause
 
 Files: src/functor/rpoly.cpp
-Copyright: 2000 C. Bond <crb@crbond.com>
+Copyright: 2000, C. Bond <crb@crbond.com>
 License: public-domain
  This software is offered freely and without restriction. This notice
  has been added to the file rpoly.cpp with the permission of the author in

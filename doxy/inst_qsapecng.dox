@@ -18,7 +18,8 @@
  *  - Boost C++ Libraries, from <a href="http://www.boost.org/">here</a>
  *      (version 1.46.0, or newer)
  *  - Qwt - Qt Widgets for Technical Applications, from
- *      <a href="http://qwt.sourceforge.net/">here</a> (version 6.0.0, or newer)
+ *      <a href="http://qwt.sourceforge.net/">here</a>
+ *      (version 6.0.0, or newer)
  *  - CMake - the cross-platform, open-source build system, from
  *      <a href="http://www.cmake.org/">here</a> (version 2.8, or newer)
  *  - nullsoft scriptable install system, from
@@ -65,16 +66,18 @@
  * shipped with CMake. To do that, execute from the main directory:
  *  - make package
  *
- * You will find the packages QSapecNG-x.y.z.[deb|tar.bz2|tar.gz|tar.Z|exe|dmg] into
- * the main directory.
+ * You will find the packages QSapecNG-x.y.z.[deb|tar.bz2|tar.gz|tar.Z|exe|dmg]
+ * into the main directory.
  *
  * \subsection qsapecng_win_sec Compile QSapecNG on Microsoft Windows systems
  *
  * On Microsoft Windows systems, you can prepare the environment using cmake by
- * command line as previously shown or open the program "CMake" or "cmake-gui" than
+ * command line as previously shown or open the program "CMake" or "cmake-gui",
+ * then
  *  - browse the filesystem and select the root directory of the source files
  *  - select the destination build directory (usually "${src_path}/build")
- *  - click on "Configure" button and select the wanted output project (i.e. Visual Studio)
+ *  - click on "Configure" button and select the wanted output project
+ *      (i.e. Visual Studio)
  *  - click again on "Configure" and than on "Generate"
  * 
  * The project is now ready to be opened with Visual Studio. Select "Release"
