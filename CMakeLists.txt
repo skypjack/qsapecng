@@ -1,5 +1,5 @@
 project( qsapecng )
-cmake_minimum_required( VERSION 2.6 )
+cmake_minimum_required( VERSION 2.8 )
 
 set(
   CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
@@ -22,11 +22,11 @@ set( PROJECT_VERSION
   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} )
 
 set( PACKAGE_VERSION "${PROJECT_VERSION}" )
-set( PACKAGE_NAME "QSapecNG - SUPSI" )
+set( PACKAGE_NAME "QSapecNG-SUPSI" )
 set( SETTINGS_ORGANIZATION "Unifi" )
 set( SETTINGS_APPLICATION "${PACKAGE_NAME}" )
 set( PROJECT_AUTHOR "Michele Caini" )
-set( PROJECT_YEAR_COPYRIGHT "2009-2011" )
+set( PROJECT_YEAR_COPYRIGHT "2009" )
 set( PROJECT_AUTHOR_EMAIL "michele.caini@gmail.com" )
 set( PACKAGE_CHEF "${PROJECT_AUTHOR} <${PROJECT_AUTHOR_EMAIL}>" )
 
@@ -189,6 +189,5 @@ else()
   )
 
 endif(WIN32 AND NOT UNIX)
-
 
 include( CPack )
