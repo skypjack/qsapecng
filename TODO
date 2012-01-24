@@ -4,3 +4,5 @@ QSapecNG-supsi TODO
     src/gui/images/qsapecng-splash-ng.png partendo dalla versione svg
     (non l'ho fatto io perché l'svg di supsi ha un formato diverso,
     quindi non so se devi cambiare qualcosa anche nei sorgenti)
+
+see trunk for major updates.
