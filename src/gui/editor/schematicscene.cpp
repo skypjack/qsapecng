@@ -240,14 +240,14 @@ QPainterPath SchematicScene::cccsPath()
   path.lineTo(2 * step, 5 * step);
   path.lineTo(0, 5 * step);
 
-  path.moveTo(2 * step, 3 * step + step / 4);
-  path.lineTo(2 * step, 2 * step - step / 4);
+  path.moveTo(step, 2 * step + step / 2);
+  path.lineTo(3 * step, 2 * step + step / 2);
 
-  path.moveTo(2 * step - step / 4, 2 * step + step / 4);
-  path.lineTo(2 * step, 2 * step - step / 4);
+  path.moveTo(2 * step - step / 4, step + step / 4);
+  path.lineTo(2 * step, step - step / 4);
 
-  path.moveTo(2 * step + step / 4, 2 * step + step / 4);
-  path.lineTo(2 * step, 2 * step - step / 4);
+  path.moveTo(2 * step + step / 4, step + step / 4);
+  path.lineTo(2 * step, step - step / 4);
 
   path.moveTo(5 * step, 0);
   path.lineTo(4 * step, 0);
@@ -271,37 +271,26 @@ QPainterPath SchematicScene::ccvsPath()
 
   path.moveTo(0, 0);
   path.lineTo(2 * step, 0);
-  path.lineTo(2 * step, step + step / 2);
+  path.lineTo(2 * step, 5 * step);
+  path.lineTo(0, 5 * step);
 
+  path.moveTo(2 * step, step + step / 2);
   path.lineTo(step, 2 * step + step / 2);
   path.lineTo(2 * step, 3 * step + step / 2);
   path.lineTo(3 * step, 2 * step + step / 2);
   path.lineTo(2 * step, step + step / 2);
 
-  path.moveTo(2 * step, 3 * step + step / 2);
-  path.lineTo(2 * step, 5 * step);
-  path.lineTo(0, 5 * step);
+  path.moveTo(step, step - step / 4);
+  path.lineTo(step, step + step / 4);
 
-  path.moveTo(2 * step, 2 * step - step / 4);
-  path.lineTo(2 * step, 2 * step + step / 4);
-
-  path.moveTo(2 * step - step / 4, 2 * step);
-  path.lineTo(2 * step + step / 4, 2 * step);
-
-  path.moveTo(2 * step - step / 4, 3 * step);
-  path.lineTo(2 * step + step / 4, 3 * step);
+  path.moveTo(step - step / 4, step);
+  path.lineTo(step + step / 4, step);
 
   path.moveTo(5 * step, 0);
   path.lineTo(4 * step, 0);
   path.lineTo(4 * step, 5 * step);
   path.lineTo(5 * step, 5 * step);
 
-  // path.moveTo(4 * step - step / 3, 2 * step + step / 4);
-  // path.lineTo(4 * step, step - step / 4);
-
-  // path.moveTo(4 * step + step / 3, 2 * step + step / 4);
-  // path.lineTo(4 * step, step - step / 4);
-  
   path.moveTo(4 * step - step / 3, 3 * step - step / 4);
   path.lineTo(4 * step, 4 * step + step / 4);
 
@@ -319,12 +308,8 @@ QPainterPath SchematicScene::conductancePath()
 
   path.moveTo(0, step);
   path.lineTo(step, step);
-  path.lineTo(step + step / 2, 0);
-  path.lineTo(2 * step, 2 * step);
-  path.lineTo(2 * step + step / 2, 0);
-  path.lineTo(3 * step, 2 * step);
-  path.lineTo(3 * step + step / 2, 0);
-  path.lineTo(4 * step, step);
+  path.addRect(step, step / 2, 3 * step, step);
+  path.moveTo(4 * step, step);
   path.lineTo(5 * step, step);
 
   return path;
@@ -346,15 +331,14 @@ QPainterPath SchematicScene::currentSourcePath()
     ), -90, 360
   );
   path.lineTo(step, 5 * step);
+  path.moveTo(0, 2 * step + step / 2);
+  path.lineTo(2 * step, 2 * step + step / 2);
 
-  path.moveTo(step, 3 * step + step / 4);
-  path.lineTo(step, 2 * step - step / 4);
+  path.moveTo(step - step / 4, step + step / 4);
+  path.lineTo(step, step - step / 4);
 
-  path.moveTo(step - step / 4, 2 * step + step / 4);
-  path.lineTo(step, 2 * step - step / 4);
-
-  path.moveTo(step + step / 4, 2 * step + step / 4);
-  path.lineTo(step, 2 * step - step / 4);
+  path.moveTo(step + step / 4, step + step / 4);
+  path.lineTo(step, step - step / 4);
 
   return path;
 }
@@ -429,12 +413,8 @@ QPainterPath SchematicScene::resistorPath()
 
   path.moveTo(0, step);
   path.lineTo(step, step);
-  path.lineTo(step + step / 2, 0);
-  path.lineTo(2 * step, 2 * step);
-  path.lineTo(2 * step + step / 2, 0);
-  path.lineTo(3 * step, 2 * step);
-  path.lineTo(3 * step + step / 2, 0);
-  path.lineTo(4 * step, step);
+  path.addRect(step, step / 2, 3 * step, step);
+  path.moveTo(4 * step, step);
   path.lineTo(5 * step, step);
 
   return path;
@@ -459,14 +439,14 @@ QPainterPath SchematicScene::vccsPath()
   path.lineTo(2 * step, 5 * step);
   path.lineTo(0, 5 * step);
 
-  path.moveTo(2 * step, 3 * step + step / 4);
-  path.lineTo(2 * step, 2 * step - step / 4);
+  path.moveTo(step, 2 * step + step / 2);
+  path.lineTo(3 * step, 2 * step + step / 2);
 
-  path.moveTo(2 * step - step / 4, 2 * step + step / 4);
-  path.lineTo(2 * step, 2 * step - step / 4);
+  path.moveTo(2 * step - step / 4, step + step / 4);
+  path.lineTo(2 * step, step - step / 4);
 
-  path.moveTo(2 * step + step / 4, 2 * step + step / 4);
-  path.lineTo(2 * step, 2 * step - step / 4);
+  path.moveTo(2 * step + step / 4, step + step / 4);
+  path.lineTo(2 * step, step - step / 4);
 
   path.moveTo(5 * step, 0);
   path.lineTo(4 * step, 0);
@@ -493,25 +473,20 @@ QPainterPath SchematicScene::vcvsPath()
 
   path.moveTo(0, 0);
   path.lineTo(2 * step, 0);
-  path.lineTo(2 * step, step + step / 2);
+  path.lineTo(2 * step, 5 * step);
+  path.lineTo(0, 5 * step);
 
+  path.moveTo(2 * step, step + step / 2);
   path.lineTo(step, 2 * step + step / 2);
   path.lineTo(2 * step, 3 * step + step / 2);
   path.lineTo(3 * step, 2 * step + step / 2);
   path.lineTo(2 * step, step + step / 2);
 
-  path.moveTo(2 * step, 3 * step + step / 2);
-  path.lineTo(2 * step, 5 * step);
-  path.lineTo(0, 5 * step);
+  path.moveTo(step, step - step / 4);
+  path.lineTo(step, step + step / 4);
 
-  path.moveTo(2 * step, 2 * step - step / 4);
-  path.lineTo(2 * step, 2 * step + step / 4);
-
-  path.moveTo(2 * step - step / 4, 2 * step);
-  path.lineTo(2 * step + step / 4, 2 * step);
-
-  path.moveTo(2 * step - step / 4, 3 * step);
-  path.lineTo(2 * step + step / 4, 3 * step);
+  path.moveTo(step - step / 4, step);
+  path.lineTo(step + step / 4, step);
 
   path.moveTo(5 * step, 0);
   path.lineTo(4 * step, 0);
@@ -537,7 +512,7 @@ QPainterPath SchematicScene::voltageSourcePath()
   uint step = GridStep;
 
   path.moveTo(step, 0);
-  path.lineTo(step, step + step / 2);
+  path.lineTo(step, 5 * step);
   path.moveTo(step, 3 * step + step / 2);
   path.arcTo(
     QRectF(
@@ -545,16 +520,12 @@ QPainterPath SchematicScene::voltageSourcePath()
       QPointF(2 * step, 3 * step + step / 2)
     ), -90, 360
   );
-  path.lineTo(step, 5 * step);
 
-  path.moveTo(step - step / 4, 3 * step);
-  path.lineTo(step + step / 4, 3 * step);
+  path.moveTo(step / 2, step - step / 4);
+  path.lineTo(step / 2, step + step / 4);
 
-  path.moveTo(step, 2 * step - step / 4);
-  path.lineTo(step, 2 * step + step / 4);
-
-  path.moveTo(step - step / 4, 2 * step);
-  path.lineTo(step + step / 4, 2 * step);
+  path.moveTo(step / 2 - step / 4, step);
+  path.lineTo(step / 2 + step / 4, step);
 
   return path;
 }
