@@ -19,6 +19,8 @@
 
 #include "config.h"
 
+#include "exception/sapecngexception.h"
+
 #include "gui/qsapecngwindow.h"
 
 #include "gui/configdialog/configdialog.h"
@@ -183,14 +185,6 @@ QSapecNGWindow::QSapecNGWindow()
 
 void QSapecNGWindow::closeEvent(QCloseEvent* event)
 {
-  QStringList session;
-  QList<QMdiSubWindow*> subWs = mdiArea_->subWindowList();
-  foreach(QMdiSubWindow* subW, subWs) {
-    SchematicEditor* editor = qobject_cast<SchematicEditor*>(subW);
-    if(editor && !editor->isUntitled())
-      session.append(editor->currentFile());
-  }
-
   mdiArea_->closeAllSubWindows();
   mdiArea_->activateNextSubWindow();
 
@@ -354,12 +348,23 @@ void QSapecNGWindow::open(const QString& fileName)
     }
 
     SchematicEditor* editor = createSchematicEditor();
-    if(editor->loadFile(fileName)) {
+    bool loaded = false;
+    try {
+      loaded = editor->loadFile(fileName);
+    } catch (...) {
+      QMessageBox::warning(this, tr("File corrupted"),
+          tr("Error loading file.\n")
+            .append("Something has gone wrong while reading the file %1.")
+            .arg(fileName));
+    }
+
+    if(loaded) {
       updateRecentFileList(fileName);
       statusBar()->showMessage(tr("File loaded"), 2000);
       mdiArea_->setActiveSubWindow(editor);
       editor->show();
     } else {
+      editor->setWindowModified(false);
       editor->close();
     }
   }
@@ -379,6 +384,19 @@ void QSapecNGWindow::open()
 }
 
 
+void QSapecNGWindow::openCrc()
+{
+  QString fileName = QFileDialog::getOpenFileName(this,
+      tr("Read file"), Settings().workspace(),
+      QString("%1")
+        .arg(tr("Netlist files (*.crc)"))
+    );
+
+  QMessageBox::information(this, tr("Netlist file"),
+      tr("We're sorry. Crc file analysis is still incomplete"));
+}
+
+
 void QSapecNGWindow::openRecent()
 {
   QAction* action = qobject_cast<QAction*>(sender());
@@ -392,12 +410,23 @@ void QSapecNGWindow::openRecent()
     }
 
     SchematicEditor* editor = createSchematicEditor();
-    if(editor->loadFile(action->data().toString())) {
+    bool loaded = false;
+    try {
+      loaded = editor->loadFile(action->data().toString());
+    } catch (...) {
+      QMessageBox::warning(this, tr("File corrupted"),
+          tr("Error loading file.\n")
+            .append("Something has gone wrong while reading the file %1.")
+            .arg(action->data().toString()));
+    }
+
+    if(loaded) {
       updateRecentFileList(action->data().toString());
       statusBar()->showMessage(tr("File loaded"), 2000);
       mdiArea_->setActiveSubWindow(editor);
       editor->show();
     } else {
+      editor->setWindowModified(false);
       editor->close();
     }
   }
@@ -407,9 +436,12 @@ void QSapecNGWindow::openRecent()
 void QSapecNGWindow::save()
 {
   SchematicEditor* editor = activeEditor();
-  if(editor && editor->save()) {
-    updateRecentFileList(editor->currentFile());
-    statusBar()->showMessage(tr("File saved"), 2000);
+  if(editor) {
+    editor->scene().assignNodes();
+    if(editor->save()) {
+      updateRecentFileList(editor->currentFile());
+      statusBar()->showMessage(tr("File saved"), 2000);
+    }
   }
 }
 
@@ -417,9 +449,12 @@ void QSapecNGWindow::save()
 void QSapecNGWindow::saveAs()
 {
   SchematicEditor* editor = activeEditor();
-  if(editor && editor->saveAs()) {
-    updateRecentFileList(editor->currentFile());
-    statusBar()->showMessage(tr("File saved"), 2000);
+  if(editor) {
+    editor->scene().assignNodes();
+    if(editor->saveAs()) {
+      updateRecentFileList(editor->currentFile());
+      statusBar()->showMessage(tr("File saved"), 2000);
+    }
   }
 }
 
@@ -553,7 +588,7 @@ void QSapecNGWindow::license()
   QString title = tr("License");
   QString body =
     "QSapecNG, Qt-based GUI for SapecNG<br>"
-    "Copyright (C) 2009-2011, Michele Caini<br>"
+    "Copyright (C) 2009, Michele Caini<br>"
     "<br>"
     "This program is free software: you can redistribute it and/or modify "
     "it under the terms of the GNU General Public License as published by "
@@ -575,10 +610,12 @@ void QSapecNGWindow::license()
 
 void QSapecNGWindow::about()
 {
-  QMessageBox::about(this, tr("QSapecNG"),
-    QString("%1%2%3")
-      .arg(tr("QSapecNG: Qt-based GUI for SapecNG\n\n"))
-      .arg(tr("QSapecNG is based in part on the work of "))
+  QMessageBox::about(this, tr(PACKAGE_NAME),
+    QString("%1%2%3%4%5")
+      .arg(PACKAGE_NAME)
+      .arg(tr(": Qt-based GUI for SapecNG\n\n"))
+      .arg(PACKAGE_NAME)
+      .arg(tr(" is based in part on the work of "))
       .arg(tr("the Qwt project (http://qwt.sf.net)."))
   );
 }
@@ -753,6 +790,10 @@ void QSapecNGWindow::createActions()
   openAct_->setShortcuts(QKeySequence::Open);
   openAct_->setStatusTip(tr("Open"));
   connect(openAct_, SIGNAL(triggered()), this, SLOT(open()));
+
+  openCrcAct_ = new QAction(QIcon(":/images/open.png"), tr("Open &Crc (netlist)"), this);
+  openCrcAct_->setStatusTip(tr("Open Crc"));
+  connect(openCrcAct_, SIGNAL(triggered()), this, SLOT(openCrc()));
 
   saveAct_ = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
   saveAct_->setShortcuts(QKeySequence::Save);
@@ -1111,6 +1152,7 @@ void QSapecNGWindow::createMenus()
   recentMenu_ = fileMenu_->addMenu(QIcon(":/images/open.png"), tr("Open &Recent"));
   for(int i = 0; i < maxRecentFiles; ++i)
     recentMenu_->addAction(openRecentActs_[i]);
+  fileMenu_->addAction(openCrcAct_);
   fileMenu_->addAction(saveAct_);
   fileMenu_->addAction(saveAsAct_);
   fileMenu_->addSeparator();
@@ -1484,8 +1526,13 @@ void QSapecNGWindow::userDefRequested()
 {
   SchematicEditor* editor = activeEditor();
 
-  if(editor)
-    editor->scene().setUserDefRequest();
+  try {
+    if(editor)
+      editor->scene().setUserDefRequest();
+  } catch (...) {
+    QMessageBox::warning(this, tr("File corrupted"),
+      tr("Incorrect definition of user-defined component."));
+  }
 }
 
 

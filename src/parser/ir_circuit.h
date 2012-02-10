@@ -24,15 +24,17 @@
 #include "parser/parser.h"
 #include "exception/sapecngexception.h"
 
-#include <stack>
-#include <iostream>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
+#include <stack>
+#include <iostream>
+
 
 namespace sapecng
 {
+
 
 
 class ir_parser: public abstract_parser

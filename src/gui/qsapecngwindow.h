@@ -107,6 +107,7 @@ private slots:
   void newFile();
   void open(const QString& fileName);
   void open();
+  void openCrc();
   void openRecent();
   void save();
   void saveAs();
@@ -228,6 +229,7 @@ private:
 
   QAction* newAct_;
   QAction* openAct_;
+  QAction* openCrcAct_;
   QAction* saveAct_;
   QAction* saveAsAct_;
   QAction* printAct_;

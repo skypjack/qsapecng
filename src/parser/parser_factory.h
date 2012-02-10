@@ -41,7 +41,7 @@ public:
   static abstract_builder* builder(
       builder_factory::b_type type,
       std::basic_ostream<
-          boost::property_tree::ptree::key_type::value_type
+          std::char_traits< char >::char_type
         >& stream
     )
   {
@@ -63,7 +63,7 @@ public:
   static abstract_builder* builder(
       std::string type,
       std::basic_ostream<
-          boost::property_tree::ptree::key_type::value_type
+          std::char_traits< char >::char_type
         >& stream
     )
   {
@@ -88,12 +88,12 @@ class parser_factory
 
 public:
   enum p_type
-    { INFO, XML };
+    { INFO, XML, CRC };
 
   static abstract_parser* parser(
       parser_factory::p_type type,
       std::basic_istream<
-          boost::property_tree::ptree::key_type::value_type
+          std::char_traits< char >::char_type
         >& stream
     )
   {
@@ -103,6 +103,8 @@ public:
       return new info_parser(stream);
     case XML:
       return new xml_parser(stream);
+    case CRC:
+      return new crc_parser(stream);
     default:
       break;
     }
@@ -113,7 +115,7 @@ public:
   static abstract_parser* parser(
       std::string type,
       std::basic_istream<
-          boost::property_tree::ptree::key_type::value_type
+          std::char_traits< char >::char_type
         >& stream
     )
   {
@@ -122,6 +124,9 @@ public:
 
     if(type == "xml")
       return parser(XML, stream);
+
+    if(type == "crc")
+      return parser(CRC, stream);
 
     return 0;
   }

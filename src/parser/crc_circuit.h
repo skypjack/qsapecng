@@ -31,12 +31,36 @@ namespace sapecng
 {
 
 
+
+class crc_parser: public abstract_parser
+{
+
+public:
+  crc_parser(
+      std::basic_istream<
+          std::char_traits< char >::char_type
+        >& stream
+    ): stream_(stream) { }
+
+  void parse(abstract_builder& builder);
+
+private:
+  std::basic_istream<
+      std::char_traits< char >::char_type
+    >& stream_;
+
+};
+
+
+
 class crc_builder: public abstract_builder
 {
 
 public:
   crc_builder(
-      std::ostream& stream
+      std::basic_ostream<
+          std::char_traits< char >::char_type
+        >& stream
     ): stream_(stream), out_(0) { }
 
   void add_circuit_properties(std::map<std::string,std::string> map) { }
@@ -105,7 +129,9 @@ private:
     );
 
 private:
-  std::ostream& stream_;
+  std::basic_ostream<
+      std::char_traits< char >::char_type
+    >& stream_;
   unsigned int out_;
 
 };

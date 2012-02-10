@@ -22,6 +22,7 @@
 
 
 #include "model/circuit.h"
+
 #include <list>
 #include <map>
 

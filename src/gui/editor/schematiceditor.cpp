@@ -252,7 +252,15 @@ bool SchematicEditor::loadFile(const QString& fileName)
 
     if(parser) {
       scene_->undoRedoStack()->beginMacro(QObject::tr("Load file"));
-      parser->parse(*out);
+
+      try {
+        parser->parse(*out);
+      } catch (...) {
+        delete parser;
+        delete out;
+        throw;
+      }
+
       scene_->undoRedoStack()->endMacro();
     }
 

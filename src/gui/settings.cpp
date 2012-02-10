@@ -61,7 +61,7 @@ void Settings::load()
       settings.value("workspace", QDir::homePath()).value<QString>();
     notation_ = settings.value(
         "notation",
-        QRegExp("[+]?(?:0|[1-9]\\d*)(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?")
+        QRegExp("[-+]?(\\d*\\.)?\\d+([eE][-+]?\\d+)?")
       ).value<QRegExp>();
   settings.endGroup();
 

@@ -21,7 +21,10 @@
 #define SAPECNGEXCEPTION_H
 
 
-#include <boost/exception/all.hpp>
+#include <boost/exception/exception.hpp>
+#include <boost/exception/info.hpp>
+
+#include <exception>
 
 
 namespace sapecng

@@ -25,7 +25,6 @@
 
 #include <streambuf>
 #include <ostream>
-
 #include <sstream>
 
 

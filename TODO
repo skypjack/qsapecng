@@ -21,9 +21,7 @@
 
 - Application asked to unregister timer 0x34000004 which is not registered in this thread. Fix application.
   Errore quando si passa al workplane... :-( ... o è il metacoso che risolve? :-D
-
-- closeEvent in qsapecngwindow non torna mica tanto! :-D
-- miglioramento del supporto alla notazione scientifica (attualmente molto rigido)
+  --> sembra risolto. :-)
 
 - risultati: non solo fdt tensione ma anche voltage gain (Kv), current gain (Ki),
     input impedance with output shorted (Zin, short),
@@ -33,7 +31,10 @@
     Zt, Yt, sensitivity
 
 - parser crc per esecuzione da riga di comando (netlist)
-- parser netlist per risoluzione gui-less e workplane diretto
+- parser netlist per risoluzione gui-less e workplane diretto (o builder dinamico)
+- parser factory e simili: tornare per copia, togliendo dai catch i delete
+- parser con Karma per output per crc
+- parser esteso crc, eliminare .info e .xml (supporto lettura per retro-compatibilità)
 
 - abilitazione/disabilitazione out, V/I probe senza doverli eliminare
 
@@ -62,3 +63,5 @@ ChangeLog:
 - workplane design fixed (frequencies box ridotta in dimensioni)
 - manuale completo
 - pre-assegna i nodi al salvataggio (salvataggio consistente)
+- parser crc (Boost C++ Spirit Qi/Lex)
+- notazione scientifica workplane uniformata con parser crc

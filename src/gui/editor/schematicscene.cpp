@@ -108,7 +108,9 @@ QPainterPath SchematicScene::portPath()
   path.addRect(2 * step, 2 * step, 1E-99, 1E-99);
   path.moveTo(step / 3, step);
   path.arcTo(
-      QRectF(step / 3, step / 3, 2 * step - step * 2 / 3, 2 * step - step * 2 / 3),
+      QRectF(step / 3, step / 3,
+        2 * step - step * 2 / 3,
+        2 * step - step * 2 / 3),
       180, 360
     );
   path.moveTo(step / 2, step);
@@ -1083,7 +1085,8 @@ QByteArray SchematicScene::registerUserDef(const SchematicScene& scene)
     std::ostringstream stream;
     sapecng::abstract_parser* parser = new SchematicSceneParser(scene);
     sapecng::abstract_builder* builder =
-      sapecng::builder_factory::builder(sapecng::builder_factory::INFO, stream);
+      sapecng::builder_factory::builder(
+        sapecng::builder_factory::INFO, stream);
     
     if(builder)
       parser->parse(*builder);
@@ -1134,8 +1137,15 @@ void SchematicScene::setUserDefRequest()
       sapecng::parser_factory::parser(
         fileInfo.suffix().toStdString(), in_file);
 
-    if(parser)
-      parser->parse(*builder);
+    try {
+      if(parser)
+        parser->parse(*builder);
+    } catch (...) {
+      delete parser;
+      delete builder;
+      delete scene;
+      throw;
+    }
 
     delete parser;
     delete builder;

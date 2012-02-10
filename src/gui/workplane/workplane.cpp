@@ -579,7 +579,7 @@ std::map<std::string, double> WorkPlane::actValues() const
     values[qobject_cast<const QLabel*>(
         data_->cellWidget(i, 0))->text().toStdString()] =
       qobject_cast<const QLineEdit*>(
-	data_->cellWidget(i, 1))->text().toDouble();
+        data_->cellWidget(i, 1))->text().toDouble();
 
   return values;
 }

@@ -53,6 +53,7 @@ void ir_parser::parse_rec(
           cprop.second.get("value", "value")
         )
       );
+      
       builder.add_circuit_properties(cmap);
     }
 
