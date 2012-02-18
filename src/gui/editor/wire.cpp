@@ -313,7 +313,7 @@ int Wire::propagate(int value)
 
   mod_ = true;
 
-  int act;
+  int act = SchematicScene::Ground;
   bool found = false;
 
   foreach(GraphicsNode* node, nodes_) {

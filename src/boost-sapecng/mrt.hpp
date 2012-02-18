@@ -187,12 +187,12 @@ namespace detail {
 
     int edges = num_vertices(iG) - 1;
 //
-//  Using (edges != 0) condition drives to accidental non-tree
-//    ((V-1+1)-fake-tree, named here fat-tree) submission.
-//  Remove this condition acts as a workaround to the fat-trees problem.
-//  Please do not add that condition to improve performance.
+//  Using the condition (edges != 0) leads to the accidental submission of
+//    sub-graphs ((V-1+1)-fake-tree, named here fat-tree).
+//  Remove this condition is a workaround for the problem of fat-trees.
+//  Please do not add that condition, even if it improves performance.
 //
-//  Here previous (wrong) guard is presented:
+//  Here is proposed the previous guard (that was wrong):
 //     for(seq_size_type i = 0; (i < inL.size()) && (edges != 0); ++i)
 //
     {
