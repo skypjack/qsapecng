@@ -1,6 +1,12 @@
 project( qsapecng )
 cmake_minimum_required( VERSION 2.8 )
 
+# qtcreator lacks a proper file management for software based on cmake,
+# this is a workaround to include file within the project tree.
+# see also add_executable statement.
+file(GLOB_RECURSE FILES src/*.h src/*.hpp src/*.cpp)
+file(GLOB_RECURSE DOXY doxy.cfg doxy/*.dox)
+
 set(
   CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   "${CMAKE_SOURCE_DIR}/cmake/Modules/"

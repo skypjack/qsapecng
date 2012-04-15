@@ -297,7 +297,12 @@ add_executable(
   ${qtpropertyeditor_MOC}
   ${qtpropertyeditor_SRCS}
   ${qtpropertyeditor_RESOURCES}
-  "${BUNDLE_ICON}"
+  ${BUNDLE_ICON}
+# qtcreator lacks a proper file management for software based on cmake,
+# this is a workaround to include file within the project tree
+# see also files statements.
+  ${FILES}
+  ${DOXY}
 )
 
 target_link_libraries( qsapecng ${LIBS} )

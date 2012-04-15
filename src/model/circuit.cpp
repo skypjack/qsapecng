@@ -443,7 +443,9 @@ void circuit_builder::replace_requested(circuit::vertex_descriptor vertex)
       *(circuit_.vG_)
     );
 
-  if(std::find(requested_.begin(), requested_.end(), vertex) != requested_.end()) {
+  if(std::find(requested_.begin(), requested_.end(), vertex)
+      != requested_.end())
+  {
 
     circuit::vertex_descriptor ireq = boost::add_vertex(*(circuit_.iG_));
     circuit::vertex_descriptor vreq = boost::add_vertex(*(circuit_.vG_));

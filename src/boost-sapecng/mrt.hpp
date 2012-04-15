@@ -17,7 +17,11 @@
 */
 
 
-//  Two Graphs Common Spanning Trees Algorithm
+//          Two Graphs Common Spanning Trees Algorithm
+//      Based on academic article of Mint, Read and Tarjan
+//     Efficient Algorithm for Common Spanning Tree Problem
+// Electron. Lett., 28 April 1983, Volume 19, Issue 9, p.346–347
+
 
 #ifndef MRT_H
 #define MRT_H
@@ -32,7 +36,6 @@
 #include <boost/graph/undirected_dfs.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/filtered_graph.hpp>
-
 #include <vector>
 #include <stack>
 #include <map>
@@ -187,6 +190,8 @@ namespace detail {
 
     int edges = num_vertices(iG) - 1;
 //
+//  [ Michele Caini ]
+//
 //  Using the condition (edges != 0) leads to the accidental submission of
 //    sub-graphs ((V-1+1)-fake-tree, named here fat-tree).
 //  Remove this condition is a workaround for the problem of fat-trees.
@@ -276,9 +281,10 @@ namespace detail {
                   detail::inL_edge_status< associative_property_map<
                     std::map<edge_descriptor, bool> > >(aiG_inL)),
                 make_dfs_visitor(
-                  detail::cycle_finder< std::stack<edge_descriptor> > (&iG_buf)),
-               associative_property_map<
-                  std::map<vertex_descriptor, default_color_type> >(vertex_color),
+                  detail::cycle_finder<
+                    std::stack<edge_descriptor> > (&iG_buf)),
+               associative_property_map< std::map<
+                  vertex_descriptor, default_color_type> >(vertex_color),
                 associative_property_map<
                   std::map<edge_descriptor, default_color_type> >(edge_color)
               );
@@ -287,9 +293,10 @@ namespace detail {
                   detail::inL_edge_status< associative_property_map<
                     std::map<edge_descriptor, bool> > >(avG_inL)),
                 make_dfs_visitor(
-                  detail::cycle_finder< std::stack<edge_descriptor> > (&vG_buf)),
-                associative_property_map<
-                  std::map<vertex_descriptor, default_color_type> >(vertex_color),
+                  detail::cycle_finder<
+                    std::stack<edge_descriptor> > (&vG_buf)),
+                associative_property_map< std::map<
+                  vertex_descriptor, default_color_type> >(vertex_color),
                 associative_property_map<
                   std::map<edge_descriptor, default_color_type> >(edge_color)
               );
@@ -757,10 +764,10 @@ mrt_two_graphs_common_spanning_trees
     associative_property_map< std::map<edge_descriptor, bool> > dvG(vG_deleted);
 
     tie(current, last) = edges(iG);
-    for(;current != last; ++current)
+    for(; current != last; ++current)
       put(diG, *current, false);
     tie(current, last) = edges(vG);
-    for(;current != last; ++current)
+    for(; current != last; ++current)
       put(dvG, *current, false);
 
     for(seq_size_type j = 0; j < inL.size(); ++j) {
