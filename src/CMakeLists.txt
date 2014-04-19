@@ -36,7 +36,7 @@ elseif(APPLE)
   set(OUTPUT_BIN_NAME "${OUTPUT_BIN_NAME}" PARENT_SCOPE)
   set(OUTPUT_DOC_FOLDER "${OUTPUT_BIN_NAME}.app/Contents/${OUTPUT_RESOURCES_FOLDER_NAME}/doc")
   set(OUTPUT_RES_FOLDER "${OUTPUT_BIN_NAME}.app/Contents/${OUTPUT_RESOURCES_FOLDER_NAME}")
-  set(OUTPUT_BUNDLE_NAME "QSapecNG")
+  set(OUTPUT_BUNDLE_NAME "${OUTPUT_BIN_NAME}")
 
   option(INCLUDE_REQUIRED_LIBRARIES_INTO_BUNDLE "Enable this option to include required external libraries into application Bundle (default ON)" ON)
 
@@ -70,9 +70,7 @@ elseif(APPLE)
     message(STATUS "You can execute 'make fixup_bundle' to manually fixup the created bundle before distributing it")
   endif(INCLUDE_REQUIRED_LIBRARIES_INTO_BUNDLE)
 elseif(WIN32)
-  # Lo metterei maiuscolo su Windows, però ci sono da cambiare alcuni
-  # percorsi in altri file di CMake.
-  set(OUTPUT_BIN_NAME "qsapecng")
+  set(OUTPUT_BIN_NAME "QSapecNG")
   set(OUTPUT_BIN_NAME "${OUTPUT_BIN_NAME}" PARENT_SCOPE)
   #set(OUTPUT_DOC_FOLDER "doc")
 
@@ -297,7 +295,7 @@ add_executable(
   ${qtpropertyeditor_MOC}
   ${qtpropertyeditor_SRCS}
   ${qtpropertyeditor_RESOURCES}
-  ${BUNDLE_ICON}
+  "${BUNDLE_ICON}"
 # qtcreator lacks a proper file management for software based on cmake,
 # this is a workaround to include file within the project tree
 # see also files statements.

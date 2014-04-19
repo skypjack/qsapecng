@@ -4,6 +4,17 @@
     o primo componente messo nell'angolo in alto a sinistra per MacOS
       https://sourceforge.net/tracker/?func=detail&aid=3131134&group_id=369990&atid=1541776
 
+- DEBIAN:
+    o incorporare tutte le patch direttamente nel codice
+    o sostituire l'attuale cartella debian con quella del repos ufficiale
+    o aggiornare l'attuale cartella debian affinché sia compatibile con le
+      modifiche già presenti sul codice
+
+- SUPSI:
+    o ricordarsi di portare sul branch supsi le modifiche dei file di CMake
+    o suggerisco di non usare un branch a se stante ma di usare dei flag di
+      compilazione, così non ci dimentichiamo di fare il merge con supsi.
+
 - refactoring:
     introdurre progetti
     eliminare workspace
@@ -65,3 +76,4 @@ ChangeLog:
 - pre-assegna i nodi al salvataggio (salvataggio consistente)
 - parser crc (Boost C++ Spirit Qi/Lex)
 - notazione scientifica workplane uniformata con parser crc
+- fix per gcc 4.7

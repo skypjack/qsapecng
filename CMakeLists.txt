@@ -84,9 +84,9 @@ mark_as_advanced( TAR_EXECUTABLE )
 ##################                             ##################
 #################################################################
 
-if(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT6_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
+if(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
 	include( InstallRequiredSystemLibraries )
-endif(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT6_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
+endif(INCLUDE_QT_DLL_IN_BIN_PACKAGE OR INCLUDE_QWT_DLL_IN_BIN_PACKAGE OR NOT QT_CONFIG MATCHES "static")
 
 
 set( CPACK_GENERATOR "TZ;TGZ;TBZ2" )
@@ -143,7 +143,7 @@ if(WIN32 AND NOT UNIX)
 
   set( CPACK_PACKAGE_EXECUTABLES "${OUTPUT_BIN_NAME}" "${OUTPUT_BIN_NAME}" )
   set( CPACK_NSIS_INSTALLED_ICON_NAME "${OUTPUT_BIN_FOLDER}\\\\${OUTPUT_BIN_NAME}.exe" )
-  set( CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}" )
+  set( CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_NAME}" )
   set( CPACK_NSIS_CONTACT "${PACKAGE_CHEF}" )
   set( CPACK_NSIS_URL_INFO_ABOUT "http://qsapecng.sourceforge.net/" )
   set( CPACK_NSIS_MODIFY_PATH ON )
@@ -165,7 +165,7 @@ if(WIN32 AND NOT UNIX)
   
   # Code to create the link on Windows Desktop if the user checks the appropriate box
   # during setup: CMake creates a checkbox that doesn't work!!!
-  set( CPACK_NSIS_DESKTOP_LINK_NAME "QSapecNG" )
+  set( CPACK_NSIS_DESKTOP_LINK_NAME "${OUTPUT_BIN_NAME}" )
   set( CPACK_NSIS_EXTRA_INSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nCreateShortcut '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk' '$instdir\\\\${OUTPUT_BIN_FOLDER}\\\\${OUTPUT_BIN_NAME}.exe'\nnodesktoplink:\n" )
   set( CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "StrCmp $INSTALL_DESKTOP '1' 0 nodesktoplink\nDelete '$desktop\\\\${CPACK_NSIS_DESKTOP_LINK_NAME}.lnk'\nnodesktoplink:\n" )
 
