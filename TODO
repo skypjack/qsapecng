@@ -1,8 +1,7 @@
 QSapecNG-supsi TODO
 ~~~~~~~~~~~~~~~~~~~
- - creare le immagini src/gui/images/qsapecng-splash.png e
-    src/gui/images/qsapecng-splash-ng.png partendo dalla versione svg
-    (non l'ho fatto io perché l'svg di supsi ha un formato diverso,
-    quindi non so se devi cambiare qualcosa anche nei sorgenti)
+ - on Windows a link in the Start Menu is created with name
+   "QSapecNG - Qt-based GUI for SapecNG", try to fix setting the name
+   of the branch.
 
 see trunk for major updates.
