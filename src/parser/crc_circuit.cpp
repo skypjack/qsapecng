@@ -21,13 +21,15 @@
 #include "parser/crc_circuit.h"
 #include "parser/parser.h"
 
+#ifndef Q_MOC_RUN
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/qi_alternative.hpp>
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/support_istream_iterator.hpp>
-#include <boost/spirit/home/phoenix/operator.hpp>
-#include <boost/spirit/home/phoenix/core.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/fusion/include/vector.hpp>
+#endif
 
 #include <iostream>
 
@@ -101,7 +103,7 @@ public:
           boost::phoenix::bind
           (
             &crc_grammar::out_rule,
-            boost::phoenix::ref(this),
+            boost::phoenix::ref(*this),
             boost::phoenix::ref(builder),
             boost::spirit::_2
           )
@@ -113,7 +115,7 @@ public:
           boost::phoenix::bind
           (
             &crc_grammar::aelm_rule,
-            boost::phoenix::ref(this),
+            boost::phoenix::ref(*this),
             boost::phoenix::ref(builder),
             boost::spirit::_1,
             boost::spirit::_2,
@@ -130,7 +132,7 @@ public:
           boost::phoenix::bind
           (
             &crc_grammar::celm_rule,
-            boost::phoenix::ref(this),
+            boost::phoenix::ref(*this),
             boost::phoenix::ref(builder),
             boost::spirit::_1,
             boost::spirit::_6,
@@ -149,7 +151,7 @@ public:
           boost::phoenix::bind
           (
             &crc_grammar::selm_rule,
-            boost::phoenix::ref(this),
+            boost::phoenix::ref(*this),
             boost::phoenix::ref(builder),
             boost::spirit::_1,
             boost::spirit::_4,
@@ -165,7 +167,7 @@ public:
           boost::phoenix::bind
           (
             &crc_grammar::elms_rule,
-            boost::phoenix::ref(this),
+            boost::phoenix::ref(*this),
             boost::spirit::_1
           )
         ];
@@ -176,7 +178,7 @@ public:
           boost::phoenix::bind
           (
             &crc_grammar::circ_rule,
-            boost::phoenix::ref(this),
+            boost::phoenix::ref(*this),
             boost::phoenix::ref(builder),
             boost::spirit::_1
           )

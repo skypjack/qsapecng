@@ -297,7 +297,7 @@ void WorkPlane::setDirty()
 void WorkPlane::xAxisLogScale(bool log)
 {
   if(log)
-    plot_->setAxisScaleEngine(QwtPlot::xBottom, new QwtLog10ScaleEngine);
+    plot_->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine(10));
   else
     plot_->setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine);
 
@@ -309,7 +309,7 @@ void WorkPlane::xAxisLogScale(bool log)
 void WorkPlane::yAxisLogScale(bool log)
 {
   if(log)
-    plot_->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+    plot_->setAxisScaleEngine(QwtPlot::yLeft, new QwtLogScaleEngine(10));
   else
     plot_->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 
@@ -627,7 +627,7 @@ void WorkPlane::createMainLayout()
 
   plot_ = new QwtPlot_ContextMenu(this);
   plot_->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
-  plot_->setAxisScaleEngine(QwtPlot::xBottom, new QwtLog10ScaleEngine);
+  plot_->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine(10));
   plot_->setAutoReplot(true);
 
   tracker_ = new QwtPlotPicker(plot_->canvas());

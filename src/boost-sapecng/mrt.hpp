@@ -27,8 +27,8 @@
 #define MRT_H
 
 
+#ifndef Q_MOC_RUN
 #include <boost/config.hpp>
-
 #include <boost/bimap.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/concept/requires.hpp>
@@ -36,6 +36,8 @@
 #include <boost/graph/undirected_dfs.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#endif
+
 #include <vector>
 #include <stack>
 #include <map>

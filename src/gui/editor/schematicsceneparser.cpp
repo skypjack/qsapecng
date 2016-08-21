@@ -31,7 +31,10 @@
 #include <QtCore/QPointer>
 #include <QtGui/QGraphicsItem>
 
+#ifndef Q_MOC_RUN
 #include <boost/assign.hpp>
+#endif
+
 #include <memory>
 
 

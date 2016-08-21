@@ -21,8 +21,10 @@
 #define SAPECNGEXCEPTION_H
 
 
+#ifndef Q_MOC_RUN
 #include <boost/exception/exception.hpp>
 #include <boost/exception/info.hpp>
+#endif
 
 #include <exception>
 

@@ -21,7 +21,9 @@
 #define EDGE_PROPERTIES_H
 
 
+#ifndef Q_MOC_RUN
 #include <boost/graph/properties.hpp>
+#endif
 
 
 namespace boost

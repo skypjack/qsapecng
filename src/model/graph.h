@@ -22,7 +22,10 @@
 
 
 #include "boost-sapecng/edge_properties.hpp"
+
+#ifndef Q_MOC_RUN
 #include <boost/graph/adjacency_list.hpp>
+#endif
 
 
 namespace sapecng
