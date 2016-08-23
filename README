@@ -1,6 +1,6 @@
 QSapecNG README
 ~~~~~~~~~~~~~~~~
-   QSapecNG v2.1.0~beta1
+   QSapecNG v2.1.1
    Copyright (C) 2009, Michele Caini
    GNU General Public License v3
 
@@ -180,7 +180,7 @@ Note for (Slackware/Debian/RedHat)-based distributions
  
    checkinstall --default \
      --pkgname qsapecng \
-     --pkgversion 2.1.0~beta1 \
+     --pkgversion 2.1.1 \
      --pkggroup electronics
 
 
