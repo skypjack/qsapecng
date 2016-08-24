@@ -1,2 +1,3 @@
 version=3
-http://sf.net/qsapecng/QSapecNG-(.*)-source\.tar\.gz
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/qsapecng-$1\.tar\.gz/ \
+  https://github.com/skypjack/qsapecng/tags .*/v?(\d\S*)\.tar\.gz

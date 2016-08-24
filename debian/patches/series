@@ -1,2 +1,1 @@
-compile_flags.patch
-libqwt6_fix.patch
+doxy-timestamp.patch

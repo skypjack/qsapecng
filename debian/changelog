@@ -1,10 +1,69 @@
-qsapecng (2.0.0-4~rc1) unstable; urgency=low
+qsapecng (2.1.1-1) unstable; urgency=medium
 
-  * Fixed new lintian warning 'missing-license-paragraph-in-dep5-copyright'
-    for paragraph 5 with public-domain license: the comment has been converted
-    to the license paragraph.
+  * New upstream release
+  * Fixed "FTBFS: type_traits/detail/has_binary_operator.hp:50: Parse
+    error at BOOST_JOIN" upstream (Closes: #834188)
+  * Fixed "Segfaults on exit and missing Qt-signals" upstream (Closes: #816898)
+  * Bumped Standards-Version to 3.9.8 in debian/control file
+  * Removed Georges Khaznadar from Uploaders because he isn't active anymore
+  * Removed menu file as stated by the tech-ctte decision on #741573
+  * Updated manpage to reflect package description
+  * Changed debian/rules to build binaries with debug information for
+    dbgsym package
 
- -- Simone Rossetto <simros85@gmail.com>  Mon, 26 Sep 2011 18:49:39 +0200
+ -- Simone Rossetto <simros85@gmail.com>  Tue, 23 Aug 2016 15:59:56 +0200
+
+qsapecng (2.0.0-8) unstable; urgency=medium
+
+  * Updated debian/watch because upstream moved to GitHub
+  * Updated debian/control:
+     - changed Homepage (due to GitHub moving)
+     - changed url in package description (due to GitHub moving)
+  * Updated debian/copyright file with new upstream url
+
+ -- Simone Rossetto <simros85@gmail.com>  Sat, 03 Oct 2015 17:15:43 +0200
+
+qsapecng (2.0.0-7) unstable; urgency=medium
+
+  * Fixed "Please upgrade package for libqwt6abi1 6.1.2" by replacing method
+    QwtLog10ScaleEngine with QwtLogScaleEngine (Closes: #798876)
+  * Fixed "FTBFS: Parse error at BOOST_JOIN" surrounding any Boost include
+    with a '#ifndef Q_MOC_RUN [...] #endif' block as stated here
+    https://bugreports.qt.io/browse/QTBUG-22829 (Closes: #799998)
+  * Updated doxy.cfg removing obsolete settings
+
+ -- Simone Rossetto <simros85@gmail.com>  Fri, 25 Sep 2015 09:54:57 +0200
+
+qsapecng (2.0.0-6) unstable; urgency=medium
+
+  * Fixed "please make the build reproducible", set HTML_TIMESTAMP=NO
+    in file doxy.cfg (Closes: #789428)
+  * Updated debian/control:
+     - bumped Standards-Version to 3.9.6
+     - removed obsolete "DM-Upload-Allowed" field
+  * Added absolute path to menu icons in file qsapecng.menu
+  * Added relro linker flag to debian/rules file
+  * Removed external link to sourceforge donation image in documentation
+
+ -- Simone Rossetto <simros85@gmail.com>  Fri, 26 Jun 2015 18:52:30 +0200
+
+qsapecng (2.0.0-5) unstable; urgency=low
+
+  * Fixed "ftbfs with GCC-4.7" adding a "this" pointer. (Closes: #667342)
+  * Updated the debian/copyright file:
+     - converted the Comment field of the public-domain license for the file
+       rpoly.cpp to the paragraph of the license itself (this fixes the the
+       lintian warning missing-license-paragraph-in-dep5-copyright).
+     - changed the Format url from dep5 to 1.0.
+  * Updated debian/control Standards-Version to 3.9.3.
+
+ -- Simone Rossetto <simros85@gmail.com>  Thu, 05 Apr 2012 20:11:49 +0200
+
+qsapecng (2.0.0-4) unstable; urgency=low
+
+  * added a DM-Upload-Allowed: yes field in debian/control
+
+ -- Georges Khaznadar <georgesk@ofset.org>  Sun, 06 Nov 2011 21:01:32 +0100
 
 qsapecng (2.0.0-3) unstable; urgency=low
 

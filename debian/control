@@ -2,25 +2,22 @@ Source: qsapecng
 Section: electronics
 Priority: optional
 Maintainer: Simone Rossetto <simros85@gmail.com>
-Uploaders: Georges Khaznadar <georgesk@ofset.org>
 Build-Depends:
  debhelper (>= 7.0.50~),
  cmake (>= 2.6.0),
  libqt4-dev (>= 4.6.0),
- libqwt-dev (>= 6.0.0),
+ libqwt-dev (>= 6.1.0),
  libboost-dev (>= 1.41.0),
  doxygen
-Standards-Version: 3.9.2
-Homepage: http://qsapecng.sourceforge.net/
-Vcs-Svn: https://qsapecng.svn.sourceforge.net/svnroot/qsapecng
-Vcs-Browser: http://qsapecng.svn.sourceforge.net/viewvc/qsapecng
+Standards-Version: 3.9.8
+Homepage: https://github.com/skypjack/qsapecng
 
 Package: qsapecng
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: qsapecng-doc (= ${binary:Version})
 Description: symbolic analyzer and solver of linear analog circuits
- This program consists of two indipendent parts: the SapecNG framework engine
+ This program consists of two independent parts: the SapecNG framework engine
  and the GUI application QSapecNG.
  .
  QSapecNG is an open source, multi-platform project, continuously enhanced by
@@ -34,9 +31,9 @@ Description: symbolic analyzer and solver of linear analog circuits
  for sub-circuits that can be created, saved, reopened and added as part of
  other circuits.
  .
- SapecNG/QSapecNG is freely available on SourceForge.net
- <https://sourceforge.net/projects/qsapecng/>. A previous version of SapecNG is
- available too, on SourceForge.net <https://sourceforge.net/projects/sapec-ng/>.
+ SapecNG/QSapecNG is freely available on GitHub
+ <https://github.com/skypjack/qsapecng>. A previous version of SapecNG is
+ available on GitHub too <https://github.com/skypjack/sapecng>.
 
 Package: qsapecng-doc
 Architecture: all
@@ -50,5 +47,4 @@ Description: symbolic analyzer and solver of linear analog circuits (documentati
  for sub-circuits that can be created, saved, reopened and added as part of
  other circuits.
  .
- This package contains the documentation of QSapecNG, that can also be read
- online at <http://qsapecng.sourceforge.net/>.
+ This package contains the documentation of QSapecNG.

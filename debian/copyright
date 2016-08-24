@@ -1,14 +1,14 @@
-Format: http://dep.debian.net/deps/dep5
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: qsapecng
 Upstream-Contact: Michele Caini <michele.caini@gmail.com>
-Source: http://qsapecng.sourceforge.net/
+Source: https://github.com/skypjack/qsapecng
 
 Files: *
 Copyright: 2009, Michele Caini <michele.caini@gmail.com>
 License: GPL-3.0+
 
 Files: debian/*
-Copyright: 2010, Simone Rossetto <simros85@gmail.com>
+Copyright: 2010-2015, Simone Rossetto <simros85@gmail.com>
 License: GPL-3.0+
 
 Files: cmake/Modules/FindQwt5.cmake
