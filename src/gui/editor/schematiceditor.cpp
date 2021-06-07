@@ -195,15 +195,26 @@ bool SchematicEditor::saveFile(const QString& fileName)
   setCursor(Qt::WaitCursor);
 
   QFileInfo fileInfo(file);
+  QString suffix = fileInfo.suffix();
   std::ofstream out_file(QFile::encodeName(fileName));
   sapecng::abstract_builder* out =
-    sapecng::builder_factory::builder(
-      fileInfo.suffix().toStdString(), out_file);
+    sapecng::builder_factory::builder(suffix.toStdString(), out_file);
 
   SchematicSceneParser* parser = new SchematicSceneParser(*scene_);
 
   if(out)
+  {
     parser->parse(*out);
+  }
+  else
+  {
+    // TODO Delete empty file created above
+    QMessageBox::warning(this, tr("Write file"),
+      tr("Unable to write file ")
+        + QString("%1:\nUnknown suffix (%2).")
+          .arg(fileName)
+          .arg(suffix));
+  }
 
   delete parser;
   delete out;
