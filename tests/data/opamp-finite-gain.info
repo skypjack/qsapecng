@@ -1,0 +1,73 @@
+circuit
+{
+    components
+    {
+        component
+        {
+            id V
+            name V1
+            value 1
+            symbolic 1
+            nodes
+            {
+                node 0
+                node 1
+            }
+        }
+        component
+        {
+            id R
+            name R1
+            value 1000
+            symbolic 1
+            nodes
+            {
+                node 1
+                node 2
+            }
+        }
+        component
+        {
+            id R
+            name R2
+            value 10000
+            symbolic 1
+            nodes
+            {
+                node 2
+                node 3
+            }
+        }
+        component
+        {
+            id A
+            name A1
+            value 200000
+            symbolic 1
+            nodes
+            {
+                node 0
+                node 3
+                node 2
+                node 0
+            }
+            props
+            {
+                prop
+                {
+                    name ideal
+                    value 0
+                }
+                prop
+                {
+                    name gbw
+                    value 1000000
+                }
+            }
+        }
+    }
+    out
+    {
+        node 3
+    }
+}

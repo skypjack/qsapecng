@@ -1,6 +1,7 @@
 /*
     QSapecNG - Qt based SapecNG GUI front-end
     Copyright (C) 2009, Michele Caini
+    Copyright (C) 2026, Wojciech Kaczmarski
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +22,10 @@
 #define PROPERTYTEXTITEM_H
 
 
-#include <QtGui/QGraphicsTextItem>
+#include "gui/theme.h"
+#include <QGraphicsTextItem>
+
+#include <functional>
 
 #include "gui/qtsolutions/qtpropertyeditor/QtProperty"
 
@@ -30,35 +34,49 @@ namespace qsapecng
 {
 
 
+// Label of a component: its name and, when enabled in the settings
+// (theme::showComponentValues()), its value on a second line. The text is
+// rebuilt from the component's properties whenever one of them changes.
 class PropertyTextItem: public QGraphicsTextItem
 {
 
   Q_OBJECT
 
 public:
-  PropertyTextItem(QGraphicsItem* parent = 0)
-      : QGraphicsTextItem(parent), property_(0)
-    {
-      setFont(QFont("Times", 10, QFont::Light));
-      setTextInteractionFlags(Qt::NoTextInteraction);
-      setFlags(QGraphicsItem::ItemIsMovable);
-    }
-  PropertyTextItem(const QString& text, QGraphicsItem* parent = 0)
-      : QGraphicsTextItem(text, parent), property_(0)
-    {
-      setFont(QFont("Times", 10, QFont::Light));
-      setTextInteractionFlags(Qt::NoTextInteraction);
-      setFlags(QGraphicsItem::ItemIsMovable);
-    }
+  PropertyTextItem(QGraphicsItem* parent = 0);
+  PropertyTextItem(const QString& text, QGraphicsItem* parent = 0);
 
-  inline void setProperty(QtProperty* property) { property_ = property; }
+  // name property of the component (its sub-properties hold the value)
+  inline void setProperty(QtProperty* property)
+    { property_ = property; refreshText(); }
+  // unit shown after the value, e.g. "F" (empty: plain number)
+  inline void setValueUnit(const QString& unit)
+    { unit_ = unit; refreshText(); }
+
+  // rebuild the text from the properties and the current settings
+  void refreshText();
+
+  // called when the user drags the label (not when the program moves it)
+  std::function<void()> onMoved;
+  // the automatic centre of the label (parent coordinates): a dragged
+  // label close to it snaps there, as if never moved
+  std::function<QPointF()> automaticCentre;
 
 public slots:
-  void valueChanged(QtProperty* property, const QString& value)
-    { if(property == property_) setPlainText(value); }
+  void valueChanged(QtProperty* property, const QString& value);
+
+protected:
+  QVariant itemChange(GraphicsItemChange change, const QVariant& value)
+    override;
+  void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
+  void init();
+
   QtProperty* property_;
+  QString unit_;
+  bool dragging_ = false;   // snap to the grid only while the user drags
 
 };
 

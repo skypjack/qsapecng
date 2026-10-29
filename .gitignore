@@ -1,2 +1,7 @@
 # QtCreator
 *.user
+
+# local build output
+/build/
+/build-*/
+/dist/

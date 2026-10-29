@@ -127,6 +127,72 @@ public:
 
   virtual void flush() = 0;
 
+  // A transformer with several windings. windings: the (start, end) nodes
+  // of each, the start being the dotted end; ratios: the turns of each
+  // winding over those of the first (ratios[0] = 1); lp: the inductance of
+  // the first winding and k the coupling between every two windings
+  // (0 < k <= 1), or lp <= 0 for an ideal transformer (turns only).
+  //
+  // By default it is built from the other elements, exactly: an ideal
+  // transformer of ratio n_i from the first winding to every other one
+  // and, when lp > 0, the magnetizing inductance k lp across the first
+  // winding and a leakage inductance (1 - k) lp n_i^2 in series with each
+  // winding. Then L_i = lp n_i^2 and M_ij = k sqrt(L_i L_j). A builder that
+  // keeps the part whole (a file writer, the schematic) overrides it.
+  virtual void add_transformer(
+      std::string name,
+      std::vector< std::pair<unsigned int, unsigned int> > windings,
+      std::vector<double> ratios,
+      double lp,
+      double k,
+      bool symbolic,
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
+    )
+  {
+    if(windings.empty() || ratios.size() != windings.size())
+      return;
+    const std::map<std::string,std::string> none;
+    const bool coupled = lp > 0.;
+    const bool leaky = coupled && k < 1.;
+
+    // the first winding: leakage in series, then the magnetizing
+    // inductance; the ideal transformers start from its inner node
+    unsigned int primary = windings[0].first;
+    if(leaky) {
+      const unsigned int m = internal_node();
+      add_dual_component(L, name + ".Lk1", (1. - k) * lp, symbolic,
+        windings[0].first, m, none);
+      primary = m;
+    }
+    if(coupled)
+      add_dual_component(L, name + ".Lm", k * lp, symbolic,
+        primary, windings[0].second, none);
+
+    for(std::size_t i = 1; i < windings.size(); ++i) {
+      const std::string index = std::to_string(i + 1);
+      unsigned int start = windings[i].first;
+      if(leaky) {
+        const unsigned int x = internal_node();
+        add_dual_component(L, name + ".Lk" + index,
+          (1. - k) * lp * ratios[i] * ratios[i], symbolic, start, x, none);
+        start = x;
+      }
+      // V(start) - V(end) = n (V(primary) - V(primary end)); the turns
+      // balance the currents into the dotted ends
+      add_quad_component(n, name + ".n" + index, ratios[i], symbolic,
+        windings[i].second, start, windings[0].second, primary, none);
+    }
+  }
+
+protected:
+  // a node inside a part built from others (add_transformer): numbered
+  // far above the netlist's own nodes
+  unsigned int internal_node() { return internalNode_++; }
+
+private:
+  unsigned int internalNode_ = 0x40000000u;
+
 };
 
 

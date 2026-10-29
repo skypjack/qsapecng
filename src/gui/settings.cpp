@@ -20,16 +20,16 @@
 #include "config.h"
 #include "gui/settings.h"
 
-#include <QtCore/QSettings>
-#include <QtCore/QRegExp>
-#include <QtCore/QDir>
+#include <QSettings>
+#include <QRegularExpression>
+#include <QDir>
 
 
 namespace qsapecng
 {
 
 
-QRegExp Settings::notation_;
+QRegularExpression Settings::notation_;
 
 QPoint Settings::mwPos_;
 QSize Settings::mwSize_;
@@ -59,10 +59,12 @@ void Settings::load()
     recentFiles_ = settings.value("recents").value<QStringList>();
     workspace_ =
       settings.value("workspace", QDir::homePath()).value<QString>();
-    notation_ = settings.value(
-        "notation",
-        QRegExp("[-+]?(\\d*\\.)?\\d+([eE][-+]?\\d+)?")
-      ).value<QRegExp>();
+    // Stored as a plain pattern string (Qt 4 stored a QRegExp blob
+    // under "notation", which newer Qt versions cannot read back).
+    notation_ = QRegularExpression(settings.value(
+        "notationPattern",
+        QStringLiteral("[-+]?(\\d*\\.)?\\d+([eE][-+]?\\d+)?")
+      ).toString());
   settings.endGroup();
 
   settings.beginGroup("MainWindow");
@@ -95,7 +97,7 @@ void Settings::save()
     settings.setValue("font", appFont_);
     settings.setValue("recents", recentFiles_);
     settings.setValue("workspace", workspace_);
-    settings.setValue("notation", notation_);
+    settings.setValue("notationPattern", notation_.pattern());
   settings.endGroup();
 
   settings.beginGroup("MainWindow");

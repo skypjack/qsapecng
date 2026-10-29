@@ -21,15 +21,15 @@
 #define EXTENDEDMDIAREA_H
 
 
-#include <QtGui/QMdiArea>
+#include <QMdiArea>
 
-#include <QtGui/QDragEnterEvent>
-#include <QtGui/QDropEvent>
-#include <QtCore/QMimeData>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
 
-#include <QtCore/QList>
-#include <QtCore/QFile>
-#include <QtCore/QUrl>
+#include <QList>
+#include <QFile>
+#include <QUrl>
 
 
 namespace qsapecng

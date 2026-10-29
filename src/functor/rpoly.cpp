@@ -37,6 +37,7 @@
  */
 
 #include "math.h"
+#include <cmath>
 
 void quad(double a,double b1,double c,double *sr,double *si,
         double *lr,double *li);
@@ -157,7 +158,11 @@ _110:
         if (xm < x)  x = xm;
     }
 /*  Chop the interval (0,x) until ff <= 0 */
-    while (1) {
+/*  [ QSapecNG ] coefficients too far apart overflow in the scaling above
+ *  (x infinite): that looped for ever. Give up instead (no zeros found);
+ *  rpoly_adapter scales the variable first, so this should not happen */
+    for (jj = 0; ; jj++) {
+        if (!std::isfinite(x) || jj > 2000) goto _99;
         xm = x*0.1;
         ff = pt[0];
         for (i=1;i<=n;i++) 
@@ -169,7 +174,8 @@ _110:
 /*  Do Newton interation until x converges to two 
  *  decimal places. 
  */
-    while (fabs(dx/x) > 0.005) {
+    for (jj = 0; fabs(dx/x) > 0.005; jj++) {
+        if (!std::isfinite(x) || jj > 1000) goto _99;   /* [ QSapecNG ] */
         ff = pt[0];
         df = ff;
         for (i=1;i<n;i++) { 
@@ -278,7 +284,7 @@ void fxshfr(int l2,int *nz)
 {
     double svu,svv,ui,vi,s;
     double betas,betav,oss,ovv,ss,vv,ts,tv;
-    double ots,otv,tvv,tss;
+    double ots = 1.0,otv = 1.0,tvv,tss;
   int type, i,j,iflag,vpass,spass,vtry,stry;
 
   *nz = 0;
@@ -327,7 +333,8 @@ void fxshfr(int l2,int *nz)
  */
     vtry = 0;
     stry = 0;
-    if (spass && (!vpass) || tss < tvv) goto _40;
+    /* as in TOMS 493: the linear (s) iteration only when s passed */
+    if (spass && (!vpass || tss < tvv)) goto _40;
 _20:        
     quadit(&ui,&vi,nz);
         if (*nz > 0) return;
@@ -390,7 +397,7 @@ _70:
 void quadit(double *uu,double *vv,int *nz)
 {
     double ui,vi;
-    double mp,omp,ee,relstp,t,zm;
+    double mp,omp = 0.0,ee,relstp = 0.0,t,zm;
   int type,i,j,tried;
 
   *nz = 0;
@@ -469,8 +476,8 @@ _50:
  */
 void realit(double *sss, int *nz, int *iflag)
 {
-    double pv,kv,t,s;
-    double ms,mp,omp,ee;
+    double pv,kv,t = 0.0,s;
+    double ms,mp,omp = 0.0,ee;
     int i,j;
 
     *nz = 0;

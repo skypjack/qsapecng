@@ -169,6 +169,19 @@ public:
         std::map<std::string,std::string>()
     );
 
+  // kept whole: id T, value lp, the windings' nodes in order, the ratios
+  // and k as properties (older versions skip the part)
+  void add_transformer(
+      std::string name,
+      std::vector< std::pair<unsigned int, unsigned int> > windings,
+      std::vector<double> ratios,
+      double lp,
+      double k,
+      bool symbolic,
+      std::map<std::string,std::string> props =
+        std::map<std::string,std::string>()
+    );
+
   void add_unknow_component(
       std::map<std::string,std::string> props =
         std::map<std::string,std::string>()

@@ -21,12 +21,19 @@
 #define QLOGGER_H
 
 
+#include "gui/theme.h"
 #include "logger/logpolicy.h"
 #include "logger/logger.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QRegExp>
-#include <QtGui/QColor>
+#include <QObject>
+#include <QRegularExpression>
+#include <QColor>
+#include <QEvent>
+#include <QList>
+#include <QPair>
+#include <QTextEdit>
+#include <QContextMenuEvent>
+#include <QMenu>
 
 
 typedef sapecng::LogPolicy SapecNGLogger;
@@ -50,17 +57,20 @@ public:
   void operator()(const std::string& msg)
   {
     QString qmsg = QString::fromStdString(msg);
-    if(qmsg.contains(QRegExp("^\\[DEBUG\\]\\s*")) && debugColor_.isValid())
-      emit textColorChanged(debugColor_);
-    if(qmsg.contains(QRegExp("^\\[INFO\\]\\s*")) && infoColor_.isValid())
-      emit textColorChanged(infoColor_);
-    if(qmsg.contains(QRegExp("^\\[WARNING\\]\\s*")) && warningColor_.isValid())
-      emit textColorChanged(warningColor_);
-    if(qmsg.contains(QRegExp("^\\[ERROR\\]\\s*")) && errorColor_.isValid())
-      emit textColorChanged(errorColor_);
-    if(qmsg.contains(QRegExp("^\\[FATAL\\]\\s*")) && fatalColor_.isValid())
-      emit textColorChanged(fatalColor_);
-    emit log(qmsg);
+    // the configured colour is passed on unchanged; LogViewer adapts it
+    // to the current theme (and again whenever the theme changes)
+    QColor color;
+    if(qmsg.startsWith("[DEBUG]"))
+      color = debugColor_;
+    else if(qmsg.startsWith("[INFO]"))
+      color = infoColor_;
+    else if(qmsg.startsWith("[WARNING]"))
+      color = warningColor_;
+    else if(qmsg.startsWith("[ERROR]"))
+      color = errorColor_;
+    else if(qmsg.startsWith("[FATAL]"))
+      color = fatalColor_;
+    emit entry(qmsg, color);
   }
 
   inline QColor debugColor() const
@@ -89,8 +99,7 @@ public:
     { fatalColor_ = color; }
 
 signals:
-  void log(const QString& msg);
-  void textColorChanged(const QColor& color);
+  void entry(const QString& msg, const QColor& color);
 
 private:
   QColor debugColor_;
@@ -141,6 +150,65 @@ public:
       sapecng::Logger().get(sapecng::Logger::FATAL)
         << (QObject::tr("[FATAL] ") + msg).toStdString();
     }
+
+};
+
+
+// Read-only message log that keeps every entry with its configured colour
+// and re-renders them when the palette changes, so the text stays readable
+// after switching between light and dark themes.
+class LogViewer: public QTextEdit
+{
+
+  Q_OBJECT
+
+public:
+  LogViewer(QWidget* parent = 0): QTextEdit(parent) { }
+
+public slots:
+  void addEntry(const QString& msg, const QColor& color)
+  {
+    entries_.append(qMakePair(msg, color));
+    write(msg, color);
+  }
+
+  void clearEntries()
+  {
+    entries_.clear();
+    clear();
+  }
+
+protected:
+  // the usual menu (copy, select all) and Clear
+  void contextMenuEvent(QContextMenuEvent* event) override
+  {
+    QMenu* menu = createStandardContextMenu();
+    menu->addSeparator();
+    QAction* clearAct = menu->addAction(tr("C&lear"));
+    clearAct->setEnabled(!entries_.isEmpty());
+    connect(clearAct, &QAction::triggered, this, &LogViewer::clearEntries);
+    menu->exec(event->globalPos());
+    delete menu;
+  }
+
+  void changeEvent(QEvent* event) override
+  {
+    QTextEdit::changeEvent(event);
+    if(event->type() == QEvent::PaletteChange) {
+      clear();
+      for(const auto& e : entries_)
+        write(e.first, e.second);
+    }
+  }
+
+private:
+  void write(const QString& msg, const QColor& color)
+  {
+    setTextColor(theme::readableOn(color));
+    append(msg);
+  }
+
+  QList< QPair<QString, QColor> > entries_;
 
 };
 

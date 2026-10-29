@@ -11,7 +11,6 @@ Thanks to the work of the Qwt project.
 Source code has been used as-is.
 
 
-Thanks to Nokia and the not yet supported project QtPropertyBrowser (on Qt Solutions Archive).
-  [http://qt.nokia.com/products/qt-addons/solutions-archive/index]
-  [http://qt.gitorious.org/qt-solutions/qt-solutions/trees/master/qtpropertybrowser]
+Thanks to The Qt Company for the Qt property browser (from the qttools repository).
+  [https://github.com/qt/qttools/tree/dev/src/shared/qtpropertybrowser]
 Source code has been used as-is.

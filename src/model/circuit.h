@@ -77,6 +77,11 @@ public:
   inline vertex_descriptor outNode() const
     { return out_; }
 
+  // every output of the netlist (Out markers, voltmeters, ammeters) in the
+  // order met; outNode() is the one chosen when the circuit was built
+  inline const std::vector<std::string>& outputNames() const
+    { return outputNames_; }
+
 private:
   std::map<std::string,std::string> props_;
 
@@ -87,6 +92,7 @@ private:
 
   vertex_descriptor reference_;
   vertex_descriptor out_;
+  std::vector<std::string> outputNames_;
 
 };
 
@@ -96,7 +102,9 @@ class circuit_builder: public abstract_builder
 {
 
 public:
-  circuit_builder(circuit& circuit);
+  // output: which of the netlist's outputs (Out markers, voltmeters,
+  // ammeters, in the order met) the transfer function is for
+  circuit_builder(circuit& circuit, unsigned int output = 0);
 
   void add_circuit_properties(std::map<std::string,std::string> map);
   void add_circuit_property(std::string name, std::string value);
@@ -136,6 +144,42 @@ public:
         std::map<std::string,std::string>()
     );
 
+  // the edges of a VCVS between existing vertices (no node bookkeeping)
+  void add_vcvs_edges(
+      std::string name,
+      double value,
+      bool symbolic,
+      unsigned int va,
+      unsigned int vb,
+      unsigned int vac,
+      unsigned int vbc,
+      std::map<std::string,std::string> props
+    );
+
+  // R, L or C with parasitics (props "ideal" = "0" and e.g. "esr")
+  void add_real_passive(
+      abstract_builder::dual_component_type c_type,
+      std::string name,
+      double value,
+      bool symbolic,
+      unsigned int va,
+      unsigned int vb,
+      std::map<std::string,std::string> props
+    );
+
+  // op-amp with open-loop gain a0 and gain-bandwidth product (props
+  // "gbw", Hz; none or 0: no pole)
+  void add_real_opamp(
+      std::string name,
+      double a0,
+      bool symbolic,
+      unsigned int va,
+      unsigned int vb,
+      unsigned int vac,
+      unsigned int vbc,
+      std::map<std::string,std::string> props
+    );
+
   void add_unknow_component(
       std::map<std::string,std::string> props =
         std::map<std::string,std::string>()
@@ -156,8 +200,24 @@ public:
   void flush();
 
 private:
+  // the vertex of a netlist node (see node() in circuit.cpp)
+  unsigned int node(unsigned int external);
+  std::map<unsigned int, unsigned int> nodes_;
+  // the components on vertices (add_dual_component and
+  // add_quad_component map the netlist nodes first)
+  void add_dual(abstract_builder::dual_component_type c_type,
+      std::string name, double value, bool symbolic,
+      unsigned int va, unsigned int vb,
+      std::map<std::string,std::string> props);
+  void add_quad(abstract_builder::quad_component_type c_type,
+      std::string name, double value, bool symbolic,
+      unsigned int va, unsigned int vb, unsigned int vac, unsigned int vbc,
+      std::map<std::string,std::string> props);
+
   void try_add_block();
   void replace_requested(circuit::vertex_descriptor vertex);
+  void add_output(circuit::vertex_descriptor vertex, const std::string& name,
+      const char* prefix);
 
   void add_edge(
       circuit::vertex_descriptor iva,
@@ -176,6 +236,8 @@ private:
   circuit& circuit_;
   std::list<circuit::vertex_descriptor> requested_;
   bool has_block_;
+  unsigned int output_;
+  std::vector<circuit::vertex_descriptor> outputs_;
 
   std::string prefix_;
   std::vector<std::string> pstack_;

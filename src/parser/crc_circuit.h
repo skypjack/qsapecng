@@ -61,7 +61,7 @@ public:
       std::basic_ostream<
           std::char_traits< char >::char_type
         >& stream
-    ): stream_(stream), out_(0) { }
+    ): stream_(stream), out_(0), hasOut_(false) { }
 
   void add_circuit_properties(std::map<std::string,std::string> map) { }
   void add_circuit_property(std::string name, std::string value) { }
@@ -133,6 +133,7 @@ private:
       std::char_traits< char >::char_type
     >& stream_;
   unsigned int out_;
+  bool hasOut_;
 
 };
 

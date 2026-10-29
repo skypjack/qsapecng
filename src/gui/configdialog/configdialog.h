@@ -21,7 +21,8 @@
 #define CONFIGDIALOG_H
 
 
-#include <QtGui/QDialog>
+#include <QDialog>
+#include <QList>
 
 #include "gui/configdialog/configpage.h"
 
@@ -43,12 +44,16 @@ class ConfigDialog: public QDialog
 public:
   ConfigDialog(QWidget* parent = 0);
 
+signals:
+  // the Appearance page was applied: open schematics and plots need redrawing
+  void appearanceApplied();
+
 public slots:
   void changePage(QListWidgetItem* current, QListWidgetItem* previous);
 
 private slots:
   void apply();
-  void checkPage();
+  void applyAndClose();
   void checkBeforeClose();
 
 private:
@@ -58,7 +63,10 @@ private:
   QListWidget* contents_;
   QStackedWidget* pages_;
 
+  QList<ConfigPage*> pages() const;
+
   ConfigPage* generalPage_;
+  ConfigPage* appearancePage_;
   ConfigPage* fontPage_;
 
 };

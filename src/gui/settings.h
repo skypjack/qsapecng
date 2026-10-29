@@ -21,13 +21,13 @@
 #define SETTINGS_H
 
 
-#include <QtCore/QPoint>
-#include <QtCore/QSize>
-#include <QtCore/QByteArray>
-#include <QtCore/QRegExp>
+#include <QPoint>
+#include <QSize>
+#include <QByteArray>
+#include <QRegularExpression>
 
-#include <QtGui/QFont>
-#include <QtGui/QColor>
+#include <QFont>
+#include <QColor>
 
 
 namespace qsapecng
@@ -51,7 +51,7 @@ public:
   void load();
   void save();
 
-  inline QRegExp notation() const
+  inline QRegularExpression notation() const
     { return notation_; }
 
   inline QPoint mwPos() const
@@ -91,7 +91,7 @@ public:
     { return recentFiles_; }
 
 private:
-  static QRegExp notation_;
+  static QRegularExpression notation_;
 
   static QPoint mwPos_;
   static QSize mwSize_;
@@ -117,7 +117,7 @@ class SettingsManager
 {
 
 public:
-  inline void setNotation(const QRegExp& notation)
+  inline void setNotation(const QRegularExpression& notation)
     { Settings::notation_ = notation; }
 
   inline void setMWPos(const QPoint& pos)

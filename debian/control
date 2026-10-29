@@ -4,10 +4,11 @@ Priority: optional
 Maintainer: Simone Rossetto <simros85@gmail.com>
 Build-Depends:
  debhelper (>= 7.0.50~),
- cmake (>= 2.6.0),
- libqt4-dev (>= 4.6.0),
- libqwt-dev (>= 6.1.0),
- libboost-dev (>= 1.41.0),
+ cmake (>= 3.16),
+ qt6-base-dev,
+ qt6-svg-dev,
+ libqwt-qt6-dev (>= 6.2),
+ libboost-dev (>= 1.66),
  doxygen
 Standards-Version: 3.9.8
 Homepage: https://github.com/skypjack/qsapecng

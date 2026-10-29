@@ -1,0 +1,7 @@
+This is the Qt property browser from qttools (src/shared/qtpropertybrowser, tag v6.4.2),
+licensed LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only. It replaces the Qt4-era Qt Solutions copy.
+
+QSapecNG 3.0 has no property browser any more (parameters are edited in a
+dialog); only the property model is kept: QtProperty, the property managers
+and their utilities. The editor factories, the variant property classes and
+the tree / button / group-box browsers were removed.

@@ -21,8 +21,8 @@
 #define ITEM_H
 
 
-#include <QtGui/QGraphicsItem>
-#include <QtGui/QPen>
+#include <QGraphicsItem>
+#include <QPen>
 
 
 class QGraphicsSceneMouseEvent;
@@ -57,6 +57,10 @@ public:
   virtual void mirror();
   virtual void rotate();
   virtual void rotateBack();
+
+  // the box rotation and mirroring turn around (and that saved files rely
+  // on); a symbol redrawn at another size keeps its old box here
+  virtual QRectF pivotRect() const { return boundingRect(); }
 
   bool mirrored() const;
   bool rotated() const;

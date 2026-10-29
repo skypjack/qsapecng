@@ -50,9 +50,9 @@ public:
   crc_lexer()
   {
     this->self.add_pattern
-        ("SID", "[RGCLVI]\\d+")
-        ("CID", "[HEFY]\\d+")
-        ("AID", "[A]\\d+")
+        ("SID", "[RGCLVI][A-Za-z0-9_]*")
+        ("CID", "[HEFYn][A-Za-z0-9_]*")
+        ("AID", "[A][A-Za-z0-9_]*")
         ("DGT", "\\d+")
         ("DBL", "[-+]?(\\d*\\.)?\\d+([eE][-+]?\\d+)?")
       ;
@@ -194,6 +194,7 @@ public:
     out_.name("out");
     grammar_.name("grammar");
 
+#ifdef QSAPECNG_PARSER_DEBUG
     boost::spirit::qi::debug(circ_);
     boost::spirit::qi::debug(elms_);
     boost::spirit::qi::debug(selm_);
@@ -201,6 +202,7 @@ public:
     boost::spirit::qi::debug(aelm_);
     boost::spirit::qi::debug(out_);
     boost::spirit::qi::debug(grammar_);
+#endif
   }
 
 private:
@@ -380,7 +382,11 @@ void crc_builder::add_out_component(
     std::map<std::string, std::string> props
   )
 {
-  out_ = v;
+  // the format has one output: the first
+  if(!hasOut_) {
+    out_ = v;
+    hasOut_ = true;
+  }
 }
 
 
@@ -549,10 +555,10 @@ void crc_builder::add_quad_component(
       ls_nodes.push_back(vbc);
 
       add_item(
-        props["lp:name"], strtol(props["lp:value"].c_str(), 0, 10),
+        props["lp:name"], strtod(props["lp:value"].c_str(), 0),
         symbolic, lp_nodes);
       add_item(
-        props["ls:name"], strtol(props["ls:value"].c_str(), 0, 10),
+        props["ls:name"], strtod(props["ls:value"].c_str(), 0),
         symbolic, ls_nodes);
 
       stream_ << name << " " << props["lp:name"] << " " << props["ls:name"];

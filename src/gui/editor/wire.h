@@ -24,9 +24,9 @@
 #include "gui/editor/item.h"
 #include "gui/editor/vpiface.h"
 
-#include <QtCore/QLineF>
-#include <QtGui/QPainterPath>
-#include <QtGui/QPen>
+#include <QLineF>
+#include <QPainterPath>
+#include <QPen>
 
 
 namespace qsapecng
@@ -78,6 +78,12 @@ public:
 
   Wire* joined(Wire* wire);
 
+  // Adds a connection point ("tap") wherever the end of another wire or a
+  // component terminal lies in the middle of this wire, so that T-junctions
+  // connect like they look (issue #5). Wires that merely cross stay
+  // unconnected. Returns true when the set of taps changed.
+  bool updateTaps();
+
 public:
   int propagate(int value);
   void invalidate();
@@ -96,9 +102,11 @@ private:
   QPainterPath path_;
 
   Qt::Orientation orientation_;
-  QList<GraphicsNode*> nodes_;
+  QList<GraphicsNode*> nodes_;   // end points (or every point), then taps
+  QList<GraphicsNode*> taps_;    // subset of nodes_
   bool connectedJunctions_;
   bool mod_;
+  int net_ = -1;   // solved net number, -1 when not solved
 
 };
 

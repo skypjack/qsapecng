@@ -17,6 +17,7 @@
 */
 
 
+#include "gui/editor/itemtransform.h"
 #include "parser/parser_factory.h"
 #include "gui/editor/schematicsceneparser.h"
 #include "gui/editor/undoredocommand.h"
@@ -24,10 +25,10 @@
 #include "gui/editor/component.h"
 #include "gui/editor/item.h"
 
-#include <QtCore/QSet>
-#include <QtCore/QFileInfo>
-#include <QtCore/QPointer>
-#include <QtGui/QGraphicsItem>
+#include <QSet>
+#include <QFileInfo>
+#include <QPointer>
+#include <QGraphicsItem>
 
 #include <sstream>
 #include <memory>
@@ -198,7 +199,7 @@ AddUserDefItem::AddUserDefItem(
   delete builder;
   
   QPointer<qsapecng::SchematicScene> smart(rep);
-  item_->setData(101, qVariantFromValue(smart));
+  item_->setData(101, QVariant::fromValue(smart));
 }
 
 
@@ -355,6 +356,30 @@ void RemoveItems::redo()
 }
 
 
+ChangeProperties::ChangeProperties(
+      const QList<PropertyChange>& changes,
+      QUndoCommand* parent
+    )
+  : QUndoCommand(parent), changes_(changes)
+{
+  setText(QObject::tr("Edit properties"));
+}
+
+
+void ChangeProperties::undo()
+{
+  for(int i = changes_.size() - 1; i >= 0; --i)
+    applyPropertyValue(changes_.at(i).property, changes_.at(i).oldValue);
+}
+
+
+void ChangeProperties::redo()
+{
+  foreach(const PropertyChange& change, changes_)
+    applyPropertyValue(change.property, change.newValue);
+}
+
+
 RotateItems::RotateItems(
       QList<QGraphicsItem*> items,
       QUndoCommand* parent
@@ -376,27 +401,45 @@ RotateItems::RotateItems(
 }
 
 
+namespace
+{
+
+// a part with one pin (Out, ground, port, one-pin source) turns around
+// that pin, so it stays on its wire
+void turn(QGraphicsItem* graphicsItem, bool back)
+{
+  Item* item = qgraphicsitem_cast<Item*>(graphicsItem);
+  if(!item) {
+    rotateItem(graphicsItem, back ? -90 : 90);
+    return;
+  }
+  const Component* c = dynamic_cast<const Component*>(item);
+  const bool onePin = c && c->pinPoints().size() == 1;
+  const QPointF before = onePin ? c->mapToScene(c->pinPoints().first())
+                                : QPointF();
+  if(back)
+    item->rotateBack();
+  else
+    item->rotate();
+  if(onePin)
+    item->moveBy(before.x() - c->mapToScene(c->pinPoints().first()).x(),
+                 before.y() - c->mapToScene(c->pinPoints().first()).y());
+}
+
+}
+
+
 void RotateItems::undo()
 {
-  foreach(QGraphicsItem* graphicsItem, items_) {
-    Item* item = qgraphicsitem_cast<Item*>(graphicsItem);
-    if(item)
-      item->rotateBack();
-    else
-      graphicsItem->rotate(-90);
-  }
+  foreach(QGraphicsItem* graphicsItem, items_)
+    turn(graphicsItem, true);
 }
 
 
 void RotateItems::redo()
 {
-  foreach(QGraphicsItem* graphicsItem, items_) {
-    Item* item = qgraphicsitem_cast<Item*>(graphicsItem);
-    if(item)
-      item->rotate();
-    else
-      graphicsItem->rotate(90);
-  }
+  foreach(QGraphicsItem* graphicsItem, items_)
+    turn(graphicsItem, false);
 }
 
 
@@ -428,7 +471,7 @@ void MirrorItems::undo()
     if(item)
       item->mirror();
     else
-      graphicsItem->scale(-1, 1);
+      scaleItem(graphicsItem, -1, 1);
   }
 }
 
@@ -440,96 +483,8 @@ void MirrorItems::redo()
     if(item)
       item->mirror();
     else
-      graphicsItem->scale(-1, 1);
+      scaleItem(graphicsItem, -1, 1);
   }
-}
-
-
-BringToFrontItem::BringToFrontItem(
-      QGraphicsItem* item,
-      QUndoCommand* parent
-    )
-  : QUndoCommand(parent), item_(item)
-{
-  setText(QObject::tr("Bring to front item"));
-  oldZValue_ = item_->zValue();
-
-  QList<QGraphicsItem*> overlapItems =
-    item_->collidingItems();
-
-  qreal zValue_ = 0;
-  foreach(QGraphicsItem* overlapItem, overlapItems) {
-    if(overlapItem->zValue() >= zValue_)
-      zValue_ = overlapItem->zValue() + 0.1;
-  }
-}
-
-
-void BringToFrontItem::undo()
-{
-  item_->setZValue(oldZValue_);
-}
-
-
-void BringToFrontItem::redo()
-{
-  item_->setZValue(zValue_);
-}
-
-
-bool BringToFrontItem::mergeWith(const QUndoCommand* command)
-{
-  if(command->id() != id())
-    return false;
-
-  if(static_cast<const BringToFrontItem*>(command)->item_ == item_)
-    return true;
-
-  return false;
-}
-
-
-SendToBackItem::SendToBackItem(
-      QGraphicsItem* item,
-      QUndoCommand* parent
-    )
-  : QUndoCommand(parent), item_(item)
-{
-  setText(QObject::tr("Send to back item"));
-  oldZValue_ = item_->zValue();
-
-  QList<QGraphicsItem*> overlapItems =
-    item_->collidingItems();
-
-  qreal zValue_ = 0;
-  foreach(QGraphicsItem* overlapItem, overlapItems) {
-    if(overlapItem->zValue() <= zValue_)
-      zValue_ = overlapItem->zValue() - 0.1;
-  }
-}
-
-
-void SendToBackItem::undo()
-{
-  item_->setZValue(oldZValue_);
-}
-
-
-void SendToBackItem::redo()
-{
-  item_->setZValue(zValue_);
-}
-
-
-bool SendToBackItem::mergeWith(const QUndoCommand* command)
-{
-  if(command->id() != id())
-    return false;
-
-  if(static_cast<const SendToBackItem*>(command)->item_ == item_)
-    return true;
-
-  return false;
 }
 
 
@@ -585,7 +540,9 @@ bool MoveItems::mergeWith(const QUndoCommand* command)
   if(command->id() != id())
     return false;
 
-  if(static_cast<const MoveItems*>(command)->items_.toSet() == items_.toSet()) {
+  const QList<QGraphicsItem*>& other = static_cast<const MoveItems*>(command)->items_;
+  if(QSet<QGraphicsItem*>(other.begin(), other.end())
+      == QSet<QGraphicsItem*>(items_.begin(), items_.end())) {
     offset_ += static_cast<const MoveItems*>(command)->offset_;
     return true;
   }

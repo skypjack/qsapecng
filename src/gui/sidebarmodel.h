@@ -21,10 +21,10 @@
 #define SIDEBARMODEL_H
 
 
-#include <QtCore/QAbstractListModel>
+#include <QAbstractListModel>
 
-#include <QtCore/QList>
-#include <QtCore/QMap>
+#include <QList>
+#include <QMap>
 
 
 namespace qsapecng
@@ -53,11 +53,17 @@ public:
   ) const;
 
   Qt::ItemFlags flags(const QModelIndex& index) const;
+  Qt::DropActions supportedDragActions() const override
+    { return Qt::CopyAction; }
 
   Qt::DropActions supportedDropActions() const;
 
   QStringList mimeTypes() const;
   QMimeData* mimeData(const QModelIndexList& indexes) const;
+
+public:
+  // update the resistor/conductance icons after the symbol style changed
+  void refreshSymbols();
 
 private:
   void setupSideBar();

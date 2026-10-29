@@ -22,14 +22,15 @@
 
 
 #include "gui/editor/schematicscene.h"
+#include "gui/editor/componentdialog.h"
 
-#include <QtGui/QUndoCommand>
+#include <QUndoCommand>
 
-#include <QtCore/QPointF>
-#include <QtCore/QLineF>
+#include <QPointF>
+#include <QLineF>
 
-#include <QtCore/QVariant>
-#include <QtCore/QList>
+#include <QVariant>
+#include <QList>
 
 
 class QGraphicsScene;
@@ -48,6 +49,9 @@ class AddItems: public QUndoCommand
 {
 
 public:
+  // the items stay in the scene when the command goes (a loaded file)
+  void release() { items_.clear(); }
+
   AddItems(
       SchematicScene* scene,
       QList<QGraphicsItem*> items,
@@ -151,6 +155,8 @@ public:
   virtual void undo();
   virtual void redo();
 
+  inline Item* wire() const { return wire_; }
+
 private:
   SchematicScene* scene_;
   QPointF pos_;
@@ -207,6 +213,24 @@ private:
 };
 
 
+class ChangeProperties: public QUndoCommand
+{
+
+public:
+  ChangeProperties(
+      const QList<PropertyChange>& changes,
+      QUndoCommand* parent = 0
+  );
+
+  virtual void undo();
+  virtual void redo();
+
+private:
+  QList<PropertyChange> changes_;
+
+};
+
+
 class RotateItems: public QUndoCommand
 {
 
@@ -247,53 +271,6 @@ public:
 
 private:
   QList<QGraphicsItem*> items_;
-
-};
-
-
-class BringToFrontItem: public QUndoCommand
-{
-
-public:
-  BringToFrontItem(
-      QGraphicsItem* item,
-      QUndoCommand* parent = 0
-    );
-
-  enum { ID = 23 };
-
-  virtual void undo();
-  virtual void redo();
-
-  inline int id() const { return ID; }
-  bool mergeWith(const QUndoCommand* command);
-
-private:
-  QGraphicsItem* item_;
-  qreal oldZValue_;
-  qreal zValue_;
-
-};
-
-
-class SendToBackItem: public QUndoCommand
-{
-
-public:
-  SendToBackItem(QGraphicsItem* item, QUndoCommand* parent = 0);
-
-  enum { ID = 29 };
-
-  virtual void undo();
-  virtual void redo();
-
-  inline int id() const { return ID; }
-  bool mergeWith(const QUndoCommand* command);
-
-private:
-  QGraphicsItem* item_;
-  qreal oldZValue_;
-  qreal zValue_;
 
 };
 

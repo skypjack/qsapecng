@@ -1,0 +1,129 @@
+Example circuits
+================
+
+Open one (File > Open Example), press Resolve (F8) and look at the Result
+panel; the Plots window (F9) shows the frequency response, and New Plot
+(Ctrl+F9) adds the other kinds: phase, Bode, poles and zeros, Smith chart.
+
+Examples marked [Smith] drive a port with a 1 A current source, so the
+output is the impedance of that port, and open as a Smith chart. Their
+values are a starting point: a real board adds its own parasitics, and
+the final values are found on the bench (with a VNA).
+
+Some examples carry their own sweep (and kind of plot): the first plot
+after Resolve uses it, and New Plot offers it.
+
+
+Basics
+------
+
+rc-lowpass-2nd-order.info
+  Two cascaded RC low-pass sections (R = 1 kOhm, C = 1 uF).
+  Result:  V1 / (C1 C2 R1 R2 s^2 + (C2 R2 + C1 R1 + C2 R1) s + 1),
+  poles near -381.97 and -2618.03 rad/s.
+
+rlc-bandpass.info
+  Series RLC band-pass, output across R (L = 10 mH, C = 1 uF, R = 100 Ohm:
+  centre frequency about 1.59 kHz, Q = 1).
+  Result:  C1 R1 V1 s / (C1 L1 s^2 + C1 R1 s + 1).
+
+bridge-meters.info
+  Wheatstone bridge (1 k, 1 k, 1.1 k, 1 k) from 10 V, with an ammeter in
+  the supply and a voltmeter across the bridge: two outputs, one tab each.
+  Isupply = 9.762 mA, Vbridge = +0.238 V.
+
+
+Amplifiers and active filters
+-----------------------------
+
+opamp-inverting.info
+  Inverting amplifier with an ideal op-amp (R1 = 1 kOhm, R2 = 10 kOhm).
+  Result:  -R2 V1 / R1 (gain -10).
+
+opamp-noninverting-gbw.info
+  Non-inverting amplifier, gain 11, with a real op-amp: open-loop gain
+  100 000 and a gain-bandwidth of 1 MHz. The Bode plot falls off from
+  about 91 kHz (GBW / gain).
+
+sallen-key-lowpass.info
+  Unity-gain Sallen-Key low-pass (R1 = R2 = 10 kOhm, C1 = 20 nF,
+  C2 = 10 nF: Butterworth, cut-off about 1.13 kHz).
+  Result:  V1 / (C1 C2 R1 R2 s^2 + (C2 R2 + C2 R1) s + 1).
+
+mfb-bandpass.info
+  Multiple-feedback band-pass: 1 kHz, Q = 5, gain 1 at the centre
+  (C1 = C2 = 10 nF, R1 = 79.58 k, R2 = 1.624 k, R3 = 159.2 k).
+
+
+Passive filters
+---------------
+
+twin-t-notch.info
+  Twin-T notch at 1 kHz (R = 15.9 k, C = 10 nF; 2C and R/2 to ground).
+  Values numeric (not symbolic) to keep the result short.
+
+fm-preemphasis-eu.info
+  FM broadcast pre-emphasis for Europe, 50 us: R1 = 10 k parallel with
+  C1 = 5 nF, R2 = 1.2 k to ground. Relative to the low-frequency level the
+  response is +3 dB at 3.18 kHz and rises 6 dB per octave; R2 stops the
+  rise above the audio band (pole near 30 kHz). The US standard is 75 us
+  (C1 = 7.5 nF).
+
+lowpass-70cm-pa.info
+  Harmonic filter after a 70 cm (420-450 MHz) power amplifier:
+  7th-order Chebyshev, 0.1 dB ripple, 50 Ohm, cut-off 500 MHz. V1 is a
+  50 Ohm generator (internal resistance in its dialog) and Out1 has a
+  50 Ohm load, so no terminating resistors are drawn and the plot is the
+  transducer gain: the filter's own insertion loss, 0 dB for a lossless
+  one. The parts are real (inductors with Q about 100 at 435 MHz,
+  capacitors with 0.5 nH ESL and 0.2 Ohm ESR): -0.63 dB at 435 MHz,
+  -57.6 dB at 870 MHz (2nd harmonic). Solving takes a few seconds.
+
+
+RF matching [Smith]
+-------------------
+
+sx1255-rx-match.info
+  50 Ohm antenna into the receive input (RF_IN) of a Semtech SX1255 set to
+  its 200 Ohm mode, at 435 MHz: an L-network, series L1 = 31.69 nH, shunt
+  C1 = 3.169 pF. Zin = 50 Ohm at 435 MHz; the 1:4 impedance step also gives
+  about 6 dB of voltage gain for free. The datasheet gives the input as a
+  plain 200 Ohm: the real input's reactance shifts the values.
+
+sx1255-tx-balun.info
+  The SX1255 transmit output (RF_OP / RF_ON) wants 100 Ohm differential;
+  an LC lattice balun turns a 50 Ohm single-ended load into that at
+  435 MHz (L = 25.87 nH, C = 5.174 pF: X = sqrt(100 * 50) = 70.7 Ohm).
+  A current source between the two outputs and a voltmeter (Zdiff) across
+  them show what the chip sees (the Smith chart opens with Z0 = 100 Ohm).
+
+pa-pi-match-435.info
+  Output network of a 5 W amplifier at 435 MHz on 7.8 V (2S Li-ion): the
+  transistor wants about (7.8 V - 0.4 V)^2 / (2 * 5 W) = 5.5 Ohm. A pi
+  network with Q = 4 (C1 = 62.05 pF, L1 = 5.308 nH, C2 = 29.27 pF) makes it
+  50 Ohm; seen from the antenna side Zout = 50 Ohm at 435 MHz and the VSWR
+  stays under 1.4 from 420 to 450 MHz.
+
+
+Parts that are not what they seem [Smith]
+-----------------------------------------
+
+crystal-10mhz.info
+  A 10 MHz quartz crystal as its Butterworth - Van Dyke model (typical
+  values: Rm = 20 Ohm, Lm = 12.66 mH, Cm = 20 fF, C0 = 5 pF): series
+  resonance at 10 MHz and parallel resonance about 20 kHz higher. It opens
+  as the magnitude of Zx from 9.99 to 10.03 MHz with 1 000 000 points per
+  decade (the resonances are only a few hundred Hz wide); try the Smith
+  chart too.
+
+dummy-load-1x50.info
+  A 1/4 W through-hole 50 Ohm resistor used as a dummy load. With its
+  typical parasitics (about 10 nH of lead and body inductance, 0.3 pF
+  across it) it is 50.2 + j8.4 Ohm at 145 MHz (VSWR 1.18) but
+  52.2 + j25.8 Ohm at 435 MHz (VSWR 1.65, return loss 12.2 dB): no longer
+  a good load. The sweep is 1 MHz - 1 GHz: add markers.
+
+dummy-load-4x200.info
+  The usual fix: four 200 Ohm resistors of the same kind in parallel. The
+  inductance is divided by four: VSWR about 1.04 at 435 MHz. (The model
+  leaves out the wiring between them, which adds some back.)

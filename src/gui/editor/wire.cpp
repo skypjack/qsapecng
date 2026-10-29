@@ -17,13 +17,14 @@
 */
 
 
+#include "gui/theme.h"
 #include "gui/editor/wire.h"
 #include "gui/editor/graphicsnode.h"
 #include "gui/editor/schematicscene.h"
 
-#include <QtCore/QStringList>
-#include <QtGui/QPainter>
-#include <QtGui/QColor>
+#include <QStringList>
+#include <QPainter>
+#include <QColor>
 
 
 namespace qsapecng
@@ -66,6 +67,7 @@ Wire::~Wire()
   }
 
   nodes_.clear();
+  taps_.clear();
 }
 
 
@@ -97,7 +99,9 @@ void Wire::paint(
   if(isSelected()) {
     painter->save();
 
-    painter->setPen(defaultPen_);
+    QPen selectionPen = defaultPen_;
+    selectionPen.setColor(theme::sheetForeground());
+    painter->setPen(selectionPen);
     double opacity = painter->opacity();
     painter->setOpacity(opacity / OpacityFactor);
     painter->drawRect(boundingRect());
@@ -105,7 +109,9 @@ void Wire::paint(
     painter->restore();
   }
 
-  painter->setPen(itemPen_);
+  QPen pen = itemPen_;
+  pen.setColor(net_ >= 0 ? theme::netColor(net_) : theme::sheetForeground());
+  painter->setPen(pen);
   painter->drawPath(path_);
 
   painter->restore();
@@ -228,13 +234,28 @@ void Wire::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
   foreach(QGraphicsItem* graphicsItem, collidingItemList) {
     Item* item = qgraphicsitem_cast<Item*>(graphicsItem);
-    if(item && itemType() == Item::Wire) {
+    if(item && item->itemType() == Item::Wire) {
 
       Wire* wire =
         static_cast<Wire*>(graphicsItem);
 
-      if(wire->orientation() == orientation_ && schematicScene())
-        schematicScene()->joinWires(this, wire);
+      // only wires lying on top of this one (after a drag): merely
+      // touching ones stay apart, the point between them may be a
+      // junction (a click used to glue a split wire back together)
+      if(wire->orientation() == orientation_ && schematicScene()) {
+        const QPointF a1 = mapToScene(fromPoint()), a2 = mapToScene(toPoint());
+        const QPointF b1 = wire->mapToScene(wire->fromPoint());
+        const QPointF b2 = wire->mapToScene(wire->toPoint());
+        const bool horizontal = orientation_ == Qt::Horizontal;
+        const bool sameLine = horizontal ? qAbs(a1.y() - b1.y()) < 0.5
+                                         : qAbs(a1.x() - b1.x()) < 0.5;
+        const qreal lo = horizontal ? qMax(qMin(a1.x(), a2.x()), qMin(b1.x(), b2.x()))
+                                    : qMax(qMin(a1.y(), a2.y()), qMin(b1.y(), b2.y()));
+        const qreal hi = horizontal ? qMin(qMax(a1.x(), a2.x()), qMax(b1.x(), b2.x()))
+                                    : qMin(qMax(a1.y(), a2.y()), qMax(b1.y(), b2.y()));
+        if(sameLine && hi - lo > 0.5)
+          schematicScene()->joinWires(this, wire);
+      }
     }
   }
 
@@ -247,9 +268,10 @@ QVariant Wire::itemChange(GraphicsItemChange change, const QVariant& value)
   if(change == ItemPositionHasChanged
         || change == ItemTransformHasChanged
         || change == ItemSceneHasChanged
-      )
+      ) {
     foreach(GraphicsNode* node, nodes_)
       node->updateItemSet();
+  }
 
   return Item::itemChange(change, value);
 }
@@ -338,17 +360,9 @@ int Wire::propagate(int value)
   if(!found)
     nodes_.front()->showNodeValue();
 
-  QList<QColor> colors;
-  colors.push_back(QColor(Qt::darkCyan));
-  colors.push_back(QColor(Qt::darkRed));
-  colors.push_back(QColor(Qt::darkMagenta));
-  colors.push_back(QColor(Qt::darkGreen));
-  colors.push_back(QColor(Qt::darkYellow));
-  colors.push_back(QColor(Qt::darkBlue));
-  colors.push_back(QColor(Qt::darkGray));
-
+  // the colour itself is looked up at paint time (follows the theme)
+  net_ = act;
   itemPen_.setWidth(itemPen_.width() + COLOR_BORDER);
-  itemPen_.setColor(colors.at(act % colors.size()));
   update();
 
   return value;
@@ -364,7 +378,7 @@ void Wire::invalidate()
 
   if(mod_) {
     itemPen_.setWidth(itemPen_.width() - COLOR_BORDER);
-    itemPen_.setColor(Qt::black);
+    net_ = -1;
     mod_ = false;
     update();
   }
@@ -381,6 +395,7 @@ void Wire::refreshNodeList()
   }
 
   nodes_.clear();
+  taps_.clear();
 
   if(connectedJunctions_) {
     if(orientation_ == Qt::Horizontal) {
@@ -414,6 +429,70 @@ void Wire::refreshNodeList()
     nodes_.append(from);
     nodes_.append(to);
   }
+}
+
+
+bool Wire::updateTaps()
+{
+  QGraphicsScene* sc = scene();
+  if(!sc || connectedJunctions_)
+    return false;
+
+  // interior grid points of the segment, in local coordinates
+  QList<QPointF> wanted;
+  const QPointF a = fromPoint();
+  const QPointF b = toPoint();
+  const int step = SchematicScene::GridStep;
+
+  QList<QPointF> interior;
+  if(orientation_ == Qt::Horizontal) {
+    const qreal lo = qMin(a.x(), b.x()), hi = qMax(a.x(), b.x());
+    for(qreal x = lo + step; x < hi - step / 2.; x += step)
+      interior.append(QPointF(x, a.y()));
+  } else {
+    const qreal lo = qMin(a.y(), b.y()), hi = qMax(a.y(), b.y());
+    for(qreal y = lo + step; y < hi - step / 2.; y += step)
+      interior.append(QPointF(a.x(), y));
+  }
+
+  foreach(const QPointF& p, interior) {
+    const QPointF sp = mapToScene(p);
+    foreach(QGraphicsItem* graphicsItem, sc->items(sp)) {
+      GraphicsNode* other = qgraphicsitem_cast<GraphicsNode*>(graphicsItem);
+      if(!other || other->parentItem() == this || other->isTap())
+        continue;
+      if(QLineF(other->scenePos(), sp).length() < 0.5) {
+        wanted.append(p);
+        break;
+      }
+    }
+  }
+
+  QList<QPointF> current;
+  foreach(GraphicsNode* tap, taps_)
+    current.append(tap->pos());
+  if(current == wanted)
+    return false;
+
+  foreach(GraphicsNode* tap, taps_) {
+    nodes_.removeAll(tap);
+    if(tap->scene())
+      tap->scene()->removeItem(tap);
+    delete tap;
+  }
+  taps_.clear();
+
+  foreach(const QPointF& p, wanted) {
+    GraphicsNode* tap = new GraphicsNode(this);
+    tap->setOwner(this);
+    tap->setTap(true);
+    tap->setPos(p);
+    tap->updateItemSet();
+    nodes_.append(tap);
+    taps_.append(tap);
+  }
+
+  return true;
 }
 
 

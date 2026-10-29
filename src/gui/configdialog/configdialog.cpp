@@ -17,17 +17,19 @@
 */
 
 
+#include "gui/theme.h"
 #include "gui/configdialog/configdialog.h"
+#include <QPixmap>
 
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
+#include <QMessageBox>
+#include <QPushButton>
 
-#include <QtGui/QListWidget>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QDialogButtonBox>
+#include <QListWidget>
+#include <QStackedWidget>
+#include <QDialogButtonBox>
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 
 namespace qsapecng
@@ -51,12 +53,14 @@ ConfigDialog::ConfigDialog(QWidget* parent)
   contents_->setCurrentRow(0);
 
   QDialogButtonBox* buttonBox = new QDialogButtonBox;
-  QPushButton* closeButton = buttonBox->addButton(QDialogButtonBox::Close);
+  QPushButton* okButton = buttonBox->addButton(QDialogButtonBox::Ok);
   QPushButton* applyButton = buttonBox->addButton(QDialogButtonBox::Apply);
+  QPushButton* closeButton = buttonBox->addButton(QDialogButtonBox::Close);
+  okButton->setDefault(true);
 
-  connect(this, SIGNAL(accepted()), this, SLOT(close()));
-  connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(checkBeforeClose()));
-  connect(applyButton, SIGNAL(clicked(bool)), this, SLOT(apply()));
+  connect(okButton, &QPushButton::clicked, this, &ConfigDialog::applyAndClose);
+  connect(closeButton, &QPushButton::clicked, this, &ConfigDialog::checkBeforeClose);
+  connect(applyButton, &QPushButton::clicked, this, &ConfigDialog::apply);
 
   QHBoxLayout* subLayout = new QHBoxLayout;
   subLayout->addWidget(contents_);
@@ -75,64 +79,89 @@ ConfigDialog::ConfigDialog(QWidget* parent)
 
 void ConfigDialog::changePage(QListWidgetItem* current, QListWidgetItem* previous)
 {
-  if(!current) {
+  if(!current)
     current = previous;
-    pages_->setCurrentIndex(contents_->row(current));
-  } else {
-    checkPage();
-    pages_->setCurrentIndex(contents_->row(current));
-  }
+  pages_->setCurrentIndex(contents_->row(current));
+}
+
+
+QList<ConfigPage*> ConfigDialog::pages() const
+{
+  return { generalPage_, appearancePage_, fontPage_ };
 }
 
 
 void ConfigDialog::apply()
 {
-  ConfigPage* page =
-    qobject_cast<ConfigPage*>(pages_->currentWidget());
-
-  if(page)
-    page->apply();
+  // every page with pending changes, not only the visible one
+  for(ConfigPage* page : pages())
+    if(page->isPageModified())
+      page->apply();
 }
 
 
-void ConfigDialog::checkPage()
+void ConfigDialog::applyAndClose()
 {
-  ConfigPage* page =
-    qobject_cast<ConfigPage*>(pages_->currentWidget());
-
-  if(page && page->isPageModified()) {
-    QMessageBox::StandardButton button =
-      QMessageBox::question(
-        this,
-        tr("Pending settings"),
-        tr("Pending settings. Apply ?"),
-        QMessageBox::Yes | QMessageBox::No,
-        QMessageBox::Yes
-      );
-
-    if(button == QMessageBox::Yes)
-      page->apply();
-  }
+  apply();
+  accept();
 }
 
 
 void ConfigDialog::checkBeforeClose()
 {
-  checkPage();
-  emit accepted();
+  bool pending = false;
+  for(ConfigPage* page : pages())
+    pending = pending || page->isPageModified();
+
+  if(pending) {
+    QMessageBox::StandardButton button =
+      QMessageBox::question(
+        this,
+        tr("Pending settings"),
+        tr("Some settings were changed but not applied. Apply them?"),
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+        QMessageBox::Yes
+      );
+
+    if(button == QMessageBox::Cancel)
+      return;
+    if(button == QMessageBox::Yes)
+      apply();
+  }
+  accept();
 }
 
 
 void ConfigDialog::createIcons()
 {
+  // the same pixmap when selected: in this icon list only the caption is
+  // highlighted, and the theme's selected icon (highlighted text colour,
+  // white) vanished on the white background
+  auto steadyIcon = [](const QString& name) {
+      const QIcon themed = theme::icon(name);
+      QIcon icon;
+      for(int size : { 32, 48, 64, 96 }) {
+        const QPixmap pm = themed.pixmap(QSize(size, size), QIcon::Normal);
+        icon.addPixmap(pm, QIcon::Normal);
+        icon.addPixmap(pm, QIcon::Selected);
+      }
+      return icon;
+    };
+
   QListWidgetItem* generalButton = new QListWidgetItem(contents_);
-  generalButton->setIcon(QIcon(":/images/qsapecng.png"));
+  generalButton->setIcon(steadyIcon("configuration"));
   generalButton->setText(tr("General"));
   generalButton->setTextAlignment(Qt::AlignHCenter);
   generalButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
+  QListWidgetItem* appearanceButton = new QListWidgetItem(contents_);
+  appearanceButton->setIcon(steadyIcon("palette"));
+  appearanceButton->setText(tr("Appearance"));
+  appearanceButton->setTextAlignment(Qt::AlignHCenter);
+  appearanceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
   QListWidgetItem* fontButton = new QListWidgetItem(contents_);
-  fontButton->setIcon(QIcon(":/images/font.png"));
+  fontButton->setIcon(steadyIcon("font"));
   fontButton->setText(tr("Font"));
   fontButton->setTextAlignment(Qt::AlignHCenter);
   fontButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -144,7 +173,12 @@ void ConfigDialog::createIcons()
 
 void ConfigDialog::createPages()
 {
+  AppearancePage* appearance = new AppearancePage;
+  connect(appearance, &AppearancePage::applied,
+    this, &ConfigDialog::appearanceApplied);
+
   pages_->addWidget(generalPage_ = new GeneralPage);
+  pages_->addWidget(appearancePage_ = appearance);
   pages_->addWidget(fontPage_ = new FontPage);
 }
 

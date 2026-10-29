@@ -1,0 +1,185 @@
+name: Build
+
+# Builds QSapecNG for Linux (AppImage) and Windows (ZIP + NSIS installer),
+# runs the solver regression tests, and uploads the packages as workflow
+# artifacts. Pushing a tag like v3.0.0 also publishes them as a GitHub
+# Release (tags with a "-", e.g. v3.0.0-beta1, become pre-releases).
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  QT_VERSION: '6.8.3'
+  QWT_VERSION: '6.3.0'
+  BOOST_VERSION: '1.92.0'
+  BOOST_SHA256: 'ea7b982002cc9dfbe59b0b217b206f470dc75f3de0bb2973d844118934d82411'
+
+jobs:
+  linux:
+    name: Linux (AppImage)
+    # oldest supported runner: the AppImage runs on distributions with
+    # the same or a newer glibc (Ubuntu 22.04, Debian 12, Fedora 36, ...)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libboost-dev libgl-dev \
+            libxkbcommon-dev libxcb-cursor0
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4.4.1
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          cache: true
+
+      - name: Cache Qwt
+        id: cache-qwt
+        uses: actions/cache@v6
+        with:
+          path: ${{ runner.temp }}/qwt
+          key: qwt-${{ env.QWT_VERSION }}-qt${{ env.QT_VERSION }}-${{ runner.os }}-ubuntu22.04
+
+      - name: Build Qwt
+        if: steps.cache-qwt.outputs.cache-hit != 'true'
+        env:
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
+        run: packaging/build-qwt.sh "$RUNNER_TEMP/qwt" "$QWT_VERSION"
+
+      - name: Build AppImage
+        env:
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
+          BUILD_DIR: build
+          CMAKE_ARGS: -DQSAPECNG_BUILD_TESTS=ON
+        run: packaging/build-appimage.sh "$RUNNER_TEMP/qwt" dist
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: QSapecNG-linux-x86_64
+          path: dist/*.AppImage
+          if-no-files-found: error
+
+  windows:
+    name: Windows (MSVC)
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4.4.1
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          cache: true
+
+      - name: Cache Boost headers
+        id: cache-boost
+        uses: actions/cache@v6
+        with:
+          path: ${{ runner.temp }}/boost
+          key: boost-${{ env.BOOST_VERSION }}-headers
+
+      - name: Download Boost headers
+        if: steps.cache-boost.outputs.cache-hit != 'true'
+        run: |
+          $tarball = "$env:RUNNER_TEMP\boost.tar.xz"
+          curl.exe -fsSL --retry 5 -o $tarball `
+            "https://github.com/boostorg/boost/releases/download/boost-$env:BOOST_VERSION/boost-$env:BOOST_VERSION-b2-nodocs.tar.xz"
+          $hash = (Get-FileHash -Algorithm SHA256 $tarball).Hash.ToLower()
+          if ($hash -ne $env:BOOST_SHA256) { throw "Boost checksum mismatch: $hash" }
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\boost" | Out-Null
+          # only the headers are needed
+          tar.exe -xJf $tarball -C "$env:RUNNER_TEMP\boost" --strip-components=1 "boost-$env:BOOST_VERSION/boost"
+          if ($LASTEXITCODE) { throw 'Boost extraction failed' }
+
+      - name: Cache Qwt
+        id: cache-qwt
+        uses: actions/cache@v6
+        with:
+          path: ${{ runner.temp }}/qwt
+          key: qwt-${{ env.QWT_VERSION }}-qt${{ env.QT_VERSION }}-${{ runner.os }}-msvc2022
+
+      - name: Build Qwt
+        if: steps.cache-qwt.outputs.cache-hit != 'true'
+        env:
+          QMAKE: ${{ env.QT_ROOT_DIR }}\bin\qmake.exe
+        run: packaging\build-qwt.ps1 -Prefix "$env:RUNNER_TEMP\qwt" -Version $env:QWT_VERSION
+
+      - name: Install NSIS
+        run: |
+          if (-not (Get-Command makensis.exe -ErrorAction SilentlyContinue) -and
+              -not (Test-Path "${env:ProgramFiles(x86)}\NSIS\makensis.exe")) {
+            choco install nsis -y --no-progress
+          }
+          "${env:ProgramFiles(x86)}\NSIS" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+
+      - name: Configure
+        run: |
+          # forward slashes: backslashes in CMake strings act as escapes
+          $tmp = $env:RUNNER_TEMP -replace '\\', '/'
+          cmake -S . -B build -A x64 `
+            -DQWT_ROOT_DIR="$tmp/qwt" `
+            -DBOOST_ROOT="$tmp/boost" `
+            -DQSAPECNG_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Package
+        working-directory: build
+        run: cpack -C Release
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: QSapecNG-windows-x64
+          path: |
+            build/QSapecNG-*-win64.zip
+            build/QSapecNG-*-win64.exe
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true

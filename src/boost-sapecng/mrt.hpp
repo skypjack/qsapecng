@@ -40,12 +40,47 @@
 
 #include <vector>
 #include <stack>
+#include "boost-sapecng/mrt_progress.hpp"
 #include <map>
 
 
 namespace boost
 {
 
+
+namespace detail
+{
+
+  struct mrt_share
+  {
+    double weight = 0., used = 0.;
+    mrt_share()
+    {
+      if(mrt_progress* p = mrt_current_progress()) {
+        if(p->cancel && p->cancel->load(std::memory_order_relaxed))
+          throw mrt_cancelled();
+        weight = p->weight;
+      }
+    }
+    // before a sub-search: half of this call's share
+    void hand_on()
+    {
+      if(mrt_progress* p = mrt_current_progress()) {
+        p->weight = weight / 2.;
+        used += weight / 2.;
+      }
+    }
+    ~mrt_share()
+    {
+      if(mrt_progress* p = mrt_current_progress()) {
+        p->done += weight - used;
+        if(p->permille)
+          p->permille->store(int(p->done * 1000.), std::memory_order_relaxed);
+      }
+    }
+  };
+
+}
 
 namespace detail {
 
@@ -190,6 +225,8 @@ namespace detail {
 
     typedef typename Seq::size_type seq_size_type;
 
+    mrt_share share;   // [ QSapecNG ] progress, cancelling
+
     int edges = num_vertices(iG) - 1;
 //
 //  [ Michele Caini ]
@@ -221,7 +258,7 @@ namespace detail {
       std::stack<edge_descriptor> iG_buf, vG_buf;
       bool found = false;
 
-      seq_size_type m;
+      seq_size_type m = 0;
       for(seq_size_type j = 0; j < inL.size() && !found; ++j) {
         if(!inL[j]
             && !get(diG, iG_bimap.left.at(j))
@@ -318,6 +355,7 @@ namespace detail {
         }
 
         // REC_MRT
+        share.hand_on();
         detail::rec_mrt_two_graphs_common_spanning_trees<Graph, Func, Seq, Map>
           (iG, iG_bimap, aiG_inL, diG, vG, vG_bimap, aiG_inL, dvG, func, inL);
 
@@ -515,6 +553,7 @@ namespace detail {
           }
 
           // REC_MRT
+          share.hand_on();
           detail::rec_mrt_two_graphs_common_spanning_trees<
               Graph, Func, Seq, Map>
             (iG, iG_bimap, aiG_inL, diG, vG, vG_bimap, aiG_inL, dvG, func, inL);
@@ -607,17 +646,11 @@ mrt_two_graphs_common_spanning_trees
   typedef typename GraphTraits::edges_size_type edges_size_type;
   typedef typename GraphTraits::edge_iterator edge_iterator;
 
-  typedef typename Seq::const_iterator seq_const_iterator;
-  typedef typename Seq::difference_type seq_diff_type;
   typedef typename Seq::value_type seq_value_type;
   typedef typename Seq::size_type seq_size_type;
-  typedef typename Seq::iterator seq_iterator;
 
-  typedef typename Order::const_iterator order_const_iterator;
-  typedef typename Order::difference_type order_diff_type;
   typedef typename Order::value_type order_value_type;
   typedef typename Order::size_type order_size_type;
-  typedef typename Order::iterator order_iterator;
 
   BOOST_STATIC_ASSERT((is_same<order_value_type, edge_descriptor>::value));
   BOOST_CONCEPT_ASSERT((Convertible<order_size_type, edges_size_type>));
@@ -862,7 +895,6 @@ mrt_two_graphs_common_spanning_trees
   typedef graph_traits<Graph> GraphTraits;
 
   typedef typename GraphTraits::edge_descriptor edge_descriptor;
-  typedef typename GraphTraits::edges_size_type edges_size_type;
   typedef typename GraphTraits::edge_iterator edge_iterator;
 
   std::vector<edge_descriptor> iGO, vGO;

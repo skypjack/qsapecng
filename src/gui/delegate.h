@@ -21,7 +21,7 @@
 #define DELEGATE_H
 
 
-#include <QtGui/QItemDelegate>
+#include <QItemDelegate>
 
 
 namespace qsapecng

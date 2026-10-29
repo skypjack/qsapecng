@@ -17,10 +17,12 @@
 */
 
 
+#include "gui/editor/itemtransform.h"
 #include "gui/editor/item.h"
 #include "gui/editor/schematicscene.h"
 
-#include <QtGui/QGraphicsSceneMouseEvent>
+#include <QTimer>
+#include <QGraphicsSceneMouseEvent>
 
 
 namespace qsapecng
@@ -28,8 +30,12 @@ namespace qsapecng
 
 
 Item::Item(QGraphicsItem* parent, SchematicScene* scene)
-  : QGraphicsItem(parent, scene)
+  : QGraphicsItem(parent)
 {
+  // Qt 4 accepted the scene in the QGraphicsItem constructor
+  if(scene && !parent)
+    scene->addItem(this);
+
   setFlags(
     QGraphicsItem::ItemIsMovable
     | QGraphicsItem::ItemIsSelectable
@@ -62,8 +68,8 @@ Item::Item(QGraphicsItem* parent, SchematicScene* scene)
 void Item::mirror()
 {
   mirrored_ = !mirrored_;
-  scale(-1, 1);
-  translate(-boundingRect().width(), 0);
+  scaleItem(this, -1, 1);
+  translateItem(this, -pivotRect().width(), 0);
 }
 
 
@@ -76,12 +82,12 @@ void Item::rotate()
   case 90:
     angle_ = 180;
     transform.rotate(180);
-    transform.translate(-boundingRect().width(), -boundingRect().height());
+    transform.translate(-pivotRect().width(), -pivotRect().height());
     break;
   case 180:
     angle_ = 270;
     transform.rotate(270);
-    transform.translate(-boundingRect().width(), 0);
+    transform.translate(-pivotRect().width(), 0);
     break;
   case 270:
     angle_ = 0;
@@ -92,14 +98,14 @@ void Item::rotate()
   default:
     angle_ = 90;
     transform.rotate(90);
-    transform.translate(0, -boundingRect().height());
+    transform.translate(0, -pivotRect().height());
   }
 
   setTransform(transform);
 
   if(mirrored_) {
-    scale(-1, 1);
-    translate(-boundingRect().width(), 0);
+    scaleItem(this, -1, 1);
+    translateItem(this, -pivotRect().width(), 0);
   }
 }
 
@@ -141,13 +147,20 @@ SchematicScene* Item::schematicScene() const
 
 void Item::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 {
-  if(event->button() == Qt::LeftButton) {
-    if(schematicScene())
-      schematicScene()->rotateSelectedItems();
-    else
-      rotate();
-
+  // double-click edits the parameters (rotation: R key or Rotate action)
+  if(event->button() == Qt::LeftButton && schematicScene()
+      && (SchematicScene::itemProperties(this)
+          || SchematicScene::isOutput(this)))
+  {
     event->accept();
+    // open the dialog once the mouse event has been handled, so the view
+    // does not keep this item as mouse grabber while the dialog is up
+    SchematicScene* scene = schematicScene();
+    QGraphicsItem* item = this;
+    QTimer::singleShot(0, scene, [scene, item]() {
+      if(scene->items().contains(item))
+        scene->editItemProperties(item);
+    });
   } else {
     QGraphicsItem::mouseDoubleClickEvent(event);
   }
@@ -170,7 +183,7 @@ void Item::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     );
 
   if(schematicScene()) {
-    schematicScene()->moveSelectedItems(offset);
+    schematicScene()->dragSelectedBy(offset);
   } else {
     if(scene()) {
       QList<QGraphicsItem*> items = scene()->selectedItems();

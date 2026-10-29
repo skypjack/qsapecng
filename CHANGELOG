@@ -1,6 +1,512 @@
 QSapecNG CHANGELOG
 ~~~~~~~~~~~~~~~~~~
 
+ * 3.0.0 (work in progress)
+    o Ported to Qt 6 (6.2 or newer), Qwt 6.2/6.3 and C++17; builds with
+      current GCC, Clang, MSVC and MinGW, CMake 3.16 - 4.x, Boost up to 1.90
+    o Modern CMake build (AUTOMOC/AUTORCC, imported targets); Windows builds
+      copy Qwt and run windeployqt automatically
+    o Property browser removed: parameters are edited in a dialog
+      (double-click, or Edit > Properties...)
+    o New look: Fusion style where the platform style is dated, scalable
+      line icons, HiDPI symbol icons, tabbed documents, sans-serif labels,
+      restyled plots; system, light or dark theme
+    o Double-click a component to edit its parameters in a dialog (name,
+      value with unit, symbolic flag; both coils of a mutual inductance);
+      undoable
+    o R rotates the selected items, or the item being placed
+    o Wire drawing as in KiCad / Eagle: W starts the tool; each click adds
+      a corner and drawing continues until it ends on a pin or a wire, or
+      on a double-click; the bend follows the first move (right-click or /
+      flips it); Esc drops the unfinished segment, a second Esc leaves
+    o Resistor symbol: IEC / DIN (rectangle, default) or ANSI
+      (zigzag)
+    o Result panel (tabbed with Messages) replaces the result popup: real
+      fractions, Result / Raw / Digit sections with Copy links, and a notice
+      when the circuit changed since it was solved
+    o Component labels are centred beside the symbol (also when rotated or
+      mirrored) and stay centred when renamed; a dragged label keeps its
+      place. Older files get the automatic placement
+    o Net numbers shown after Resolve leave out the ground net (0)
+    o Values can be typed with prefixes: 4.7k, 4k7, 4R7, 100n, 2.2u or
+      2.2µ, 1meg, also with the unit (10 kΩ, 100nF); stored as plain numbers
+    o Result panel: Copy LaTeX (\frac{...}{...}) next to each Copy
+    o File > Export Schematic (Ctrl+E): SVG, PNG (~300 dpi) or PDF, black on
+      white without the grid; printing also leaves out grid and selection
+    o Example circuits: RC low-pass, RLC band-pass, inverting amplifier,
+      Sallen-Key low-pass; installed with the program and listed in
+      File > Open Example
+    o Junction dots only where three or more wires or pins meet; plain
+      bends and wire ends on pins have none
+    o Picking a component with no schematic open starts a new one
+    o The splash screen can be turned off; it stays up about 2.5 s
+    o A bent wire acts as one object: clicking a segment selects the whole
+      run up to junctions and pins (move, delete), and a wire drawn in one
+      go is one undo step. "Wire cross" removed (W draws all wires)
+    o Box selection as in CAD: dragging right selects what is entirely
+      inside (blue box), dragging left also what the box touches (green)
+    o Results simplified for reading: a numeric denominator is divided out
+      ((-V1) / 0.1 -> -10 V1), minus signs instead of "( - x )",
+      parentheses only around a sum multiplied by s
+    o The status bar progress indicator only appears while solving
+    o Results show the input factored out: -(R2 / R1) V1, H(s) V1
+    o Editor zoom with the mouse wheel around the pointer (Shift / Ctrl +
+      wheel scroll), middle-button drag pans; the canvas extends around
+      the drawing and the grid thins out when zoomed out
+    o The Out marker is a tag ("Out") pointing at its terminal
+    o Plot markers: click a plot to place a marker (a dashed line with
+      frequency, magnitude and phase), click the line to remove it. The
+      Markers panel beside each plot lists them: edit a frequency (10k,
+      2.5MEG), Add, Remove, and move the selected one left / right by a
+      step in Hz (prefixes allowed). Values come from the transfer
+      function, markers stay when the circuit is solved again; Plot >
+      Markers Panel (Ctrl+M), Plot > Clear Markers
+    o Plots in a window of their own (Plots, one tab per plot) instead of
+      the Editor / Workplane tabs: Run > New Plot (F9) asks for the kind,
+      frequency range and axes; several plots at once, with the Plot menu
+      and a toolbar in that window. Plots follow every Resolve (F8);
+      Plot > Plot Settings changes the
+      current one, Window > Plots Window (Ctrl+Shift+P) brings it back;
+      size and place are remembered
+    o Plot Settings is a panel beside the plots (Plot > Plot Settings):
+      it shows the current plot's settings and applies every change at
+      once; Run > New Plot keeps its dialog
+    o Markers panel: closed until the first marker is placed; the Peak
+      buttons move the selected marker to the previous / next peak of the
+      magnitude; -3 dB places
+      a marker where the magnitude is 3 dB below the selected one and makes
+      that the reference (bandwidth in the difference columns)
+    o Pole-zero map: the same scale on both axes, whatever the window's
+      shape
+    o Plot > Antialiasing (and Configure): smooth curves on or off (kept);
+      the grid and the marker lines stay sharp either way, and the setting
+      reaches every curve of a plot (those of another plot kind or unit
+      kept the old one until shown). Curves are drawn at their exact
+      positions (Qwt rounded every point to a whole pixel, so even smooth
+      curves came out in steps)
+    o The Markers panel is a side panel of the Plots window, like Plot
+      Settings, with its own close button; it shows the markers of the
+      plot in front. Right-click on a plot: Add Marker Here (at the
+      frequency clicked) and Zoom to Fit (Reset View renamed; Home). The
+      side panels no longer float off as windows of their own, and Plot
+      Settings is never narrower than its form (no horizontal scroll bar)
+    o Differential markers: Reference makes the selected marker the
+      reference; the others show their difference from it in magnitude
+      and phase (in the panel and on the plot) and in frequency
+    o Plot axes use prefixes (1k, 10M); pole and zero labels read
+      -5k + j5k
+    o Out tag 10 % lower
+    o Real resistors, inductors and capacitors: untick "Ideal" in the
+      parameters to add parasitics - R: series L and parallel C; L: winding
+      resistance and parallel C; C: ESR, ESL and leakage resistance (0 =
+      none). The part itself stays symbolic, the parasitics are numeric
+    o Context menu: Rotate (R), Flip Horizontally (H), Flip Vertically
+      (V), clipboard, order, and a Place submenu with every part; new
+      hotkeys G (ground), P (port), O (Out), T (label)
+    o A part being placed hangs on the pointer by its pin (one-pin parts),
+      the middle between its pins (two pins) or its centre (more), always
+      on a grid point
+    o Click a pin or a wire end to start a wire there (a drag still moves
+      the part)
+    o Text labels: T hangs a label on the pointer and asks for its text
+      (several lines) when it is placed; a click selects it, a drag moves
+      it on the grid, a double-click edits it
+    o Component labels sit closer to their parts; a dragged label snaps
+      back to its centred place when brought near it; right-click > Reset
+      Label Position
+    o Grid: dots or lines, faint / medium / strong
+    o A wire ending on the middle of another splits it there, so a click
+      selects wires only up to the junction (a click no longer glues
+      touching wires together)
+    o Fixed: a crash when a part was picked with its hotkey (T, G, P, O)
+      while the pointer was over the schematic
+    o Pasted parts follow the pointer until a click places them (right
+      click rotates, Esc takes the paste back) and get names of their own
+      (a copy of R2 becomes R3; duplicate names merged in the result)
+    o Flip Horizontally / Vertically refer to the screen also for rotated
+      parts (they flipped about the part's own axis)
+    o Moving parts tidies the wires: pieces lying on top of each other are
+      merged, and a wire end left connected to nothing is trimmed back, so
+      moving a part away and back leaves no stubs or stray junction dots
+    o Mutual inductance: Lp and Ls are small upright captions beside the
+      coils instead of outlines across them
+    o Fixed: Esc did not cancel a part picked in the Components list (the
+      list kept the keyboard)
+    o Fixed: markers kept the colours of the theme they were made in
+    o Fixed: the Markers panel squeezed the Phase column after Clear Markers
+    o Fixed: the Font page icon vanished when selected in the Configure
+      dialog
+    o Fixed: the Out tag looked grey (edges and caption between pixels)
+    o Components list: one click picks the part to place (dragging still
+      works); a click below the list goes back to the plain pointer; the
+      list shows the part being placed
+    o Moving parts keeps them connected: wires ending on a moved pin
+      stretch along (straight, or with a bend so the pin is entered as
+      before), and a part touching a moved pin directly gets a new wire;
+      a mouse drag or an arrow key is one undo step
+    o Net numbers after Resolve only for nets joining two or more pins
+      (the Out tag counts), numbered 1, 2, 3 ... without gaps, placed on a
+      wire corner beside the wires instead of on a lead
+    o Resolve leaves out parts connected to nothing (they made the whole
+      result 0) and says so in Messages
+    o Dragged labels snap to the grid
+    o Fit to Window centres the drawing both ways
+    o Op-amp: GBW defaults to 1 MHz; its label reads G= for the gain
+    o Points per decade up to 10000
+    o Plots: Frequency Response, Phase Response, Bode Plot (both on
+      one graph, phase on the right axis) and Poles & Zeros (centred on
+      the origin), with units on the axes; options for magnitude in dB or
+      linear, phase in degrees or radians, frequency in Hz or rad/s, and
+      log or linear axes (kept between sessions). The separate Gain and
+      Loss plots, the Data box and the result tooltip are gone; values
+      come from the schematic
+    o Plots: mouse wheel zooms around the pointer (Shift: frequency only,
+      Ctrl: vertical only), middle button pans, Plot > Zoom to Fit
+      (Home); Plot > Vertical Range sets a fixed or automatic range,
+      kept per quantity (dB, linear, degrees, radians; both Bode axes)
+    o Plot > Frequency Range: automatic (a decade beyond the poles
+      and zeros, the default) or start/stop as typed (10k, 1MEG), with
+      log-spaced points per decade instead of a fixed step
+    o Status bar: what is going on and what the active tool expects, the
+      number of parts and wires, zoom and pointer position
+    o Op-amps: "Ideal" (as before) or a real one with an open-loop gain
+      (100dB, 200V/mV, 1e5V/V or a number; can stay symbolic) and an
+      optional gain-bandwidth product (single-pole model)
+    o Gain values accept dB, V/mV and V/V
+    o Voltage Source (1-pin): a source from the ground to its one pin,
+      drawn as a lead ending in a small circle (saved as a voltage source plus
+      its own type, so older versions open it as a two-pin source)
+    o Repository cleanup: unused bitmap icons and symbols (no longer built
+      into the program), old SapecNG images, macOS leftovers, the 2014 TODO
+    o Component labels: name only (default) or name and value,
+      e.g. "C1 / 1 µF"
+    o Side panels start closed except Components and Messages (Window >
+      Show); a saved layout from an earlier version is replaced once
+    o Pole-zero map always uses linear axes (poles were invisible with the
+      default logarithmic x axis)
+    o Fixed: new parts could repeat a name already in the schematic (e.g. a
+      second R1 after opening a file)
+    o Fixed: a rotated resistor or conductance moved off its wires when the
+      symbol style (ANSI / DIN) differed from the one it was drawn with
+    o Fixed: after switching from dark to light (or back) with no
+      schematic open, the editor background and the component icons kept
+      the old colours
+    o Fixed: Poles & Zeros crashed for a constant transfer function (e.g. an
+      inverting amplifier); it now says there are none. Roots at s = 0 are
+      no longer counted twice
+    o Fixed: an op-amp's value and symbolic flag were ignored when a file
+      was read
+    o Fixed: segmentation fault on Resolve when terms cancel out in the
+      transfer function (issue #6): the solver advanced an erased iterator
+    o Fixed: saving without a known extension wrote an empty file and
+      reported success (issue #4, PR #7)
+    o Fixed: a wire ending in the middle of another wire (T-junction) looked
+      connected but was not (issue #5); it now connects, with a junction
+      dot, while wires that merely cross stay unconnected
+    o Fixed: dropping a wire onto a component treated the component as a
+      wire (undefined behaviour while looking for wires to merge)
+    o Fixed: delete vs delete[] mismatches in the solver
+    o Fixed: mutual inductance read its coil values as whole numbers
+      (0.001 H became 0 H, 1.5 H became 1 H), so every circuit with one
+      had a wrong result
+    o Fixed: a netlist whose node numbers have a gap (an unused number,
+      e.g. a net with only a loose wire, or a hand-written netlist) was
+      solved as 0; nodes are now numbered internally
+    o Circuits without a unique solution (a loop of voltage sources,
+      current sources in series, a floating group, an op-amp without
+      feedback) are reported as such, with the usual causes, instead of a
+      result of 0 or 1/0; no plot opens for them
+    o Plots use the numeric result directly (as Digit in the Result panel)
+      instead of evaluating the symbolic one with values collected again
+      from the parts, where a name not found counted as 0
+    o Saving numbers the nodes in the file even when the circuit was never
+      solved (they were all saved as 0, so the file was no usable
+      netlist); the examples are saved again
+    o Faster solving of larger circuits: equal terms are found through an
+      index instead of a linear search (25 parts: 65 s down to 9 s)
+    o Solver regression tests (cmake -DQSAPECNG_BUILD_TESTS=ON, ctest),
+      among them an independent numeric solver (modified nodal analysis)
+      that checks the engine on random circuits with every component
+      type, the poles and zeros, and the plotted frequency response
+    o Settings > Configure QSapecNG gathers the options: General (splash
+      screen, log), Appearance (theme, resistor symbol, component labels,
+      grid style and strength, plot antialiasing) and Font; OK, Apply
+      (every page) and Close
+    o Voltmeter and ammeter: right-click > Reverse Polarity swaps the + / -
+      ends (the arrow for an ammeter) and so the sign of the result; undoable
+      and saved
+    o Result panel: the Result, Raw and Digit sections sit side by side
+      when they fit the panel's width
+    o Result panel: a result too long for the panel's width is shown on
+      one line, cut short with "+ ...", with an Expand link to show it all
+      (Collapse to go back); kept per output when solving again
+    o README: Quick start instead of the old Usage and Translations, and a
+      What's new in 3.0 section
+    o Several outputs: every Out marker, voltmeter and ammeter is solved,
+      each with a name (Out1, Out2, VM1, AM1 ... kept in the file); the
+      Result panel has a tab per output, and a plot shows the output chosen
+      in New Plot or in the Plot Settings panel (and in its tab title).
+      Placing a second output no longer dims the first. Older versions
+      read the first Out marker of such a file; .crc netlists keep one
+    o The Out tag grows with its name; double-click an Out marker or a
+      meter (or Properties) to rename it - Vout, Vbe ... - for the sheet,
+      the Result tabs and the plots; undoable, two outputs cannot share a
+      name
+    o Fixed: after a Resolve, Undo and Redo stayed disabled until another
+      schematic was picked, and the progress bar stayed in the status bar
+    o Fixed: a meter's output could be lost when the netlist numbered a
+      node after it (the solver moved the meter's internal node but kept
+      the output on the old one)
+    o Run > Plots (F9) brings up the plots of the schematic, or opens a
+      Bode plot when it has none (solving first if need be); New Plot
+      (Ctrl+F9, Plot menu and the plot window) asks for the kind
+    o Resolve no longer opens a plot by itself: the Plots window stays
+      shut until asked for (F9), and the status bar points to it. A file
+      naming a kind of plot (plot.kind, as some examples) still opens it
+      with its first result
+    o Automatic vertical range of the plots: one major step of margin
+      above and below the curves
+    o Grid dots are stronger at medium and strong strength
+    o Flip Vertically has an icon; the Flip Horizontally icon now shows the
+      vertical axis it flips about
+    o The Label tool places one label, then the pointer is back to normal;
+      Ctrl+Enter finishes the label's text
+    o Right-click menu: options that do nothing for the selection are left
+      out (Reverse Polarity without a meter, Reset Label Position without a
+      part, Properties for parts without parameters)
+    o Labels beside a part (sources, meters) keep a little more distance
+    o Save As has Ctrl+Shift+S on desktops without a standard key for it
+    o Bring to front / Send to back removed: the stacking order of items
+      changes nothing in a schematic
+    o File > Export SPICE Netlist: the circuit as a .cir file for ngspice,
+      LTspice and the like, with an AC sweep (the plots' range when set by
+      hand) and a .print line per output. Conductances become resistors,
+      an ideal op-amp a VCVS with a gain of 1e8, a real one its gain and
+      pole, the ideal transformer a VCVS and a CCCS, the mutual inductance
+      two coils and a K line, parasitics their own parts. A test checks
+      the export with ngspice on random circuits when ngspice is installed
+    o Nullor: a nullator (one circle: no voltage, no current) and a
+      norator (two circles: any voltage and current) as one part with four
+      free pins - the ideal op-amp without its ground, for pathological-
+      element models. Saved as an ideal op-amp of its own type: older
+      versions open it as an op-amp
+    o Three-Winding Transformer: a primary and two secondaries on one core
+      (dots mark where each winding starts), ideal (turns ratios N2/N1 and
+      N3/N1) or with the primary inductance and a coupling k between every
+      two windings; the secondaries in series make a centre-tapped one.
+      Solved exactly as leakage inductances (1 - k) L, a magnetizing
+      inductance k Lp and ideal transformers, which appear by name in the
+      Raw result. Older versions skip the part
+    o Solver tests: a transformer with three windings in the random
+      circuits, checked against its own inductance-matrix model
+    o File > Open Netlist reads a .crc netlist and draws it: the parts in
+      a row, one bus per node, ground symbols and Out markers; saving
+      writes the netlist back. Part names may be longer than a letter and
+      digits (Rload), and ideal transformers (n) are read
+    o The voltmeter and the ammeter are in the Components list (no longer
+      on the toolbar)
+    o Plots: the kind of plot is picked with four buttons (magnitude,
+      phase, Bode, poles and zeros); New Plot from the Plots window keeps
+      that window in front; the automatic vertical range fits the curves
+      (a resonance peak is no longer cut off)
+    o Messages and Result have Clear in their right-click menu
+    o A wire started by clicking a pin or a junction ends the wire tool
+      when it is finished
+    o Mutual inductance: the Lp and Ls tags sit further from the windings
+    o Smith chart, a fifth kind of plot: the output read as an impedance
+      (a 1 A current source driving the port, the Out marker on it) is
+      drawn as its reflection coefficient against Z0 (50 ohm by default),
+      with labelled resistance and reactance circles; optional admittance
+      circles (dashed) show where a shunt part moves the point. A click on
+      the curve places a marker with Z, the reflection coefficient and the
+      VSWR (the labels kept apart and inside the chart). An impedance that
+      does not change with frequency (a resistor) shows as a dot
+    o Plots window: Plot Settings and Markers are tabs on the right,
+      always there (the toolbar buttons for them are gone; the Plot menu
+      brings either tab to the front, and the first marker brings up
+      Markers); the window is made tall enough for the settings (no
+      scroll bar) and wide enough for a well-proportioned plot, within the
+      screen; closing the last plot leaves the window open
+    o New Plot dialog: fits its contents when the kind of plot changes
+    o The pointer turns into the aiming cross over a pin or a wire end,
+      where a click starts a wire
+    o 16 examples (File > Open Example, now a scrolling list): besides the
+      basics, an RF chain for 70 cm around the Semtech SX1255 (receive
+      match, transmit balun, 5 W PA pi network, harmonic low-pass with
+      real parts), a 10 MHz crystal model, EU FM pre-emphasis, a bridge
+      with meters, and a through-hole dummy load with its parasitics
+    o A schematic file can carry the sweep and kind of plot it opens with
+      (plot.fstart, plot.fstop, plot.points, plot.kind, plot.z0)
+    o Smith chart markers: Z, the reflection coefficient and the VSWR or,
+      by a tick in Plot Settings, the return loss
+    o Points per decade up to 1 000 000 for narrow sweeps (at most about
+      100 000 points are computed)
+    o Meters: the V and A and the + and - marks stay upright when the
+      meter is turned
+    o Markers: several can be selected in the table (Ctrl / Shift); the
+      selected ones are drawn bold in the plot; a click on the empty part
+      of the table clears the selection
+    o Voltage sources can have an internal resistance (untick Ideal in
+      their dialog; shown under the value, Rs = 50 Ω), and an Out marker
+      a load (a resistor to the ground, shown on its tag): neither needs
+      drawing. With both, the magnitude plots show the transducer gain (load power over the power the
+      source can give, 0 dB = lossless), assuming a load equal to the
+      source resistance when the Out marker has none; also in SPICE export
+    o Editing after a Resolve is quick again: every edit laid out the whole
+      result (long ones took seconds); now only an "out of date" strip
+      appears above it
+    o Undo no longer takes back the loading of a file (it emptied the
+      schematic, and Redo brought the parts back renamed with default
+      values)
+    o Plot Settings: the vertical ranges (automatic or from - to) moved in
+      from a separate dialog; Resolve (F8) in the Plots window solves the
+      plot's own schematic; the sweep is no longer carried over to other
+      plots
+    o Markers: names (M1, M2 ...) in the first column; Peak also finds
+      dips (notches, series resonances)
+    o Menus: the Plot menu lives in the Plots window (New Plot is in Run);
+      Window has no Tile / Cascade / Next / Previous (tabs); Zoom Normal
+      is Actual Size (100 %), centred; Output (O) named in full
+    o 14 net colours plus a grey reference (ground) net; a softer
+      selection colour in the dark theme; the example list follows a
+      theme switch; Esc on the Font page no longer empties it
+    o No plot opens by itself for a result that does not depend on
+      frequency (resistors and sources only)
+    o The Plots window opens at a moderate size (settings without a
+      scroll bar, the plot 1.25 times as wide as high, at most 80 % of
+      the screen) and later only grows when the settings need it
+    o A marker placed by a click keeps the frequency to the resolution of
+      a pixel (it was rounded to 3 digits: on a narrow sweep every click
+      gave the same 10 MHz); marker frequencies show all their digits
+    o Smith chart: while the mouse button is held, a dotted ghost marker
+      with its frequency follows the curve; releasing places the marker
+      there (as the vertical line does on the other plots)
+    o The frequency axis spans the sweep exactly (a narrow sweep was
+      widened to whole decades, the curve squeezed out of sight); a
+      vertical range set by hand belongs to its plot only
+    o Frequency axis labels carry enough digits to tell a narrow sweep's
+      ticks apart (10.005M, 10.01M, 10.015M)
+    o Parts cannot be placed, moved, pasted or dropped on top of one
+      another (meeting at the pins is fine); the status bar says why
+    o A part with one pin (Out, ground, port, one-pin source) turns around
+      its pin and stays on its wire; the Out tag's caption stays inside
+      the tag, read upwards when the tag stands on end
+    o A wire is started by a click only on a free pin or on a wire end or
+      junction; a click on a connected pin selects the part
+    o New application icon, sharp at every size (16 and 22 pixels drawn
+      apart); the icon files are made from SVG by packaging/make-icons.py
+    o The splash screen is drawn by the program: icon, name and version
+      on a light card, readable on any desktop
+    o Light theme on a dark desktop: the light palette is complete (it
+      took Fusion's, which follows the system's dark scheme since Qt 6.5);
+      with Qt 6.8 or newer, window frames and native dialogs follow the
+      chosen theme too
+    o Results: a sum times the input is shown in parentheses,
+      (L1 s + R1) I1, as is a negated sum (it lost them when the
+      denominator was 1)
+    o Resolve shows its progress in percent (status bar and progress bar)
+      and can be stopped: Run > Stop (Shift+F8), also in the Plots window;
+      quitting or closing a schematic while it solves stops the solver
+      instead of waiting for it
+    o The solver uses several processor cores: outputs (Out markers,
+      voltmeters, ammeters) are solved at the same time, and a single
+      output is split among the cores too. Settings > General > Solver
+      sets the maximum number of cores used in all. The result does not
+      depend on the number of cores
+    o Much faster solver: the common spanning trees are searched on plain
+      arrays with union-find cycle tests (the same Minty-Read-Tarjan
+      choices, in the same order), the sign of a tree takes one walk over
+      it instead of an elimination, and each tree's terms are added up as
+      it is found instead of keeping every tree in memory. A 7-section
+      LC ladder with real L and C (32 nodes, about 4 billion trees) goes
+      from about 3,300 to 220,000 trees per second on one core and needs
+      some 50 MB instead of hundreds of GB; small circuits solve 10 - 30
+      times faster
+    o Coefficients are summed exactly (rounded once), so they no longer
+      depend on the order the terms are found in. The search no longer
+      produces sets that are not trees (they added nothing, but could
+      move a term's place): in some results the terms come in a slightly
+      different order, the values are the same
+    o New tests compare the solver with the previous one term by term on
+      the examples and on 600 random circuits
+    o Resolve gives the numeric result (Digit) and the plots at once,
+      whatever the size of the circuit: the transfer function is worked
+      out as a determinant (exactly, modulo many primes), without listing
+      the trees. A 7-section LC ladder with real L and C: about a second,
+      where the symbolic result takes hours
+    o The symbolic result (Result, Raw) of a big circuit is then worked out
+      in the background, with the schematic free to edit (an edit stops
+      it). Settings > General > Solver > Symbolic result: Always, Ask when
+      it takes long (the default: asks when it would take more than about
+      10 s, with the estimated time), or Never (numeric
+      only). A small circuit gets it at once, as before. The Result panel
+      says what is going on ("Calculating... 3h 50min left.") and offers
+      to compute it when skipped or stopped
+    o The time the symbolic result takes is estimated before it starts:
+      its work is counted (small circuits) or sampled within a few per cent
+      (random paths down the search), at the speed of the last symbolic
+      solve on the computer
+    o The progress bar is 1.5 times as wide and shows the time left of the
+      symbolic result (from the terms found so far). Times are shown the
+      same way everywhere: 3h 50min, 50min, 40s
+    o Plots of high-order transfer functions: a term with a high power of
+      s overflowed (infinity, then NaN), which drew nonsense and froze the
+      window; the terms are now scaled before they are added
+    o Big circuits whose coefficients span more than 300 decades (an LC
+      ladder bridged by capacitors: 1 to 1e320): some were stored as
+      infinities, and opening the plot froze the program (the root finder
+      for the frequency range never returned). The numerator and the
+      denominator are now scaled together to keep every coefficient a
+      finite number (the transfer function is the same), and made monic
+      only when that fits
+    o Poles and zeros: the polynomial is scaled to roots of like size
+      before the root finder (rpoly), which gives up instead of looping
+      when it cannot cope; then the Aberth-Ehrlich method finds them
+      (roots spread over many decades)
+    o Markers: "< Peak" and "Peak >" from a marker already on a peak or a
+      dip stayed there; they move on to the next one
+    o Smith chart: offered only when the output is an impedance (a 1 A
+      current source drives the circuit, no voltage source does): greyed
+      out otherwise, in New Plot and in Plot Settings, saying why. A Smith
+      chart of such a circuit (from a file) says it in its title. It drew
+      the voltage ratio as an impedance: curves off the chart
+    o Resolve no longer leaves the Plots window behind the main window:
+      pressed there, it stays in front (also with the question about the
+      symbolic result, which now opens over it); pressed in the main
+      window, the Plots window comes back over it once the result is in
+    o A crash (heap corruption) at exit with schematics open: closing them
+      reached the main window after its parts were freed. A schematic
+      still solving in the background is stopped when it is closed
+    o The symbolic result takes about a sixth of the memory, and less
+      time: a term's component names are kept once for the whole program
+      (a term holds pointers to them, shared by its copies), Result shares
+      Raw's terms when every component is symbolic, and the solver's
+      tables are smaller (exact sums without the heap, compact keys). An
+      RC ladder of 29 parts (514,229 terms): 1.3 GB and 8.6 s down to
+      0.2 GB and 3.4 s on one core; 33 parts (3.5 million terms): 1.4 GB,
+      where it ran out of memory before
+    o A symbolic result too large for the computer's memory (half of it)
+      is stopped, with a message in the Result panel; the numeric result
+      and the plots are complete. Before, the program could be killed by
+      the system, losing unsaved schematics
+    o Result panel: a formula of thousands of terms or more shows its first
+      200; Copy and Copy LaTeX give all of it.
+      Laying out millions of terms took minutes and gigabytes
+    o Resolve after changing only values (or which parts are symbolic):
+      the symbolic result comes at once, made from the terms of the last
+      one instead of listing the trees again, and without the question
+      about the time it takes. It takes time by the size of the result,
+      not by the number of trees: an RC ladder of 33 parts, 2 s instead
+      of 26 s. A changed circuit, or a new value of a part's internals
+      (ESR, GBW...), is solved anew
+    o Plots window: the size it had last time is kept. It no longer grows
+      to most of the screen when the Markers tab is in front
+    o Components: a column of tool buttons on the left edge, as in
+      Inkscape; the button of the part being placed stays pressed, and
+      the names are in the tooltips. It replaces the Components list;
+      the window layout starts afresh once. Docked at the top or bottom,
+      the buttons are the size of the other toolbars'
+
  * 2.1.1
     o Porting to Qwt6
     o Bug fixing

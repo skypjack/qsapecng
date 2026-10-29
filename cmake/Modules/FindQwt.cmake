@@ -1,111 +1,90 @@
-# - Try to find the Qwt includes and library
-# Once done this will define:
+# FindQwt.cmake - locate the Qwt plotting library built for the Qt major
+# version in use (QT_VERSION_MAJOR must be set before calling find_package).
 #
-#  QWT_ROOT_DIR       - The base directory of Qwt library.
-#  QWT_INCLUDE_DIRS   - Where to find qwt*.h header files.
-#  QWT_LIBRARIES      - Libraries to be linked with executable.
-#  QWT_FOUND          - True if Qwt library is found.
+# Result:
+#   Qwt::Qwt            imported target
+#   QWT_FOUND, QWT_INCLUDE_DIRS, QWT_LIBRARIES, QWT_VERSION_STRING
 #
-#  QWT_VERSION_STRING - The version of Qwt library found (x.y.z)
-#  QWT_VERSION_MAJOR  - The major version of Qwt library
-#  QWT_VERSION_MINOR  - The minor version of Qwt library
-#  QWT_VERSION_PATCH  - The patch version of Qwt library
+# Hints: set QWT_ROOT_DIR (CMake or environment variable) to the Qwt install
+# prefix, e.g. C:/Qwt-6.3.0 on Windows or /opt/qwt-qt6 on Linux.
 #
-# If Qwt libraries are installed in a custom folder (this usually happens on
-# Windows) the environment variable QWT_ROOT_DIR can be set to the base
-# folder of the libraries.
+# Distribution packages name the library differently per Qt version:
+#   Debian/Ubuntu: libqwt-qt6.so / libqwt-qt5.so (headers in include/qwt)
+#   Fedora:        libqwt-qt6.so / libqwt-qt5.so (headers in include/qt6/qwt)
+#   vcpkg/MSYS2:   qwt.lib / libqwt-qt6.dll.a
+#   source build:  libqwt.so / qwt.lib
 #
-# Copyright (c) 2012 Simone Rossetto <simros85@gmail.com>
-#
-# +---------------------------------------------------------------------------
-# |	This file is FindQwt.cmake, part of "QSapecNG"
-# |
-# |	This program is free software: you can redistribute it and/or modify
-# |	it under the terms of the GNU General Public License as published by
-# |	the Free Software Foundation, either version 3 of the License, or
-# |	(at your option) any later version.
-# |
-# |	This program is distributed in the hope that it will be useful,
-# |	but WITHOUT ANY WARRANTY; without even the implied warranty of
-# |	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# |	GNU General Public License for more details.
-# |
-# |	You should have received a copy of the GNU General Public License
-# |	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# +---------------------------------------------------------------------------
-#
+# Copyright (c) 2012 Simone Rossetto, 2026 updated for Qt5/Qt6.
+# Distributed under the GNU GPL v3 or later.
 
-if(NOT QT4_FOUND)
-	find_package(Qt4 REQUIRED QUIET)
-endif(NOT QT4_FOUND)
+if(NOT QT_VERSION_MAJOR)
+  set(QT_VERSION_MAJOR 6)
+endif()
 
-find_path(QWT_ROOT_DIR
-	NAMES
-		"include/qwt.h"
-		"include/qwt/qwt.h"
-		"lib/qwt.framework/Headers/qwt.h"
-	PATHS ENV QWT_ROOT_DIR
-	PATH_SUFFIXES "qwt")
-    	
+set(_qwt_hints ${QWT_ROOT_DIR} $ENV{QWT_ROOT_DIR})
+
 find_path(QWT_INCLUDE_DIR
-	NAMES "qwt.h" 
-	HINTS ${QWT_ROOT_DIR}
-	PATHS ENV QWT_ROOT_DIR
-	PATH_SUFFIXES
-		"include"
-		"include/qwt"
-		"lib/qwt.framework/Headers")
+  NAMES qwt_plot.h
+  HINTS ${_qwt_hints}
+  PATH_SUFFIXES
+    include
+    include/qwt
+    include/qwt-qt${QT_VERSION_MAJOR}
+    include/qt${QT_VERSION_MAJOR}/qwt
+    qwt
+    lib/qwt.framework/Headers
+)
 
-find_library(QWT_LIBRARY
-	NAMES qwt libqwt
-	HINTS ${QWT_ROOT_DIR}
-	PATHS ENV QWT_ROOT_DIR
-	PATH_SUFFIXES "lib")
+find_library(QWT_LIBRARY_RELEASE
+  NAMES qwt-qt${QT_VERSION_MAJOR} qwt
+  HINTS ${_qwt_hints}
+  PATH_SUFFIXES lib
+)
+find_library(QWT_LIBRARY_DEBUG
+  NAMES qwt-qt${QT_VERSION_MAJOR}d qwtd
+  HINTS ${_qwt_hints}
+  PATH_SUFFIXES lib debug/lib
+)
 
-if(QWT_LIBRARY)
-	file(STRINGS "${QWT_INCLUDE_DIR}/qwt_global.h" _qwt_version REGEX "^#define QWT_VERSION[ ]+0x.*$")
-	
-	string(REGEX REPLACE "^#define QWT_VERSION[ ]+0x([1-9]?).*$" "\\1" _qwt_ver_major1 "${_qwt_version}")
-	string(REGEX REPLACE "^#define QWT_VERSION[ ]+0x[0-9]([0-9]).*$" "\\1" _qwt_ver_major2 "${_qwt_version}")
-	set(QWT_VERSION_MAJOR "${_qwt_ver_major1}${_qwt_ver_major2}")
-   	
-	string(REGEX REPLACE "^#define QWT_VERSION[ ]+0x[0-9][0-9]([1-9]?).*$" "\\1" _qwt_ver_minor1 "${_qwt_version}")
-	string(REGEX REPLACE "^#define QWT_VERSION[ ]+0x[0-9][0-9][0-9]([0-9]).*$" "\\1" _qwt_ver_minor2 "${_qwt_version}")
-	set(QWT_VERSION_MINOR "${_qwt_ver_minor1}${_qwt_ver_minor2}")
+include(SelectLibraryConfigurations)
+select_library_configurations(QWT)
 
-	string(REGEX REPLACE "^#define QWT_VERSION[ ]+0x[0-9][0-9][0-9][0-9]([1-9]?).*$" "\\1" _qwt_ver_patch1 "${_qwt_version}")
-	string(REGEX REPLACE "^#define QWT_VERSION[ ]+0x[0-9][0-9][0-9][0-9][0-9]([0-9]).*$" "\\1" _qwt_ver_patch2 "${_qwt_version}")
-	set(QWT_VERSION_PATCH "${_qwt_ver_patch1}${_qwt_ver_patch2}")
-   	
-   	set(QWT_VERSION_STRING "${QWT_VERSION_MAJOR}.${QWT_VERSION_MINOR}.${QWT_VERSION_PATCH}")
-
-	# to be tested
-	IF (CYGWIN)
-		IF(BUILD_SHARED_LIBS)
-			# No need to define QWT_USE_DLL here, because it's default for Cygwin.
-		ELSE(BUILD_SHARED_LIBS)
-			SET (QWT_DEFINITIONS -DQwt_STATIC)
-		ENDIF(BUILD_SHARED_LIBS)
-	ENDIF (CYGWIN)
-endif(QWT_LIBRARY)
-
-mark_as_advanced(
-    QWT_LIBRARY
-    QWT_INCLUDE_DIR
-    _qwt_version
-    _qwt_ver_major1
-    _qwt_ver_major2
-    _qwt_ver_minor1
-    _qwt_ver_minor2
-    _qwt_ver_patch1
-    _qwt_ver_patch2)
+if(QWT_INCLUDE_DIR AND EXISTS "${QWT_INCLUDE_DIR}/qwt_global.h")
+  file(STRINGS "${QWT_INCLUDE_DIR}/qwt_global.h" _qwt_ver
+       REGEX "^#define[ \t]+QWT_VERSION_STR[ \t]+\"[0-9.]+\"")
+  string(REGEX REPLACE ".*\"([0-9.]+)\".*" "\\1" QWT_VERSION_STRING "${_qwt_ver}")
+endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Qwt
-	REQUIRED_VARS QWT_LIBRARY QWT_INCLUDE_DIR
-	VERSION_VAR QWT_VERSION_STRING)
+  REQUIRED_VARS QWT_LIBRARY QWT_INCLUDE_DIR
+  VERSION_VAR QWT_VERSION_STRING)
 
 if(QWT_FOUND)
-	set(QWT_INCLUDE_DIRS ${QWT_INCLUDE_DIR})
-	set(QWT_LIBRARIES ${QWT_LIBRARY})
-endif(QWT_FOUND)
+  set(QWT_INCLUDE_DIRS ${QWT_INCLUDE_DIR})
+  set(QWT_LIBRARIES ${QWT_LIBRARY})
+  if(NOT TARGET Qwt::Qwt)
+    add_library(Qwt::Qwt UNKNOWN IMPORTED)
+    set_target_properties(Qwt::Qwt PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${QWT_INCLUDE_DIR}")
+    if(QWT_LIBRARY_RELEASE)
+      set_property(TARGET Qwt::Qwt APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+      set_target_properties(Qwt::Qwt PROPERTIES IMPORTED_LOCATION_RELEASE "${QWT_LIBRARY_RELEASE}")
+    endif()
+    if(QWT_LIBRARY_DEBUG)
+      set_property(TARGET Qwt::Qwt APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+      set_target_properties(Qwt::Qwt PROPERTIES IMPORTED_LOCATION_DEBUG "${QWT_LIBRARY_DEBUG}")
+    endif()
+    if(NOT QWT_LIBRARY_RELEASE)
+      set_target_properties(Qwt::Qwt PROPERTIES IMPORTED_LOCATION "${QWT_LIBRARY_DEBUG}")
+    else()
+      set_target_properties(Qwt::Qwt PROPERTIES IMPORTED_LOCATION "${QWT_LIBRARY_RELEASE}")
+    endif()
+    # Shared Qwt on Windows needs QWT_DLL so headers use dllimport.
+    if(WIN32 AND NOT QWT_STATIC)
+      set_property(TARGET Qwt::Qwt APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS QWT_DLL)
+    endif()
+  endif()
+endif()
+
+mark_as_advanced(QWT_INCLUDE_DIR QWT_LIBRARY_RELEASE QWT_LIBRARY_DEBUG)

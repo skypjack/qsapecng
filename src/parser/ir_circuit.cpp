@@ -18,6 +18,8 @@
 
 
 #include "parser/ir_circuit.h"
+#include <locale>
+#include <sstream>
 
 #ifndef Q_MOC_RUN
 #include <boost/lexical_cast.hpp>
@@ -59,9 +61,12 @@ void ir_parser::parse_rec(
       builder.add_circuit_properties(cmap);
     }
 
-    if(head->get_child_optional("out")) {
-      boost::property_tree::ptree& o =
-        head->get_child("out");
+    // one "out" per Out marker (older files, and older versions, have or
+    // read only the first)
+    BOOST_FOREACH(boost::property_tree::ptree::value_type& oc, *head) {
+      if(oc.first != "out")
+        continue;
+      boost::property_tree::ptree& o = oc.second;
 
       unsigned int node =
         boost::lexical_cast<unsigned int>(o.get("node", "0"));
@@ -222,9 +227,11 @@ void ir_parser::parse_rec(
             );
           break;
         case 'A':
+          // value / symbolic: open-loop gain of a non-ideal op-amp (props
+          // "ideal" = 0); an ideal one ignores them
           builder.add_quad_component(
               abstract_builder::AO,
-              name, 1., false,
+              name, value, symbolic,
               nodes.at(0), nodes.at(1),
               nodes.at(2), nodes.at(3),
               imap
@@ -247,6 +254,35 @@ void ir_parser::parse_rec(
               nodes.at(2), nodes.at(3),
               imap
             );
+          break;
+        case 'T':
+          {
+            // a transformer: the windings' nodes in pairs, the turns
+            // ratios ("ratio2", "ratio3" ...) and k as properties
+            std::vector< std::pair<unsigned int, unsigned int> > windings;
+            std::vector<double> ratios;
+            for(std::size_t i = 0; i + 1 < nodes.size(); i += 2) {
+              windings.push_back(std::make_pair(nodes.at(i), nodes.at(i + 1)));
+              double ratio = 1.;
+              if(i > 0) {
+                std::istringstream in(imap["ratio" + std::to_string(i / 2 + 1)]);
+                in.imbue(std::locale::classic());
+                if(!(in >> ratio))
+                  ratio = 1.;
+              }
+              ratios.push_back(ratio);
+            }
+            double k = 1.;
+            {
+              std::istringstream in(imap["k"]);
+              in.imbue(std::locale::classic());
+              if(!(in >> k))
+                k = 1.;
+            }
+            if(windings.size() >= 2)
+              builder.add_transformer(name, windings, ratios, value, k,
+                symbolic, imap);
+          }
           break;
         }
       }
@@ -408,7 +444,7 @@ void ir_builder::add_out_component(
     }
   }
 
-  head_->put_child("out", cc);
+  head_->add_child("out", cc);
 }
 
 
@@ -592,6 +628,35 @@ void ir_builder::end_userdef_component(
 {
   head_ = stack_.top();
   stack_.pop();
+}
+
+
+void ir_builder::add_transformer(
+    std::string name,
+    std::vector< std::pair<unsigned int, unsigned int> > windings,
+    std::vector<double> ratios,
+    double lp,
+    double k,
+    bool symbolic,
+    std::map<std::string, std::string> props
+  )
+{
+  std::vector<unsigned int> nodes;
+  for(const auto& w : windings) {
+    nodes.push_back(w.first);
+    nodes.push_back(w.second);
+  }
+  auto text = [](double x) {
+      std::ostringstream s;
+      s.imbue(std::locale::classic());
+      s.precision(15);
+      s << x;
+      return s.str();
+    };
+  for(std::size_t i = 1; i < ratios.size(); ++i)
+    props["ratio" + std::to_string(i + 1)] = text(ratios[i]);
+  props["k"] = text(k);
+  add_item('T', name, lp, symbolic, nodes, props);
 }
 
 

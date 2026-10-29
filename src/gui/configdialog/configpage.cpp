@@ -19,24 +19,33 @@
 
 #include "gui/configdialog/configpage.h"
 #include "gui/settings.h"
+#include "config.h"
+#include "gui/theme.h"
+#include "gui/workplane/workplane.h"
 
 #include "logger/logger.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
-#include <QtGui/QComboBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLabel>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <algorithm>
+#include <QThread>
+#include <QComboBox>
+#include <QFormLayout>
+#include <QSettings>
+#include <QPushButton>
+#include <QGroupBox>
+#include <QLabel>
 
-#include <QtCore/QSignalMapper>
+#include <QSignalMapper>
 
-#include <QtGui/QFontDialog>
-#include <QtGui/QColorDialog>
+#include <QFontDialog>
+#include <QColorDialog>
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QGridLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QGridLayout>
 
 
 namespace qsapecng
@@ -49,19 +58,70 @@ GeneralPage::GeneralPage(QWidget* parent)
   Settings settings;
 
   /*
-   * Project Settings Box
+   * Startup Box
    */
-  QGroupBox* projectSettingsBox = new QGroupBox(
-      tr("Project Settings"), this
-    );
-  projectSettingsBox->setCheckable(false);
-  projectSettingsBox->setAlignment(Qt::AlignLeft);
+  QGroupBox* startupBox = new QGroupBox(tr("Startup"), this);
+  splash_ = new QCheckBox(tr("Show the &splash screen"));
+  splash_->setChecked(QSettings(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION)
+    .value(QStringLiteral("Application/showSplash"), true).toBool());
+  connect(splash_, &QCheckBox::toggled, this, [this]() { setPageModified(true); });
+  QHBoxLayout* startupLayout = new QHBoxLayout;
+  startupLayout->addWidget(splash_);
+  startupBox->setLayout(startupLayout);
 
-  QHBoxLayout* projectSettingsLayout = new QHBoxLayout;
-  projectSettingsLayout->addWidget(
-    new QLabel(tr("Nothing to do here, that's good!! :-)")));
+  /*
+   * Solver Box
+   */
+  QGroupBox* solverBox = new QGroupBox(tr("Solver"), this);
+  threads_ = new QSpinBox;
+  threads_->setRange(1, std::max(1, QThread::idealThreadCount()));
+  threads_->setValue(QSettings(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION)
+    .value(QStringLiteral("Application/solverThreads"),
+      QThread::idealThreadCount()).toInt());
+  threads_->setToolTip(tr("The solver works on this many processor cores "
+    "at most, for all the outputs (Out markers and meters) together: "
+    "several outputs are solved at the same time, and a single output is "
+    "split among the cores"));
+  connect(threads_, &QSpinBox::valueChanged, this,
+    [this]() { setPageModified(true); });
+  QLabel* threadsLabel = new QLabel(tr("Use a &maximum of"));
+  QLabel* threadsTail = new QLabel(tr("cores (of %1)")
+    .arg(QThread::idealThreadCount()));
+  threadsLabel->setBuddy(threads_);
+  QHBoxLayout* threadsLayout = new QHBoxLayout;
+  threadsLayout->addWidget(threadsLabel);
+  threadsLayout->addWidget(threads_);
+  threadsLayout->addWidget(threadsTail);
+  threadsLayout->addStretch();
 
-  projectSettingsBox->setLayout(projectSettingsLayout);
+  // Resolve gives the numeric result (Digit) and the plots first; the
+  // symbolic one (Result, Raw) lists every term and can take hours
+  symbolic_ = new QComboBox;
+  symbolic_->addItem(tr("Always"), 0);
+  symbolic_->addItem(tr("Ask when it takes long"), 1);
+  symbolic_->addItem(tr("Never (numeric only)"), 2);
+  const int mode = QSettings(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION)
+    .value(QStringLiteral("Application/symbolicResult"), 1).toInt();
+  symbolic_->setCurrentIndex(std::max(0, symbolic_->findData(mode)));
+  symbolic_->setToolTip(tr("Resolve gives the numeric result (Digit) and "
+    "the plots at once, whatever the circuit. The symbolic result (Result, "
+    "Raw) can take hours for a big circuit: it is worked out in the "
+    "background, and Ask shows the time it would take first when that is "
+    "more than about 10 seconds. A small circuit gets it at once, unless "
+    "Never is chosen"));
+  connect(symbolic_, &QComboBox::currentIndexChanged, this,
+    [this]() { setPageModified(true); });
+  QLabel* symbolicLabel = new QLabel(tr("&Symbolic result:"));
+  symbolicLabel->setBuddy(symbolic_);
+  QHBoxLayout* symbolicLayout = new QHBoxLayout;
+  symbolicLayout->addWidget(symbolicLabel);
+  symbolicLayout->addWidget(symbolic_);
+  symbolicLayout->addStretch();
+
+  QVBoxLayout* solverLayout = new QVBoxLayout;
+  solverLayout->addLayout(threadsLayout);
+  solverLayout->addLayout(symbolicLayout);
+  solverBox->setLayout(solverLayout);
 
   /*
    * Log Settings Box
@@ -69,9 +129,6 @@ GeneralPage::GeneralPage(QWidget* parent)
   QGroupBox* logSettingsBox = new QGroupBox(
       tr("Log Settings"), this
     );
-  projectSettingsBox->setCheckable(false);
-  projectSettingsBox->setAlignment(Qt::AlignLeft);
-
   logLevel_ = new QComboBox;
   logLevel_->addItem(tr("Debug"), QVariant(sapecng::Logger::DEBUG));
   logLevel_->addItem(tr("Info"), QVariant(sapecng::Logger::INFO));
@@ -152,8 +209,8 @@ GeneralPage::GeneralPage(QWidget* parent)
   connect(fatalColor_, SIGNAL(clicked()),
     colorMapper_, SLOT(map()));
 
-  connect(colorMapper_, SIGNAL(mapped(int)),
-    this, SLOT(changeColor(int)));
+  connect(colorMapper_, &QSignalMapper::mappedInt,
+    this, [this](int id) { changeColor(id); });
 
   QHBoxLayout* logLevelLayout = new QHBoxLayout;
   logLevelLayout->addWidget(logLevelLabel);
@@ -180,7 +237,8 @@ GeneralPage::GeneralPage(QWidget* parent)
    * Main layout
    */
   QVBoxLayout* mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(projectSettingsBox);
+  mainLayout->addWidget(startupBox);
+  mainLayout->addWidget(solverBox);
   mainLayout->addWidget(logSettingsBox);
   mainLayout->addStretch();
   setLayout(mainLayout);
@@ -189,14 +247,22 @@ GeneralPage::GeneralPage(QWidget* parent)
 
 void GeneralPage::apply()
 {
+  QSettings(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION)
+    .setValue(QStringLiteral("Application/showSplash"), splash_->isChecked());
+  QSettings(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION)
+    .setValue(QStringLiteral("Application/solverThreads"), threads_->value());
+  QSettings(SETTINGS_ORGANIZATION, SETTINGS_APPLICATION)
+    .setValue(QStringLiteral("Application/symbolicResult"),
+      symbolic_->currentData().toInt());
+
   SettingsManager manager;
 
   manager.setLogLvl(logLevel_->itemData(logLevel_->currentIndex()).toInt());
-  manager.setDebugColor(debugColor_->palette().color(QPalette::Background));
-  manager.setInfoColor(infoColor_->palette().color(QPalette::Background));
-  manager.setWarningColor(warningColor_->palette().color(QPalette::Background));
-  manager.setErrorColor(errorColor_->palette().color(QPalette::Background));
-  manager.setFatalColor(fatalColor_->palette().color(QPalette::Background));
+  manager.setDebugColor(debugColor_->palette().color(QPalette::Window));
+  manager.setInfoColor(infoColor_->palette().color(QPalette::Window));
+  manager.setWarningColor(warningColor_->palette().color(QPalette::Window));
+  manager.setErrorColor(errorColor_->palette().color(QPalette::Window));
+  manager.setFatalColor(fatalColor_->palette().color(QPalette::Window));
 
   setPageModified(false);
 }
@@ -212,7 +278,7 @@ void GeneralPage::changeColor(int id)
   {
   case sapecng::Logger::DEBUG:
     color = QColorDialog::getColor(
-        debugColor_->palette().color(QPalette::Background),
+        debugColor_->palette().color(QPalette::Window),
         this, tr("Choose a color")
       );
     if(color.isValid()) {
@@ -222,7 +288,7 @@ void GeneralPage::changeColor(int id)
     break;
   case sapecng::Logger::INFO:
     color = QColorDialog::getColor(
-        infoColor_->palette().color(QPalette::Background),
+        infoColor_->palette().color(QPalette::Window),
         this, tr("Choose a color")
       );
     if(color.isValid()) {
@@ -232,7 +298,7 @@ void GeneralPage::changeColor(int id)
     break;
   case sapecng::Logger::WARNING:
     color = QColorDialog::getColor(
-        warningColor_->palette().color(QPalette::Background),
+        warningColor_->palette().color(QPalette::Window),
         this, tr("Choose a color")
       );
     if(color.isValid()) {
@@ -242,7 +308,7 @@ void GeneralPage::changeColor(int id)
     break;
   case sapecng::Logger::ERROR:
     color = QColorDialog::getColor(
-        errorColor_->palette().color(QPalette::Background),
+        errorColor_->palette().color(QPalette::Window),
         this, tr("Choose a color")
       );
     if(color.isValid()) {
@@ -252,7 +318,7 @@ void GeneralPage::changeColor(int id)
     break;
   case sapecng::Logger::FATAL:
     color = QColorDialog::getColor(
-        fatalColor_->palette().color(QPalette::Background),
+        fatalColor_->palette().color(QPalette::Window),
         this, tr("Choose a color")
       );
     if(color.isValid()) {
@@ -270,10 +336,102 @@ void GeneralPage::levelChanged()
 }
 
 
+AppearancePage::AppearancePage(QWidget* parent)
+  : ConfigPage(parent)
+{
+  auto combo = [this](const QStringList& items, int current) {
+      QComboBox* box = new QComboBox;
+      box->addItems(items);
+      box->setCurrentIndex(current);
+      connect(box, &QComboBox::currentIndexChanged, this,
+        [this]() { setPageModified(true); });
+      return box;
+    };
+
+  mode_ = combo({ tr("Follow the system"), tr("Light"), tr("Dark") },
+    static_cast<int>(theme::mode()));
+
+  QGroupBox* windowBox = new QGroupBox(tr("Colours"), this);
+  QFormLayout* windowLayout = new QFormLayout;
+  windowLayout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
+  windowLayout->addRow(tr("&Theme:"), mode_);
+  windowBox->setLayout(windowLayout);
+
+  resistor_ = combo({ tr("ANSI"), tr("IEC / DIN") },
+    theme::resistorStyle() == theme::ResistorStyle::Ansi ? 0 : 1);
+  labels_ = combo({ tr("Name only"), tr("Name and value") },
+    theme::showComponentValues() ? 1 : 0);
+  gridStyle_ = combo({ tr("Dots"), tr("Lines") },
+    theme::gridStyle() == theme::GridStyle::Dots ? 0 : 1);
+  gridStrength_ = combo({ tr("Faint"), tr("Medium"), tr("Strong") },
+    theme::gridStrength());
+
+  QGroupBox* schematicBox = new QGroupBox(tr("Schematic"), this);
+  QFormLayout* schematicLayout = new QFormLayout;
+  schematicLayout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
+  schematicLayout->addRow(tr("&Resistor symbol:"), resistor_);
+  schematicLayout->addRow(tr("Component &labels:"), labels_);
+  schematicLayout->addRow(tr("&Grid:"), gridStyle_);
+  schematicLayout->addRow(tr("Grid &strength:"), gridStrength_);
+  schematicBox->setLayout(schematicLayout);
+
+  antialias_ = new QCheckBox(tr("Smooth (&antialiased) curves and lines"));
+  antialias_->setChecked(WorkPlane::antialiased());
+  connect(antialias_, &QCheckBox::toggled, this, [this]() { setPageModified(true); });
+
+  QGroupBox* plotBox = new QGroupBox(tr("Plots"), this);
+  QVBoxLayout* plotLayout = new QVBoxLayout;
+  plotLayout->addWidget(antialias_);
+  plotBox->setLayout(plotLayout);
+
+  QVBoxLayout* mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(windowBox);
+  mainLayout->addWidget(schematicBox);
+  mainLayout->addWidget(plotBox);
+  mainLayout->addStretch();
+  setLayout(mainLayout);
+}
+
+
+void AppearancePage::apply()
+{
+  const theme::Mode mode = static_cast<theme::Mode>(mode_->currentIndex());
+  if(mode != theme::mode())
+    theme::setMode(mode);
+  theme::setResistorStyle(resistor_->currentIndex() == 0
+    ? theme::ResistorStyle::Ansi : theme::ResistorStyle::Din);
+  theme::setShowComponentValues(labels_->currentIndex() == 1);
+  theme::setGridStyle(gridStyle_->currentIndex() == 0
+    ? theme::GridStyle::Dots : theme::GridStyle::Lines);
+  theme::setGridStrength(gridStrength_->currentIndex());
+  WorkPlane::setAntialiasedDefault(antialias_->isChecked());
+
+  setPageModified(false);
+  emit applied();
+}
+
+
+namespace
+{
+
+// the font dialog as a page: Esc (or any accept / reject) would hide it and
+// leave the page empty; the Configure dialog's own buttons decide instead
+class EmbeddedFontDialog: public QFontDialog
+{
+public:
+  EmbeddedFontDialog() { setWindowFlags(Qt::Widget); }
+  void done(int) override { }
+  void accept() override { }
+  void reject() override { }
+};
+
+}
+
+
 FontPage::FontPage(QWidget* parent)
   : ConfigPage(parent)
 {
-  fontPage_ = new QFontDialog;
+  fontPage_ = new EmbeddedFontDialog;
   fontPage_->setCurrentFont(QApplication::font());
   fontPage_->setOption(QFontDialog::NoButtons, true);
 

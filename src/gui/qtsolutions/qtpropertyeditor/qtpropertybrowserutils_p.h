@@ -1,89 +1,5 @@
-/****************************************************************************
-**
-** This file is part of a Qt Solutions component.
-** 
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** 
-** Contact:  Qt Software Information (qt-info@nokia.com)
-** 
-** Commercial Usage  
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
-** 
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-** 
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
-** 
-** GNU General Public License Usage 
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-** 
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
-** 
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
-** 
-****************************************************************************/
-
-/****************************************************************************
-**
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
-**
-** This file is part of the tools applications of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the either Technology Preview License Agreement or the
-** Beta Release License Agreement.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
-** package.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-**
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Copyright (C) 2016 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 
 //
 //  W A R N I N G
@@ -101,12 +17,10 @@
 
 #include <QtCore/QMap>
 #include <QtGui/QIcon>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <QtCore/QStringList>
 
-#if QT_VERSION >= 0x040400
 QT_BEGIN_NAMESPACE
-#endif
 
 class QMouseEvent;
 class QCheckBox;
@@ -116,6 +30,7 @@ class QtCursorDatabase
 {
 public:
     QtCursorDatabase();
+    void clear();
 
     QStringList cursorShapeNames() const;
     QMap<int, QIcon> cursorShapeIcons() const;
@@ -142,6 +57,9 @@ public:
     static QPixmap fontValuePixmap(const QFont &f);
     static QIcon fontValueIcon(const QFont &f);
     static QString fontValueText(const QFont &f);
+    static QString dateFormat();
+    static QString timeFormat();
+    static QString dateTimeFormat();
 };
 
 class QtBoolEdit : public QWidget {
@@ -164,44 +82,13 @@ Q_SIGNALS:
     void toggled(bool);
 
 protected:
-    void mousePressEvent(QMouseEvent * event);
+    void mousePressEvent(QMouseEvent * event) override;
 
 private:
     QCheckBox *m_checkBox;
     bool m_textVisible;
 };
 
-class QtKeySequenceEdit : public QWidget
-{
-    Q_OBJECT
-public:
-    QtKeySequenceEdit(QWidget *parent = 0);
-
-    QKeySequence keySequence() const;
-    bool eventFilter(QObject *o, QEvent *e);
-public Q_SLOTS:
-    void setKeySequence(const QKeySequence &sequence);
-Q_SIGNALS:
-    void keySequenceChanged(const QKeySequence &sequence);
-protected:
-    void focusInEvent(QFocusEvent *e);
-    void focusOutEvent(QFocusEvent *e);
-    void keyPressEvent(QKeyEvent *e);
-    void keyReleaseEvent(QKeyEvent *e);
-    bool event(QEvent *e);
-private slots:
-    void slotClearShortcut();
-private:
-    void handleKeyEvent(QKeyEvent *e);
-    int translateModifiers(Qt::KeyboardModifiers state, const QString &text) const;
-
-    int m_num;
-    QKeySequence m_keySequence;
-    QLineEdit *m_lineEdit;
-};
-
-#if QT_VERSION >= 0x040400
 QT_END_NAMESPACE
-#endif
 
 #endif

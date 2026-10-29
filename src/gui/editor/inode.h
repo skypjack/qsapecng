@@ -21,7 +21,7 @@
 #define INODE_H
 
 
-#include <QtCore/QSharedData>
+#include <QSharedData>
 
 
 namespace qsapecng
